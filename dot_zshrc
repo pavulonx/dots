@@ -1,0 +1,150 @@
+# If not running interactively, don't do anything
+[[ $- != *i* ]] && return
+
+ZSHD="$HOME/.zsh.d"
+SOURCES=(
+  commands.zsh
+  completion.zsh
+  exports.local.zsh
+  exports.zsh
+  key-bindings.zsh
+  termsupport.zsh
+)
+for src in $SOURCES; do
+  source "$ZSHD/$src"
+done
+
+
+## OPTS
+setopt interactivecomments # adds comments in input
+setopt long_list_jobs
+# setopt correct_all
+setopt interactivecomments # recognize comments
+setopt auto_pushd
+setopt pushd_ignore_dups
+setopt pushdminus
+setopt auto_cd
+setopt multios
+
+
+# lscolors
+autoload -U colors && colors
+export LSCOLORS="Gxfxcxdxbxegedabagacad"
+export LS_COLORS='rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lz=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.rar=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.axv=01;35:*.anx=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.axa=00;36:*.oga=00;36:*.spx=00;36:*.xspf=00;36:';
+export TIME_STYLE='long-iso'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
+
+
+# SSH
+eval "$(ssh-agent)" >> /dev/null;
+ssh-add "$SSH_KEY_PATH" 2> /dev/null
+
+# Plugins
+#source /usr/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+#source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# fpath=(~/.zsh.d/ $fpath)
+
+
+## HISTORY yyyy-mm-dd"
+HISTSIZE=90000
+SAVEHIST=90000
+HISTFILE=~/.zsh_history
+
+setopt extended_history       # record timestamp of command in HISTFILE
+setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
+setopt hist_ignore_dups       # ignore duplicated commands history list
+setopt hist_ignore_space      # ignore commands that start with space
+setopt hist_verify            # show command with history expansion to user before running it
+setopt inc_append_history     # add commands to HISTFILE in order of execution
+setopt share_history          # share command history data
+
+
+zstyle ':completion:*' menu select
+
+setopt auto_menu         # show completion menu on successive tab press
+setopt complete_in_word
+setopt always_to_end
+setopt auto_list         # automatically list choices on ambiguous completion.
+
+WORDCHARS=''
+zmodload -i zsh/complist
+
+
+
+
+### Added by Zinit's installer
+
+# Load a few important annexes, without Turbo
+# (this is currently required for annexes)
+      
+
+### End of Zinit's installer chunk
+
+### Added by Zinit's installer
+if [[ ! -f $HOME/.zinit/bin/zinit.zsh ]]; then
+    print -P "%F{33}▓▒░ %F{220}Installing %F{33}DHARMA%F{220} Initiative Plugin Manager (%F{33}zdharma/zinit%F{220})…%f"
+    command mkdir -p "$HOME/.zinit" && command chmod g-rwX "$HOME/.zinit"
+    command git clone https://github.com/zdharma/zinit "$HOME/.zinit/bin" && \
+        print -P "%F{33}▓▒░ %F{34}Installation successful.%f%b" || \
+        print -P "%F{160}▓▒░ The clone has failed.%f%b"
+fi
+
+source "$HOME/.zinit/bin/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+### End of Zinit's installer chunk
+#
+
+
+
+zinit light-mode for \
+    zsh-users/zsh-autosuggestions \
+    zsh-users/zsh-completions \
+    zdharma/history-search-multi-word \
+    simnalamburt/cgitc \
+    simnalamburt/ctrlf \
+    MichaelAquilina/zsh-you-should-use \
+    OMZ::plugins/docker-compose \
+    OMZL::git.zsh
+
+zinit wait lucid for \
+  atinit"zicompinit; zicdreplay"  \
+        zdharma/fast-syntax-highlighting \
+        OMZP::colored-man-pages
+#        OMZP::colored-man-pages \
+#  as"completion" \
+#        OMZP::docker/_docker
+        # docker-compose completion
+#        https://github.com/docker/cli/blob/master/contrib/completion/zsh/_docker
+zinit ice wait'1' lucid as'completion'
+zinit snippet https://raw.githubusercontent.com/docker/compose/master/contrib/completion/zsh/_docker-compose
+
+
+# Easily access the directories you visit most often.
+#
+# Usage:
+#   $ z work
+#   $ <CTRL-G>work
+zinit light agkozak/zsh-z
+zinit light andrewferrier/fzf-z
+
+
+
+
+# prompt theme
+setopt prompt_subst
+zinit ice src"agnosterzak.zsh-theme"
+zinit light jakubrozenbajger/agnosterzak-ohmyzsh-theme
+
+autoload -U compinit && compinit
+#setopt globdots # find a way to toggle globdots
+
+
+
+
+
+
+
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

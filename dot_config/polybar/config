@@ -1,0 +1,327 @@
+;----------------
+; General
+;----------------
+
+[settings]
+screenchange-reload = true
+;compositing-background = xor
+;compositing-background = screen
+;compositing-foreground = source
+;compositing-border = over
+locale = en_US.UTF-8
+
+[global/wm]
+margin-top = 0
+margin-bottom = 0
+
+[colors]
+transparent = #00000000
+background = #222d32
+foreground = #ebdbb2
+black = #7c6f64
+dgrey = #928374
+dred = #cc241d
+red = #fb4934
+dgreen = #98971a
+green = #b8bb26
+dyellow = #d79921
+yellow = #fabd2f
+dblue = #458588
+blue = #83a598
+dmagenta = #b16286
+magenta = #d3869b
+dcyan = #689d6a
+cyan = #8ec07c
+lgrey = #a89984
+white = #ebdbb2
+accentblue = #00bcd4
+
+;tblack = #852f343f
+;tred = #80fb4934
+;tgreen = #80b8bb26
+;tyellow = #80fabd2f
+;tblue = #8083a598
+;tmagenta = #80d3869b
+;tcyan = #808ec07c
+;twhite = #80ebdbb2
+;tgrey = #80a89984
+
+tblack = #222d32
+tred = #222d32
+tgreen = #222d32
+tyellow = #222d32
+tblue = #222d32
+tmagenta = #222d32
+tcyan = #222d32
+twhite = #222d32
+tgrey = #222d32
+
+
+[bar/top]
+width = 100%
+height = 22
+fixed-center = true
+monitor = ${env:MONITOR:}
+
+scroll-up = i3wm-wsnext
+scroll-down = i3wm-wsprev
+
+spacing = 1
+
+padding-left = 0
+padding-right = 2
+
+module-margin-left = 2
+module-margin-right = 2
+module-margin-top = 2
+module-margin-bottom = 2
+
+;colors
+background = ${colors.background}
+foreground = ${colors.foreground}
+line-color = #f00
+
+line-size = 2
+;font-0 = Noto Sans:size=9:fontformat=truetype
+;font-0 = Selawik:size=9:fontformat=truetype
+font-0 = Segoe UI:size=9:fontformat=truetype
+font-1 = Noto Sans:size=9:fontformat=truetype
+font-2 = NotoSans-Regular:size=8;-1
+font-3 = MaterialIcons:size=10;0
+font-4 = FontAwesome:size=10;0
+font-5 = DejaVuSansMono Nerd Font:size=10;0
+
+;; tray
+tray-position = right
+tray-padding = 4
+tray-background = ${colors.background}
+tray-detached = false
+;tray-maxsize = 16
+tray-offset-x = 2
+; tray-offset-y = 0
+tray-scale = 01.00
+
+modules-left = i3 xwindow
+modules-center =
+;date
+modules-right = music vpn wlan backlight filesystem temperature cpu memory battery volume date
+
+underline-size = 1
+
+;----------------
+; Modules
+;----------------
+
+[module/xwindow]
+type = internal/xwindow
+label = %title:0:180:...%
+
+[module/i3]
+type = internal/i3
+strip-wsnumbers = true
+index-sort = true
+
+format = <label-state> <label-mode>
+
+label-mode-foreground = ${colors.background}
+label-mode-background = ${colors.dyellow}
+label-mode-padding = 1
+
+label-focused-foreground = ${colors.accentblue}
+label-focused-background = ${colors.tblue}
+label-focused-underline = ${colors.accentblue}
+label-focused-padding = 1
+
+label-unfocused-padding = 1
+
+label-urgent-background = ${colors.tred}
+label-urgent-underline = ${colors.dred}
+label-urgent-padding = 1
+
+label-visible-background = ${colors.tgreen}
+label-visible-underline = ${colors.dgreen}
+label-visible-padding = 1
+
+;[module/updates]
+;type = custom/script
+;exec = $HOME/.bin/updates.sh
+;interval = 120
+;format-background = ${colors.background}
+;format-foreground = ${colors.red}
+;format-foreground = ${colors.tred}
+
+;format-padding = 2
+;click-left = urxvt -e sudo pacman -Syu
+
+[module/temperature]
+type = internal/temperature
+format = <ramp> <label>
+label = +%temperature-c%
+interval = 1
+hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon1/temp1_input
+warn-temperature = 80
+ramp-0 = 
+ramp-1 = 
+ramp-2 = 
+ramp-3 = 
+ramp-4 = 
+ramp-5 = 
+ramp-6 = 
+ramp-7 = 
+ramp-7-foreground = #fba922
+
+[module/backlight]
+type = internal/backlight
+card = intel_backlight
+format = <label>
+format-padding = 2
+label =   %percentage%
+
+[module/music]
+type = custom/script
+exec = $HOME/.config/polybar/scripts/mediaplayer.sh
+label = %output:0:40:...%
+format-padding = 2
+interval = 2
+exec-if = pgrep -x spotify || pgrep -x deadbeef
+click-left = playerctl previous --player=playerctld
+click-right = playerctl next --player=playerctld
+click-middle = playerctl play-pause --player=playerctld
+
+[module/volume]
+type = internal/alsa
+format-volume = <ramp-volume> <label-volume>
+master-mixer = Master
+label-muted =  muted
+label-muted-foreground = #66
+ramp-volume-0 = 
+ramp-volume-1 = 
+ramp-volume-2 = 
+format-volume-padding = 2
+format-volume-background = ${colors.tgreen}
+mapping = true
+
+
+[module/date]
+type = internal/date
+interval = 2
+date = "  %d.%m.%Y"
+date-alt = "  %A, %d. %B"
+time = "%H:%M"
+time-alt = "%H:%M:%S"
+format-padding = 2
+label = "%{A3:gsimplecal:}%date%    %time%%{A}"
+format-background = ${colors.tcyan}
+
+[module/cpu]
+type = internal/cpu
+interval = 0.5
+format = <label> <ramp-coreload>
+label = 
+
+ramp-coreload-0 = ▁
+ramp-coreload-0-font = 2
+ramp-coreload-0-foreground = ${colors.foreground}
+ramp-coreload-1 = ▂
+ramp-coreload-1-font = 2
+ramp-coreload-1-foreground = ${colors.foreground}
+ramp-coreload-2 = ▃
+ramp-coreload-2-font = 2
+ramp-coreload-2-foreground = ${colors.foreground}
+ramp-coreload-3 = ▄
+ramp-coreload-3-font = 2
+ramp-coreload-3-foreground = ${colors.foreground}
+ramp-coreload-4 = ▅
+ramp-coreload-4-font = 2
+ramp-coreload-4-foreground = #fba922
+ramp-coreload-5 = ▆
+ramp-coreload-5-font = 2
+ramp-coreload-5-foreground = #fba922
+ramp-coreload-6 = ▇
+ramp-coreload-6-font = 2
+ramp-coreload-6-foreground = #ff5555
+ramp-coreload-7 = █
+ramp-coreload-7-font = 2
+ramp-coreload-7-foreground = #ff5555
+
+
+[module/filesystem]
+type = internal/fs
+mount-0 = /
+interval = 20
+label-mounted =   %free%
+
+
+[module/memory]
+type = internal/memory
+format = <label> <bar-used>
+label = 
+interval = 3
+bar-used-width = 6
+bar-used-foreground-0 = ${colors.foreground}
+bar-used-foreground-1 = ${colors.foreground}
+bar-used-foreground-2 = #fba922
+bar-used-foreground-3 = #ff5555
+bar-used-indicator = |
+bar-used-indicator-font = 6
+bar-used-indicator-foreground = #ff
+bar-used-fill = –
+bar-used-fill-font = 6
+bar-used-empty = –
+bar-used-empty-font = 6
+bar-used-empty-foreground = #444444
+
+
+[module/wlan]
+type = internal/network
+interface = wlp3s0
+interval = 3.0
+
+format-connected-padding = 1
+format-disconnected-padding = 1
+format-connected = <label-connected>
+label-connected =%downspeed:9%  %essid:0:8:…%
+label-disconnected = 
+label-disconnected-foreground = ${colors.lgrey}
+
+
+[module/vpn]
+type = custom/script
+exec = pgrep openvpn
+interval = 5
+label = vpn
+format-prefix = " "
+format-prefix-foreground = #5b
+
+
+[module/battery]
+type = internal/battery
+battery = hidpp_battery_0
+adapter = AC
+full-at = 99
+
+format-charging = <animation-charging> <label-charging>
+
+format-discharging = <ramp-capacity> <label-discharging>
+label-discharging = %percentage% (%time%)
+
+format-full-prefix = "  "
+format-padding = 2
+
+ramp-capacity-0 = 
+ramp-capacity-1 = 
+ramp-capacity-2 = 
+ramp-capacity-3 = 
+ramp-capacity-4 = 
+
+animation-charging-0 = 
+animation-charging-1 = 
+animation-charging-2 = 
+animation-charging-3 = 
+animation-charging-4 = 
+animation-charging-framerate = 750
+
+format-background = ${colors.tblue}
+
+; vim:ft=dosini
+
