@@ -1,18 +1,27 @@
 #!/bin/bash
 
-RCFILE="$HOME/.backuprc"
+RC_FILE="$HOME/.backuprc"
+FILTER_FILE="$HOME/.backup.filter"
 
-# Set initial defaults for parameters
-SOURCE="/"
+# FIXME: source is always user home
+# TODO: parametrize source, adn make path include absolute path eg. backup -s 'HOME/dir' results in backing up to $DESTINATON/$hHOME/dir
+SOURCE="$HOME/"
+## Default to current user's' home directory if no source path is specified
+#if [ "$SOURCE" == "/" ]; then
+#    SOURCE="$HOME/"
+#    echo "Source path not provided. Using home directory: \"$SOURCE\""
+#    echo
+#fi
+
 DESTINATION="/"
 REAL_RUN="no"
 
 # Check if commandline parameters are passed. If so, set variables
 while getopts s:d:c opts; do
     case $opts in
-        s)
-            SOURCE="$OPTARG"
-            ;;
+#        s)
+#            SOURCE="$OPTARG"
+#            ;;
         d)
             DESTINATION="$OPTARG"
             ;;
@@ -22,99 +31,68 @@ while getopts s:d:c opts; do
     esac
 done
 
+#TODO: better parsing of arguments and config file
 # Exit if destination is not provided
 if [ "$DESTINATION" == "/" ]; then
-    if [ -f "$RCFILE" ] && grep -q "DESTINATION=" "$RCFILE"; then
-        DESTINATION="$(grep "DESTINATION=" "$RCFILE" | cut -d'=' -f2-)"
+    if [ -f "$RC_FILE" ] && grep -q "DESTINATION=" "$RC_FILE"; then
+        DESTINATION="$(grep "DESTINATION=" "$RC_FILE" | cut -d'=' -f2-)"
     else
-        echo "Destination needs to be provided: -d \"destination_path\" or in $RCFILE"
+        echo "Destination needs to be provided: -d \"destination_path\" or in $RC_FILE"
         exit 1
     fi
 fi
 
-# Default to current user's' home directory if no source path is specified
-if [ "$SOURCE" == "/" ]; then
-    SOURCE="$HOME/"
-    echo "Source path not provided. Using home directory: \"$SOURCE\""
-    echo
-fi
+
 
 # TODO Symlink check instructions: https://stackoverflow.com/questions/59838/check-if-a-directory-exists-in-a-shell-script
 # TODO Canonicalize paths instructions (for relative path support): https://stackoverflow.com/questions/32857392/bash-check-if-a-relative-path-exists
 
 # Check if source directory exists
-if [ ! -d "$SOURCE" ]; then
-    echo "Directory \"$SOURCE\" does not exist"
+if [ ! -d "$SOURCE" ] || [ ! -r "$SOURCE" ]; then
+    echo "Directory \"$SOURCE\" does not exist or is not readable"
     exit 1
 fi
 
-# Check if source directory is readable
-if [ ! -r "$SOURCE" ]; then
-    echo "Directory \"$SOURCE\" is not readable"
-    exit 1
-fi
-
-# Check if destination directory exists
-if [ ! -d "$DESTINATION" ]; then
-    echo "Directory \"$DESTINATION\" does not exist"
-    exit 1
-fi
-
-# Check if destination directory is writable
-if [ ! -r "$DESTINATION" ]; then
-    echo "Directory \"$DESTINATION\" is not writable"
+# Check if destination directory exists and wirtable
+if [ ! -d "$DESTINATION" ] || [ ! -r "$DESTINATION" ]; then
+    echo "Directory \"$DESTINATION\" does not exist or is not writable"
     exit 1
 fi
 
 # Append current PC (hostname) and username to destination
-DESTINATION="${DESTINATION%/}/$(hostname)_$USER-`id -u $USER`"
+DESTINATION="${DESTINATION%/}/$(hostname)_$USER-$(id -u "$USER")"
 
-# Set logfile location in the destination
-TIMESTAMP=$(date +%Y%m%d%H%M%S)
-LOGFILE="$DESTINATION/.logs/rsync.$TIMESTAMP.log"
 mkdir -p "$DESTINATION/.logs"
+TIMESTAMP=$(date +%Y%m%d%H%M%S)
 
-FILTERFILE="$HOME/.backup.filter"
-
-#       --recursive, -r          recurse into directories
-#       --links, -l              copy symlinks as symlinks
-#       --times, -t              preserve modification times
-#       --devices                preserve device files (super-user only)
-#       --specials               preserve special files
-#       -D                       same as --devices --specials
-#       --update, -u             skip files that are newer on the receiver
-#       --progress               show progress during transfer
-#       --partial-dir=DIR        put a partially transferred file into DIR
-#       --partial                keep partially transferred files
-#       -P                       same as --partial --progress
-#       --verbose, -v            increase verbosity
-#       --suffix=SUFFIX          backup suffix (default ~ w/o --backup-dir)
-#       --backup, -b             make backups (see --suffix & --backup-dir)
-#       --backup-dir=DIR         make backups into hierarchy based in DIR
-#       --filter=RULE, -f        add a file-filtering RULE
-#       --exclude=PATTERN        exclude files matching PATTERN
-
+rsync_commands=(
+    "-rltDuPv"
+    "--progress"
+    "--human-readable"
+    "--modify-window=1"
+    "--log-file=$DESTINATION/.logs/rsync.$TIMESTAMP.log"
+    "--delete"
+    "--backup"
+    "--backup-dir=$DESTINATION/.backups"
+    "--suffix=.$TIMESTAMP.backup"
+    "--partial"
+    "--partial-dir=$DESTINATION/.partials"
+    "--filter=merge $FILTER_FILE"
+    "--filter=:- .gitignore"
+    "--exclude=$DESTINATION/.backups"
+    "--exclude=$DESTINATION/.logs"
+    "$SOURCE"
+    "$DESTINATION"
+)
 
 do_rsync() {
-    rsync -rltDuPv --progress --human-readable --modify-window=1 --log-file="$LOGFILE" \
-    --delete --backup --backup-dir="$DESTINATION/.backups" --suffix=".$TIMESTAMP.backup" \
-    --partial --partial-dir="$DESTINATION/.partials" \
-    --filter="merge $FILTERFILE" --filter=":- .gitignore" \
-    --exclude="$DESTINATION/.backups" --exclude="$DESTINATION/.logs" \
-    "$SOURCE" "$DESTINATION"
-
+    rsync "${rsync_commands[@]}"
     # Clean files older than 30 days
     find "$DESTINATION/.backups/" -daystart -mtime +30 -type f -delete
 }
 
 do_rsync_dry_run() {
-    rsync -rltDuPv --progress --dry-run --human-readable --modify-window=1 --log-file="$LOGFILE" \
-    --delete --backup --backup-dir="$DESTINATION/.backups" --suffix=".$TIMESTAMP.backup" \
-    --partial --partial-dir="$DESTINATION/.partials" \
-    --filter="merge $FILTERFILE" --filter=":- .gitignore" \
-    --exclude="$DESTINATION/.backups" --exclude="$DESTINATION/.logs" \
-    "$SOURCE" "$DESTINATION"
-
+    rsync --dry-run "${rsync_commands[@]}"
     # Clean files older than 30 days
     find "$DESTINATION/.backups/" -daystart -mtime +30 -type f -delete
 }
@@ -122,7 +100,7 @@ do_rsync_dry_run() {
 echo "Source:       $SOURCE"
 echo "Destination:  $DESTINATION"
 echo
-if [ $REAL_RUN == "yes" ]; then
+if [ "$REAL_RUN" == "yes" ]; then
     echo "Starting backup..."
     echo
     do_rsync
