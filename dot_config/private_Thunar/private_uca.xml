@@ -14,7 +14,7 @@
 	<icon>add</icon>
 	<name>Add To Chezmoi Dotfiles</name>
 	<unique-id>1601062754964654-1</unique-id>
-	<command>chezmoi add %F</command>
+	<command>chezmoi add -r %F</command>
 	<description>Add to chezmoi</description>
 	<patterns>*</patterns>
 	<startup-notify/>
