@@ -1,0 +1,7 @@
+# https://github.com/twpayne/chezmoi/issues/721
+init-scripts/**
+init-scripts*
+backups/**
+backups*
+docs/**
+docs*

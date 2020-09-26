@@ -1,0 +1,7 @@
+#!/bin/bash
+
+# some majnaro i3 shit
+locker="/usr/bin/lockscreen"
+logger "DEPRECATED! blurlock invoked by: $(ps -o comm= $PPID). Executing $locker"
+
+"$locker"
