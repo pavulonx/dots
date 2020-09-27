@@ -11,6 +11,8 @@ alias grep='grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox}'
 alias fcl='fc -li 1'
 alias :q='exit'
 
+alias chm="chezmoi"
+
 # ls
 alias ls='ls --color=auto'
 alias l='ls -lah'
