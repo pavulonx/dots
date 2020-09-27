@@ -1,22 +1,19 @@
 #!/bin/bash
 
-RC_FILE="$HOME/.backuprc"
-FILTER_FILE="$HOME/.backup.filter"
-
-# FIXME: source is always user home
-# TODO: parametrize source, adn make path include absolute path eg. backup -s 'HOME/dir' results in backing up to $DESTINATON/$hHOME/dir
-SOURCE="$HOME/"
-## Default to current user's' home directory if no source path is specified
-#if [ "$SOURCE" == "/" ]; then
-#    SOURCE="$HOME/"
-#    echo "Source path not provided. Using home directory: \"$SOURCE\""
-#    echo
-#fi
-
+# 1. defaults
 DESTINATION="/"
 REAL_RUN="no"
 
-# Check if commandline parameters are passed. If so, set variables
+# 2. config overrides
+_backup_conf_file="$HOME/.backuprc"
+if ! [ -f "$_backup_conf_file" ]; then
+	echo "# backup config
+	" > "$_backup_conf_file"
+fi
+source "$_backup_conf_file"
+
+
+# 3. script params
 while getopts s:d:c opts; do
     case $opts in
 #        s)
@@ -31,18 +28,22 @@ while getopts s:d:c opts; do
     esac
 done
 
-#TODO: better parsing of arguments and config file
+## CONSTANTS
+FILTER_FILE="$HOME/.backup.filter"
+SOURCE="$HOME/" # FIXME: source is always user home
+# TODO: parametrize source, adn make path include absolute path eg. backup -s 'HOME/dir' results in backing up to $DESTINATON/$hHOME/dir
+## Default to current user's' home directory if no source path is specified
+#if [ "$SOURCE" == "/" ]; then
+#    SOURCE="$HOME/"
+#    echo "Source path not provided. Using home directory: \"$SOURCE\""
+#    echo
+#fi
+
 # Exit if destination is not provided
 if [ "$DESTINATION" == "/" ]; then
-    if [ -f "$RC_FILE" ] && grep -q "DESTINATION=" "$RC_FILE"; then
-        DESTINATION="$(grep "DESTINATION=" "$RC_FILE" | cut -d'=' -f2-)"
-    else
-        echo "Destination needs to be provided: -d \"destination_path\" or in $RC_FILE"
-        exit 1
-    fi
+    echo "Destination needs to be provided: -d \"destination_path\" or in $_backup_conf_file"
+    exit 1
 fi
-
-
 
 # TODO Symlink check instructions: https://stackoverflow.com/questions/59838/check-if-a-directory-exists-in-a-shell-script
 # TODO Canonicalize paths instructions (for relative path support): https://stackoverflow.com/questions/32857392/bash-check-if-a-relative-path-exists
