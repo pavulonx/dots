@@ -1,0 +1,34 @@
+# configuration file for betterlockscreen
+
+locktext="Logged as @$USER"
+
+transparent=00000000
+dimmed=00000066
+white=ffffffff
+red=c0392b
+blue=2980b9
+
+insidecolor=$transparent
+ringcolor=$white
+verifcolor=$white
+separatorcolor=$transparent
+
+keyhlcolor=$blue
+bshlcolor=$blue
+
+insidevercolor=$white
+ringvercolor=$white
+
+insidewrongcolor=$red
+ringwrongcolor=$red
+
+timecolor=$white
+datecolor=$white
+
+#override i3lock lockargs
+#lockargs="$lockargs --bar-indicator"
+#lockargs="$lockargs --radius=25 --ring-width=5"
+
+# only for update
+#blur_level=
+loginbox=$dimmed
