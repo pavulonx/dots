@@ -1,6 +1,7 @@
 # configuration file for betterlockscreen
 
-locktext="Logged as @$USER"
+# date
+locktext="%A %d.%m.%Y"
 
 transparent=00000000
 dimmed=00000066
@@ -27,7 +28,6 @@ datecolor=$white
 
 #override i3lock lockargs
 #lockargs="$lockargs --bar-indicator"
-#lockargs="$lockargs --radius=25 --ring-width=5"
 
 # only for update
 #blur_level=
