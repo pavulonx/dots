@@ -2,7 +2,7 @@
 #set -e
 
 install_all() {
-	yay -S --needed $@
+	yay -S --noconfirm "$(yay -Qi $@ 2>&1 >/dev/null | grep "error: package" | grep "was not found" | cut -d"'" -f2 | tr "\n" " ")"
 }
 
 ###############################################################################
@@ -150,7 +150,6 @@ ttf-windows
 nerd-fonts-dejavu-complete
 nerd-fonts-terminus
 terminus-font
-terminus-font-ttf
 ttf-bitstream-vera
 ttf-dejavu
 ttf-droid
