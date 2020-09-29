@@ -43,6 +43,8 @@ xf86-input-libinput
 xf86-input-mouse
 xf86-input-void
 xfce4-power-manager
+zsh
+chezmoi
 )
 
 echo "Installing core packages"
