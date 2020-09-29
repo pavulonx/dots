@@ -9,7 +9,7 @@ install_all() {
 echo "CORE"
 core=(
 adapta-gtk-theme
-adwaita
+adwaita-icon-theme
 arandr
 autorandr
 betterlockscreen
@@ -38,9 +38,7 @@ xautomation
 xclip
 xdotool
 xf86-input-evdev
-xf86-input-keyboard
 xf86-input-libinput
-xf86-input-mouse
 xf86-input-void
 xfce4-power-manager
 zsh
