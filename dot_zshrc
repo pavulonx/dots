@@ -36,17 +36,8 @@ export TIME_STYLE='long-iso'
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
 
-
 # SSH
 eval "$(ssh-agent)" >> /dev/null;
-ssh-add "$SSH_KEY_PATH" 2> /dev/null
-
-# Plugins
-#source /usr/share/zsh/plugins/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
-#source /usr/share/zsh/plugins/zsh-autosuggestions/zsh-autosuggestions.zsh
-
-# fpath=(~/.zsh.d/ $fpath)
-
 
 ## HISTORY yyyy-mm-dd"
 HISTSIZE=90000
@@ -72,17 +63,6 @@ setopt auto_list         # automatically list choices on ambiguous completion.
 WORDCHARS=''
 zmodload -i zsh/complist
 
-
-
-
-### Added by Zinit's installer
-
-# Load a few important annexes, without Turbo
-# (this is currently required for annexes)
-
-
-### End of Zinit's installer chunk
-
 ### Added by Zinit's installer
 if [[ ! -f $HOME/.zinit/bin/zinit.zsh ]]; then
     print -P "%F{33}▓▒░ %F{220}Installing %F{33}DHARMA%F{220} Initiative Plugin Manager (%F{33}zdharma/zinit%F{220})…%f"
@@ -97,8 +77,6 @@ autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
 ### End of Zinit's installer chunk
 #
-
-
 
 zinit light-mode for \
     zsh-users/zsh-autosuggestions \
@@ -124,7 +102,6 @@ zinit snippet https://raw.githubusercontent.com/docker/compose/master/contrib/co
 
 
 # Easily access the directories you visit most often.
-#
 # Usage:
 #   $ z work
 #   $ <CTRL-G>work
@@ -143,9 +120,5 @@ autoload -U compinit && compinit
 #setopt globdots # find a way to toggle globdots
 
 
-
-
-
-
-
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+
