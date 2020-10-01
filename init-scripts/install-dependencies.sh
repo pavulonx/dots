@@ -28,6 +28,7 @@ picom
 playerctl
 polybar
 redshift
+geoclue
 rofi
 scrot
 thunar
