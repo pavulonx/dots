@@ -25,7 +25,7 @@ font xft:Segoe UI 9
 floating_modifier $mod
 
 # start a terminal
-bindsym $mod+Return exec alacritty
+bindsym $mod+Return exec terminal
 
 # kill focused window
 bindsym $mod+Shift+q kill
@@ -256,7 +256,6 @@ for_window [class="Lxappearance"] floating enable sticky enable border normal
 for_window [class="Manjaro-hello"] floating enable
 for_window [class="Manjaro Settings Manager"] floating enable border normal
 for_window [title="MuseScore: Play Panel"] floating enable
-for_window [class="Nitrogen"] floating enable sticky enable border normal
 for_window [class="Oblogout"] fullscreen enable
 for_window [class="octopi"] floating enable
 for_window [title="About Pale Moon"] floating enable
@@ -337,7 +336,7 @@ bindsym $mod+9 exec --no-startup-id xautolock -locknow
 # Autostart applications
 exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec --no-startup-id thunar --daemon
-exec --no-startup-id nitrogen --restore; sleep 1; picom -b --experimental-backends
+exec --no-startup-id picom -b --experimental-backends
 exec --no-startup-id nm-applet
 exec --no-startup-id xfce4-power-manager
 exec --no-startup-id clipit
@@ -347,10 +346,10 @@ exec --no-startup-id xfce4-power-manager
 exec --no-startup-id autorandr -c
 exec --no-startup-id xbindkeys
 
-exec_always --no-startup-id xautolock -time 60 -notify 20 -notifier 'notify-send -u critical -t 20 "Screen lock in 20s"' -locker 'betterlockscreen -l'
+exec_always --no-startup-id xautolock -time 60 -notify 20 -notifier 'notify-send -u critical -t 20 "Screen lock in 20s"' -locker lockscreen
 exec_always --no-startup-id betterlockscreen -w
-exec_always --no-startup-id fix_xcursor
 exec_always --no-startup-id ~/.config/polybar/launch.sh
+# exec_always --no-startup-id fix_xcursor
 #exec_always --no-startup-id ~/.bin/toggle_monitor.sh
 
 ##
@@ -358,7 +357,7 @@ exec_always --no-startup-id ~/.config/polybar/launch.sh
 ##
 
 # hide/unhide i3status bar
-bindsym $mod+m bar mode toggle
+bindsym $mod+m exec polybar-msg cmd toggle
 
 
 #############################
