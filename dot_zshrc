@@ -5,7 +5,6 @@ ZSHD="$HOME/.zsh.d"
 SOURCES=(
   commands.zsh
   completion.zsh
-  exports.local.zsh
   exports.zsh
   key-bindings.zsh
   termsupport.zsh
