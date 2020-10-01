@@ -2,7 +2,7 @@
 alias zshconf='$EDITOR ~/.zshrc'
 alias ssha="eval $(ssh-agent)"
 
-alias i3conf="vim ~/.i3/config"
+alias i3conf="vim ~/.config/i3/config"
 alias ccat='pygmentize -g'
 alias diff="diff --color"
 
@@ -27,6 +27,7 @@ alias ...='../..'
 alias ....='../../..'
 alias .....='../../../..'
 alias ......='../../../../..'
+alias cdgr='$(gitroot)'
 
 alias -- -='cd -'
 alias 1='cd -'
@@ -62,8 +63,12 @@ alias drcip="docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}
 alias gitunmodlastcommit='git ls-files --full-name | grep -v "$(git diff --name-only HEAD)"'
 alias gdo='git diff origin/"$(git_current_branch)"'
 alias gdcao='git diff --cached origin/"$(git_current_branch)"'
-alias glogf='~/.bin/git_log_tree_fancy.sh'
+alias glogf='~/.bin/git_log_tree_fancy'
 alias gitroot='git rev-parse --show-toplevel'
+
+function gcmsgj {
+    git commit -m "$(git_current_branch | grep -Eo '[A-Z]+-[0-9]+') $1"
+}
 
 # clipboard
 function clip() {

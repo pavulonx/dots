@@ -158,7 +158,11 @@ type = internal/temperature
 format = <ramp> <label>
 label = +%temperature-c%
 interval = 1
+{{- if eq .chezmoi.hostname "LT33693" }}
+hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon9/temp1_input
+{{- else }}
 hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon1/temp1_input
+{{- end }}
 warn-temperature = 80
 ramp-0 = 
 ramp-1 = 
@@ -296,7 +300,11 @@ format-prefix-foreground = #5b
 
 [module/battery]
 type = internal/battery
+{{- if eq .chezmoi.hostname "LT33693" }}
+battery = BAT1
+{{- else }}
 battery = hidpp_battery_0
+{{- end }}
 adapter = AC
 full-at = 99
 
@@ -324,4 +332,3 @@ animation-charging-framerate = 750
 format-background = ${colors.tblue}
 
 ; vim:ft=dosini
-

@@ -1,0 +1,13 @@
+{{- if eq .chezmoi.hostname "LT33693" }} # work laptop
+[url "https://github.com/"]
+	insteadOf = git@github.com:
+[url "https://"]
+	insteadOf = git://
+{{- end }}
+[user]
+	email = j.rozenbajger@ocado.com
+	name = Jakub Rozenbajger
+[core]
+	editor = vim
+[pull]
+	rebase = true

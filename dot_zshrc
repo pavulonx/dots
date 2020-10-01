@@ -14,6 +14,8 @@ for src in $SOURCES; do
   source "$ZSHD/$src"
 done
 
+#source local setups
+source ~/.local-setup.sh
 
 ## OPTS
 setopt interactivecomments # adds comments in input
@@ -78,7 +80,7 @@ zmodload -i zsh/complist
 
 # Load a few important annexes, without Turbo
 # (this is currently required for annexes)
-      
+
 
 ### End of Zinit's installer chunk
 

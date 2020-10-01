@@ -2,3 +2,4 @@ use current_player
 auto configure crontab - backup
 use picom instead of compton
 Change default terminal (alias or ln -s /usr/bin/terminal)
+cht.sh/chect.sh tab completition
