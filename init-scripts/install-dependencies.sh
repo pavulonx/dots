@@ -43,6 +43,7 @@ xf86-input-void
 xfce4-power-manager
 zsh
 chezmoi
+polkit
 )
 
 echo "Installing core packages"
