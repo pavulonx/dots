@@ -1,2 +1,2 @@
 # automatically run startx if not running
-pidof startx || startx
+pgrep startx || startx
