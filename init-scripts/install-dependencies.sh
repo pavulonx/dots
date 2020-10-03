@@ -22,7 +22,6 @@ i3lock-color
 i3-scrot #aur
 i3status
 imagemagick
-lightdm
 lxappearance
 picom
 playerctl
@@ -45,15 +44,12 @@ xfce4-power-manager
 zsh
 chezmoi
 polkit
+polkit-gnome
+dunst
 )
 
 echo "Installing core packages"
 install_all "${core[@]}"
-
-echo "Post install scripts"
-
-echo "Enabling lightdm as display manager"
-sudo systemctl enable lightdm.service -f
 
 ###############################################################################
 echo "SOUND"
