@@ -105,7 +105,11 @@ tray-scale = 01.00
 modules-left = i3 xwindow
 modules-center =
 ;date
+{{- if eq .pctype "desktop" }}
+modules-right = music vpn filesystem temperature cpu memory battery volume date
+{{- else }}
 modules-right = music vpn wlan backlight filesystem temperature cpu memory battery volume date
+{{- end }}
 
 underline-size = 1
 
@@ -175,12 +179,14 @@ ramp-6 = 
 ramp-7 = 
 ramp-7-foreground = #fba922
 
+{{- if ne .pctype "desktop" }}
 [module/backlight]
 type = internal/backlight
 card = intel_backlight
 format = <label>
 format-padding = 2
 label =   %percentage%
+{{- end }}
 
 [module/music]
 type = custom/script
@@ -277,6 +283,7 @@ bar-used-empty-font = 6
 bar-used-empty-foreground = #444444
 
 
+{{- if ne .pctype "desktop" }}
 [module/wlan]
 type = internal/network
 interface = wlp3s0
@@ -288,6 +295,7 @@ format-connected = <label-connected>
 label-connected =%downspeed:9%  %essid:0:8:…%
 label-disconnected = 
 label-disconnected-foreground = ${colors.lgrey}
+{{- end }}
 
 
 [module/vpn]
