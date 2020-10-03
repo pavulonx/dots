@@ -330,26 +330,20 @@ mode "resize" {
 # Lock screen
 # bindsym $mod+9 exec --no-startup-id blurlock
 # bindsym $mod+9 exec --no-startup-id betterlockscreen -l
-bindsym $mod+9 exec --no-startup-id xautolock -locknow
+bindsym $mod+9 exec --no-startup-id lockscreen
 
 # Autostart applications
-exec --no-startup-id /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 exec --no-startup-id thunar --daemon
-exec --no-startup-id picom -b --experimental-backends
 exec --no-startup-id nm-applet
-exec --no-startup-id xfce4-power-manager
 exec --no-startup-id clipit
 exec --no-startup-id redshift
 exec --no-startup-id /usr/lib/geoclue-2.0/demos/agent & redshift -P
-exec --no-startup-id xfce4-power-manager
 exec --no-startup-id autorandr -c
 exec --no-startup-id xbindkeys
 
-exec_always --no-startup-id ~/.bin/autolock
 exec_always --no-startup-id betterlockscreen -w
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 # exec_always --no-startup-id fix_xcursor
-#exec_always --no-startup-id ~/.bin/toggle_monitor.sh
 
 ##
 # 'bar' section has been removed, using polybar instead

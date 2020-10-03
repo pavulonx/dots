@@ -106,9 +106,9 @@ modules-left = i3 xwindow
 modules-center =
 ;date
 {{- if eq .pctype "desktop" }}
-modules-right = music vpn filesystem temperature cpu memory volume date
+modules-right = music vpn filesystem temperature cpu memory xdpms volume date
 {{- else }}
-modules-right = music vpn wlan backlight filesystem temperature cpu memory battery volume date
+modules-right = music vpn wlan backlight filesystem temperature cpu memory xdpms battery volume date
 {{- end }}
 
 underline-size = 1
@@ -187,6 +187,14 @@ format = <label>
 format-padding = 2
 label =   %percentage%
 {{- end }}
+
+[module/xdpms]
+type = custom/script
+exec = $HOME/.config/polybar/scripts/xdpms.sh
+label = %output:0:8:...%
+format-padding = 2
+interval = 2
+click-left = $HOME/.config/polybar/scripts/xdpms.sh toggle
 
 [module/music]
 type = custom/script
