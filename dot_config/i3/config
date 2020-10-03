@@ -346,7 +346,7 @@ exec --no-startup-id xfce4-power-manager
 exec --no-startup-id autorandr -c
 exec --no-startup-id xbindkeys
 
-exec_always --no-startup-id xautolock -time 60 -notify 20 -notifier 'notify-send -u critical -t 20 "Screen lock in 20s"' -locker lockscreen
+exec_always --no-startup-id ~/.bin/autolock
 exec_always --no-startup-id betterlockscreen -w
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 # exec_always --no-startup-id fix_xcursor
