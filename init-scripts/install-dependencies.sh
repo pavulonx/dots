@@ -13,7 +13,7 @@ adwaita-icon-theme
 arandr
 autorandr
 betterlockscreen
-clipit
+clipmenu
 feh
 flat-remix
 flat-remix-gtk
@@ -40,7 +40,6 @@ xdotool
 xf86-input-evdev
 xf86-input-libinput
 xf86-input-void
-xfce4-power-manager
 zsh
 chezmoi
 polkit
@@ -49,6 +48,7 @@ dunst
 moreutils
 gnome-calculator
 xorg-xkill
+xsel
 )
 
 echo "Installing core packages"
@@ -227,3 +227,7 @@ fi
 ###############################################################################
 
 printf "\n\nCOMPLETED!\n\n"
+
+
+## REMOVE:
+# xfce4-power-manager
