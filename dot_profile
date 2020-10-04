@@ -8,3 +8,12 @@ export LANG=en_US.UTF-8
 
 # clipmenu config
 export CM_LAUNCHER=rofi
+
+# automatically run startx if not running
+if ! pgrep startx; then
+    if command -v startx-with-log &> /dev/null; then
+        startx-with-log
+    else
+        startx
+    fi
+fi

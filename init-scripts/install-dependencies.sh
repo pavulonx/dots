@@ -51,6 +51,7 @@ xorg-xkill
 xsel
 python-pygments
 udiskie
+bashtop
 )
 
 echo "Installing core packages"
@@ -62,6 +63,7 @@ sound=(
 pulseaudio
 pulseaudio-alsa
 pavucontrol
+pamixer
 alsa-firmware
 alsa-lib
 alsa-plugins
