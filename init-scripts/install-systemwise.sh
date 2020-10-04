@@ -16,7 +16,7 @@ install_systemwise() {
 }
 
 find "$DIR/root" -type f | awk -F'root' '{ print $2}' |
-while read location; do
+while read -r location; do
     install_systemwise "$location";
 done;
 
