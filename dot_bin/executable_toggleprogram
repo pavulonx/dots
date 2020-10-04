@@ -1,0 +1,17 @@
+#!/usr/bin/env sh
+
+#!/bin/sh
+# Toggles a problem on and off
+
+ID=$(pidof "$1")
+
+program=$1
+shift;
+
+if [ -z "$ID" ]; then
+  # shellcheck disable=SC2068
+  "$program" $@
+else
+  killall "$program" && notify-send "Killed $program"
+fi
+

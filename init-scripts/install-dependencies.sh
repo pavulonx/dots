@@ -47,6 +47,8 @@ polkit
 polkit-gnome
 dunst
 moreutils
+gnome-calculator
+xorg-xkill
 )
 
 echo "Installing core packages"
