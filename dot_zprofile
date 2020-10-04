@@ -1,7 +1,7 @@
 # automatically run startx if not running
 if ! pgrep startx; then
-    if [ -f ~/.bin/startx-with-log ]; then
-        ~/.bin/startx-with-log
+    if command -v startx-with-log &> /dev/null; then
+        startx-with-log
     else
         startx
     fi

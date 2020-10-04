@@ -46,6 +46,7 @@ chezmoi
 polkit
 polkit-gnome
 dunst
+moreutils
 )
 
 echo "Installing core packages"

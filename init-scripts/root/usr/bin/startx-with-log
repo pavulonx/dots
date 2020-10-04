@@ -1,0 +1,14 @@
+#!/usr/bin/env sh
+log_dir=~/.xsessionlogs
+mkdir -p  "$log_dir"
+log_file_path="$log_dir/$(date +'%F_%H-%M-%S').log"
+
+# remove old logs reamin only newest
+#rm "$(ls -1t "$log_dir" | tail -n +2 | xargs -I {} echo $log_dir/{})" &> /dev/null || true
+# rm "$(ls -1t "$log_dir" | tail -n +2 | xargs -I {} echo $log_dir/{} | xargs)" || true
+ls -1t "$log_dir" | tail -n +2 | xargs -r -I {} rm $log_dir/{} || true
+
+ln -sf "$log_file_path" "$log_dir/current.log"
+
+# startx
+startx | ts '[%Y-%m-%d %H:%M:%S]' &> "$log_file_path"

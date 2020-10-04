@@ -7,5 +7,6 @@ docs/**
 docs*
 **/.idea/**
 **/.idea*
-TODO
+TODO.md
+README.md
 

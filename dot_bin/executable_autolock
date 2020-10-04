@@ -1,7 +1,0 @@
-#!/usr/bin/env sh
-time=10
-if [ ! -z "$1" ] && [ "$1" -gt 0 ] && [ "$1" -le 60 ]; then
-    time="$1"
-fi
-killall xautolock
-xautolock -time "$time" -notify 20 -notifier 'notify-send -u critical -t 20 "Screen lock in 20s"' -corners '000-' -locker 'lockscreen'
