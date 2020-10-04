@@ -234,6 +234,7 @@ assign [class="jetbrains-*"] $ws3
 for_window [title="alsamixer"] floating enable border pixel 1
 for_window [class="deluge|Deluge-gtk"] floating enable
 for_window [class="GParted"] floating enable border normal
+for_window [class="[nN]m-connection-editor"] floating enable sticky enable border normal
 for_window [class="Lxappearance"] floating enable sticky enable border normal
 for_window [class="Pavucontrol"] floating enable
 for_window [class="qt5ct"] floating enable sticky enable border normal
