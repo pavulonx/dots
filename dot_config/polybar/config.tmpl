@@ -104,9 +104,9 @@ modules-left = i3 xwindow
 modules-center =
 ;date
 {{- if eq .pctype "desktop" }}
-modules-right = music weather vpn filesystem temperature cpu memory xdpms volume date
+modules-right = music weather vpn filesystem temperature cpu memory xdpms pulseaudio date
 {{- else }}
-modules-right = music weather vpn wlan backlight filesystem temperature cpu memory xdpms battery volume date
+modules-right = music weather vpn wlan backlight filesystem temperature cpu memory xdpms battery pulseaudio date
 {{- end }}
 
 underline-size = 1
@@ -200,15 +200,32 @@ exec = $HOME/.config/polybar/scripts/mediaplayer.sh
 label = %output:0:40:...%
 format-padding = 2
 interval = 2
-exec-if = pgrep -x spotify || pgrep -x deadbeef
-click-left = playerctl previous --player=playerctld
+;exec-if = pgrep -x spotify || pgrep -x deadbeef
+exec-if = test `playerctl -l | grep -v playerctl | wc -l` -gt 0
+click-left = playerctl play-pause --player=playerctld
+click-middle = playerctl previous --player=playerctld
 click-right = playerctl next --player=playerctld
-click-middle = playerctl play-pause --player=playerctld
 
-[module/volume]
-type = internal/alsa
-format-volume = <ramp-volume> <label-volume>
-master-mixer = Master
+;[module/volume]
+;type = internal/alsa
+;format-volume = <ramp-volume> <label-volume>
+;master-mixer = Master
+;label-muted =  muted
+;label-muted-foreground = #66
+;ramp-volume-0 = 
+;ramp-volume-1 = 
+;ramp-volume-2 = 
+;format-volume-padding = 2
+;format-volume-background = ${colors.tgreen}
+;mapping = true
+
+[module/pulseaudio]
+type = internal/pulseaudio
+;unreleased TODO: update when available
+;click-right = pavucontrol &
+;format-volume = <ramp-volume> <label-volume>
+format-volume = "%{A3:pavucontrol &:}<ramp-volume> <label-volume>{A}"
+use-ui-max = false
 label-muted =  muted
 label-muted-foreground = #66
 ramp-volume-0 = 
@@ -216,8 +233,6 @@ ramp-volume-1 = 
 ramp-volume-2 = 
 format-volume-padding = 2
 format-volume-background = ${colors.tgreen}
-mapping = true
-
 
 [module/date]
 type = internal/date

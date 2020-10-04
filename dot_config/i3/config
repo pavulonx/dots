@@ -34,18 +34,20 @@ bindsym $mod+d exec --no-startup-id  rofi -show
 ################################################################################################
 ## sound-section - DO NOT EDIT if you wish to automatically upgrade Alsa -> Pulseaudio later! ##
 ################################################################################################
-exec --no-startup-id volumeicon
-bindsym $mod+Ctrl+m exec terminal -e 'alsamixer'
+#exec --no-startup-id volumeicon
+#bindsym $mod+Ctrl+m exec terminal -e 'alsamixer'
 #exec --no-startup-id pulseaudio
-#exec --no-startup-id pa-applet
-#bindsym $mod+Ctrl+m exec pavucontrol
+bindsym $mod+Ctrl+m exec pavucontrol
 ################################################################################################
 
 # Media player controls
-bindsym XF86AudioPlay   exec playerctl --player=playerctld play-pause
-bindsym XF86AudioPause  exec playerctl --player=playerctld play-pause
-bindsym XF86AudioNext   exec playerctl --player=playerctld next
-bindsym XF86AudioPrev   exec playerctl --player=playerctld previous
+bindsym XF86AudioPlay         exec playerctl --player=playerctld play-pause
+bindsym XF86AudioPause        exec playerctl --player=playerctld play-pause
+bindsym XF86AudioNext         exec playerctl --player=playerctld next
+bindsym XF86AudioPrev         exec playerctl --player=playerctld previous
+bindsym XF86AudioRaiseVolume  exec pamixer -i 5
+bindsym XF86AudioLowerVolume  exec pamixer -d 5
+bindsym XF86AudioMute         exec pamixer -t
 
 # Start Applications
 bindsym $mod+Ctrl+b exec terminal -e 'bmenu'
