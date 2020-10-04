@@ -1,0 +1,23 @@
+#!/usr/bin/env sh
+
+cmd="$({ autorandr | awk '{print "load " $0}'; echo "
+  run common
+  run horizontal
+  run vertical
+  run change
+" | xargs -n2; } | rofi -dmenu -i -p "Autorandr")"
+
+autorandr_args=''
+case "$cmd" in
+    run\ change*)   autorandr_args="-c" ;;
+    run\ *)         autorandr_args="$(echo "$cmd" | cut -d " " -f2)" ;;
+    load\ *)        autorandr_args="--load $(echo "$cmd" | cut -d " " -f2)" ;;
+    *) exit 0;
+esac
+
+# shellcheck disable=SC2086
+autorandr $autorandr_args
+
+notify-send "Screen: autorandr $autorandr_args";
+
+exit 0

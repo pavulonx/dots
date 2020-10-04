@@ -56,13 +56,10 @@ bindsym XF86AudioPrev   exec playerctl --player=playerctld previous
 bindsym $mod+Ctrl+b exec terminal -e 'bmenu'
 bindsym $mod+F2 exec chromium
 bindsym $mod+F3 exec thunar
-bindsym $mod+F9  --release exec --no-startup-id "autorandr common;      exec notify-send 'Autorandr common'; true"
-bindsym $mod+F10 --release exec --no-startup-id "autorandr horizontal;  exec notify-send 'Autorandr horizontal'; true"
-bindsym $mod+F11 --release exec --no-startup-id "autorandr vertical;    exec notify-send 'Autorandr vertical'; true"
-bindsym $mod+F12 --release exec --no-startup-id "autorandr -c;          exec notify-send 'Autorandr change'; true"
-bindsym $mod+Shift+plus --release exec --no-startup-id "autorandr -c; exec notify-send 'Autorandr change'; true"
-bindsym $mod+Shift+t --release exec "toggleprogram picom -b --experimental-backends"
-bindsym $mod+Shift+d --release exec "toggleprogram dunst; exec notify-send 'Dunst restart'"
+bindsym $mod+Shift+F12  --release exec --no-startup-id "autorandr common; exec notify-send 'autorandr common'; true"
+bindsym $mod+Shift+plus --release exec --no-startup-id "autorandr-menu"
+bindsym $mod+Shift+t --release exec --no-startup-id "toggleprogram picom -b --experimental-backends"
+bindsym $mod+Shift+d --release exec --no-startup-id "toggleprogram dunst; exec notify-send 'Dunst restart'"
 
 # screenshots
 bindsym $mod+Print --release exec --no-startup-id i3-scrot -w
