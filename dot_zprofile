@@ -1,3 +1,5 @@
+[ -f ~/.profile ] && source ~/.profile
+
 # automatically run startx if not running
 if ! pgrep startx; then
     if command -v startx-with-log &> /dev/null; then

@@ -61,7 +61,7 @@ bindsym $mod+F10 --release exec --no-startup-id "autorandr horizontal;  exec not
 bindsym $mod+F11 --release exec --no-startup-id "autorandr vertical;    exec notify-send 'Autorandr vertical'; true"
 bindsym $mod+F12 --release exec --no-startup-id "autorandr -c;          exec notify-send 'Autorandr change'; true"
 bindsym $mod+Shift+plus --release exec --no-startup-id "autorandr -c; exec notify-send 'Autorandr change'; true"
-bindsym $mod+Shift+t exec --no-startup-id toggleprogram picom -b --experimental-backends
+bindsym $mod+Shift+t --release exec "toggleprogram picom -b --experimental-backends"
 bindsym $mod+Shift+d --release exec "toggleprogram dunst; exec notify-send 'Dunst restart'"
 
 # screenshots
