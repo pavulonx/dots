@@ -49,6 +49,8 @@ moreutils
 gnome-calculator
 xorg-xkill
 xsel
+python-pygments
+udiskie
 )
 
 echo "Installing core packages"
@@ -144,6 +146,8 @@ awesome-terminal-fonts
 adobe-source-sans-pro-fonts
 cantarell-fonts
 noto-fonts
+noto-fonts-emoji
+noto-fonts-extra
 consolas-font
 ttf-windows
 nerd-fonts-dejavu-complete

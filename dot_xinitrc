@@ -50,6 +50,7 @@ xautolock -time 10 -notify 20 -notifier 'notify-send -u critical -t 20 "Screen l
 
 # startup programs
 dunst &
+udiskie -s &
 picom -b --experimental-backends &
 /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
 clipmenud &
