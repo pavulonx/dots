@@ -20,3 +20,13 @@ while read -r location; do
     install_systemwise "$location";
 done;
 
+
+# override preinstalled manjaro stuff todo: remove manjaro support
+if grep -q "manjaro" /etc/os-release; then
+  find "$DIR/manjaro" -type f | awk -F'manjaro' '{ print $2}' |
+  while read -r location; do
+    install_systemwise "$location";
+  done;
+fi
+
+echo "Done!"
