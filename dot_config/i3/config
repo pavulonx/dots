@@ -51,7 +51,7 @@ bindsym XF86AudioMute         exec pamixer -t
 
 # Start Applications
 bindsym $mod+Ctrl+b exec terminal -e 'bmenu'
-bindsym $mod+F2 exec chromium
+bindsym $mod+F2 exec $BROWSER
 bindsym $mod+F3 exec thunar
 bindsym $mod+Shift+F12  --release exec --no-startup-id "autorandr common; exec notify-send 'autorandr common'; true"
 bindsym $mod+Shift+plus --release exec --no-startup-id "autorandr-menu"

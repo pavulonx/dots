@@ -1,0 +1,3 @@
+[data]
+    pctype = "desktop"
+    browser = "/usr/bin/firefox"

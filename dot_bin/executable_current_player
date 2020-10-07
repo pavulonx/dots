@@ -9,7 +9,8 @@ mapping='
 
   playerctld => 1
   spotify    => 2
-  chromium.* => 3
+  firefox.* => 3
+  chromium.* => 4
 '
 
 all_players="$(playerctl metadata -af ":{{status}}::{{playerName}}:{{playerName}}")"

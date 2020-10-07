@@ -173,6 +173,7 @@ programs=(
 gimp
 inkscape
 chromium
+firefox
 deluge
 vlc
 spotify
