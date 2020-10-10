@@ -306,7 +306,7 @@ exec --no-startup-id nm-applet
 exec --no-startup-id redshift
 exec --no-startup-id /usr/lib/geoclue-2.0/demos/agent & redshift -P
 exec --no-startup-id autorandr -c
-exec --no-startup-id xbindkeys
+#exec --no-startup-id xbindkeys
 
 exec_always --no-startup-id betterlockscreen -w
 exec_always --no-startup-id ~/.config/polybar/launch.sh
