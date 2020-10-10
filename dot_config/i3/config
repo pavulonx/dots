@@ -142,7 +142,7 @@ bindsym $mod+Shift+bracketright move workspace to output right,  move workspace 
 bindsym $mod+Shift+v exec --no-startup-id clipmenu
 
 # network
-bindsym $mod+Ctrl+n exec nm-connection-editor
+bindsym $mod+Ctrl+n exec networkmanager_dmenu
 
 # Workspace names
   set $ws1 "1: "

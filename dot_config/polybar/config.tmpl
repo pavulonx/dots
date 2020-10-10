@@ -36,16 +36,6 @@ lgrey = #a89984
 white = #ebdbb2
 accentblue = #00bcd4
 
-;tblack = #852f343f
-;tred = #80fb4934
-;tgreen = #80b8bb26
-;tyellow = #80fabd2f
-;tblue = #8083a598
-;tmagenta = #80d3869b
-;tcyan = #808ec07c
-;twhite = #80ebdbb2
-;tgrey = #80a89984
-
 tblack = #222d32
 tred = #222d32
 tgreen = #222d32
@@ -96,8 +86,8 @@ tray-padding = 4
 tray-background = ${colors.background}
 tray-detached = false
 ;tray-maxsize = 16
-tray-offset-x = 2
-; tray-offset-y = 0
+;tray-offset-x = 2
+;tray-offset-y = 0
 tray-scale = 01.00
 
 modules-left = i3 xwindow
@@ -118,6 +108,7 @@ underline-size = 1
 [module/xwindow]
 type = internal/xwindow
 label = %title:0:180:...%
+
 
 [module/i3]
 type = internal/i3
@@ -145,16 +136,6 @@ label-visible-background = ${colors.tgreen}
 label-visible-underline = ${colors.dgreen}
 label-visible-padding = 1
 
-;[module/updates]
-;type = custom/script
-;exec = $HOME/.bin/updates.sh
-;interval = 120
-;format-background = ${colors.background}
-;format-foreground = ${colors.red}
-;format-foreground = ${colors.tred}
-
-;format-padding = 2
-;click-left = urxvt -e sudo pacman -Syu
 
 [module/temperature]
 type = internal/temperature
@@ -186,6 +167,7 @@ format-padding = 2
 label =   %percentage%
 {{- end }}
 
+
 [module/xdpms]
 type = custom/script
 exec = $HOME/.config/polybar/scripts/xdpms.sh
@@ -193,6 +175,7 @@ label = %output:0:8:...%
 format-padding = 2
 interval = 2
 click-left = $HOME/.config/polybar/scripts/xdpms.sh toggle
+
 
 [module/music]
 type = custom/script
@@ -206,18 +189,6 @@ click-left = playerctl play-pause --player=playerctld
 click-middle = playerctl previous --player=playerctld
 click-right = playerctl next --player=playerctld
 
-;[module/volume]
-;type = internal/alsa
-;format-volume = <ramp-volume> <label-volume>
-;master-mixer = Master
-;label-muted =  muted
-;label-muted-foreground = #66
-;ramp-volume-0 = 
-;ramp-volume-1 = 
-;ramp-volume-2 = 
-;format-volume-padding = 2
-;format-volume-background = ${colors.tgreen}
-;mapping = true
 
 [module/pulseaudio]
 type = internal/pulseaudio
@@ -234,6 +205,7 @@ ramp-volume-2 = 
 format-volume-padding = 2
 format-volume-background = ${colors.tgreen}
 
+
 [module/date]
 type = internal/date
 interval = 2
@@ -245,12 +217,12 @@ format-padding = 2
 label = "%{A3:$HOME/.config/polybar/scripts/calendar.sh:}%date%    %time%%{A}"
 format-background = ${colors.tcyan}
 
+
 [module/cpu]
 type = internal/cpu
 interval = 0.5
 format = <label> <ramp-coreload>
 label = 
-
 ramp-coreload-0 = ▁
 ramp-coreload-0-font = 2
 ramp-coreload-0-foreground = ${colors.foreground}
@@ -309,7 +281,6 @@ bar-used-empty-foreground = #444444
 type = internal/network
 interface = wlp3s0
 interval = 3.0
-
 format-connected-padding = 1
 format-disconnected-padding = 1
 format-connected = <label-connected>
@@ -361,7 +332,6 @@ animation-charging-framerate = 750
 
 format-background = ${colors.tblue}
 
-; vim:ft=dosini
 
 [module/weather]
 type = custom/script

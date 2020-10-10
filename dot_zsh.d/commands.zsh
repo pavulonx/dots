@@ -7,6 +7,7 @@ alias ccat='pygmentize -g'
 alias diff="diff --color"
 
 alias pacman-clean='sudo pacman -R `pacman -Qdtq`'
+alias yaygit='yay -S `pacman -Q | grep "\-git" | cut -d" " -f1`'
 alias grep='grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox}'
 alias fcl='fc -li 1'
 alias :q='exit'

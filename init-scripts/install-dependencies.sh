@@ -52,6 +52,7 @@ xsel
 python-pygments
 udiskie
 bashtop
+networkmanager_dmenu
 )
 
 echo "Installing core packages"
