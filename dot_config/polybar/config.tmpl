@@ -15,8 +15,9 @@ transparent = #00000000
 background = #222d32
 foreground = #ebdbb2
 urgent = #cc241d
-inactive = #887964
-orange = #d79921
+inactive = #786954
+orange = #faa00f
+red = #f94144
 
 [bar/top]
 width = 100%
@@ -28,11 +29,9 @@ enable-ipc = true
 scroll-up = i3wm-wsnext
 scroll-down = i3wm-wsprev
 
-spacing = 1
-
-padding-left = 0
+spacing = 0
+padding-left = 1
 padding-right = 2
-
 module-margin-left = 2
 module-margin-right = 2
 module-margin-top = 2
@@ -41,7 +40,7 @@ module-margin-bottom = 2
 ;colors
 background = ${colors.background}
 foreground = ${colors.foreground}
-line-color = #f00
+line-color = ${colors.background}
 line-size = 1
 underline-size = 1
 
@@ -67,6 +66,8 @@ modules-right = music weather vpn lan filesystem temperature cpu memory xdpms pu
 {{- else }}
 modules-right = music weather vpn wlan lan backlight filesystem temperature cpu memory xdpms battery pulseaudio
 {{- end }}
+
+separator =
 
 ;----------------
 ; Modules
@@ -107,23 +108,26 @@ label-visible-background = ${colors.inactive}
 [module/temperature]
 type = internal/temperature
 format = <ramp> <label>
+format-warn = <ramp> <label-warn>
 label = +%temperature-c%
+label-warn = +%temperature-c%
 interval = 1
 {{- if eq .chezmoi.hostname "LT33693" }}
 hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon9/temp1_input
 {{- else }}
 hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon1/temp1_input
 {{- end }}
-warn-temperature = 80
+base-temperature = 35
+warn-temperature = 75
 ramp-0 = 
-ramp-1 = 
+ramp-1 = 
 ramp-2 = 
 ramp-3 = 
 ramp-4 = 
-ramp-5 = 
+ramp-5 = 
 ramp-6 = 
-ramp-7 = 
-ramp-7-foreground = #fba922
+label-warn-foreground = ${colors.orange}
+ramp-6-foreground = ${colors.orange}
 
 
 [module/backlight]
@@ -163,7 +167,7 @@ type = internal/pulseaudio
 format-volume = "%{A3:pavucontrol &:}<ramp-volume> <label-volume>{A}"
 use-ui-max = false
 label-muted =  muted
-label-muted-foreground = #66
+label-muted-foreground = ${colors.inactive}
 ramp-volume-0 = 
 ramp-volume-1 = 
 ramp-volume-2 = 
@@ -198,29 +202,17 @@ label = 
 format-padding = 1
 ramp-coreload-spacing = 0
 ramp-coreload-0 = ▁
-ramp-coreload-0-font = 2
-ramp-coreload-0-foreground = ${colors.foreground}
 ramp-coreload-1 = ▂
-ramp-coreload-1-font = 2
-ramp-coreload-1-foreground = ${colors.foreground}
 ramp-coreload-2 = ▃
-ramp-coreload-2-font = 2
-ramp-coreload-2-foreground = ${colors.foreground}
 ramp-coreload-3 = ▄
-ramp-coreload-3-font = 2
-ramp-coreload-3-foreground = ${colors.foreground}
 ramp-coreload-4 = ▅
-ramp-coreload-4-font = 2
-ramp-coreload-4-foreground = #fba922
+ramp-coreload-4-foreground = ${colors.orange}
 ramp-coreload-5 = ▆
-ramp-coreload-5-font = 2
-ramp-coreload-5-foreground = #fba922
+ramp-coreload-5-foreground = ${colors.orange}
 ramp-coreload-6 = ▇
-ramp-coreload-6-font = 2
-ramp-coreload-6-foreground = #ff5555
+ramp-coreload-6-foreground = ${colors.red}
 ramp-coreload-7 = █
-ramp-coreload-7-font = 2
-ramp-coreload-7-foreground = #ff5555
+ramp-coreload-7-foreground = ${colors.red}
 
 
 [module/memory]
@@ -229,19 +221,16 @@ format = <label> <bar-used>
 label = 
 format-padding = 1
 interval = 3
-bar-used-width = 6
+bar-used-width = 9
 bar-used-foreground-0 = ${colors.foreground}
 bar-used-foreground-1 = ${colors.foreground}
-bar-used-foreground-2 = #fba922
-bar-used-foreground-3 = #ff5555
+bar-used-foreground-2 = ${colors.orange}
+bar-used-foreground-3 = ${colors.red}
 bar-used-indicator = |
-bar-used-indicator-font = 6
-bar-used-indicator-foreground = #ff
+bar-used-indicator-foreground = ${colors.foreground}
 bar-used-fill = –
-bar-used-fill-font = 6
 bar-used-empty = –
-bar-used-empty-font = 6
-bar-used-empty-foreground = #444444
+bar-used-empty-foreground = ${colors.inactive}
 
 
 [module/lan]
@@ -272,7 +261,6 @@ exec = pgrep openvpn
 interval = 5
 label = vpn
 format-prefix = " "
-format-prefix-foreground = #5b
 
 
 [module/battery]
