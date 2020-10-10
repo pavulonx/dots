@@ -91,12 +91,11 @@ tray-detached = false
 tray-scale = 01.00
 
 modules-left = i3 xwindow
-modules-center =
-;date
+modules-center = date
 {{- if eq .pctype "desktop" }}
-modules-right = music weather vpn filesystem temperature cpu memory xdpms pulseaudio date
+modules-right = music weather vpn lan filesystem temperature cpu memory xdpms pulseaudio
 {{- else }}
-modules-right = music weather vpn wlan backlight filesystem temperature cpu memory xdpms battery pulseaudio date
+modules-right = music weather vpn wlan lan backlight filesystem temperature cpu memory xdpms battery pulseaudio
 {{- end }}
 
 underline-size = 1
@@ -171,8 +170,8 @@ label =   %percentage%
 [module/xdpms]
 type = custom/script
 exec = $HOME/.config/polybar/scripts/xdpms.sh
-label = %output:0:8:...%
-format-padding = 2
+label = %output:0:7:...%
+format-padding = 1
 interval = 2
 click-left = $HOME/.config/polybar/scripts/xdpms.sh toggle
 
@@ -181,7 +180,7 @@ click-left = $HOME/.config/polybar/scripts/xdpms.sh toggle
 type = custom/script
 exec = $HOME/.config/polybar/scripts/mediaplayer.sh
 label = %output:0:40:...%
-format-padding = 2
+format-padding = 1
 interval = 2
 ;exec-if = pgrep -x spotify || pgrep -x deadbeef
 exec-if = test `playerctl -l | grep -v playerctl | wc -l` -gt 0
@@ -276,18 +275,26 @@ bar-used-empty-font = 6
 bar-used-empty-foreground = #444444
 
 
-{{- if ne .pctype "desktop" }}
-[module/wlan]
+[module/lan]
 type = internal/network
-interface = wlp3s0
-interval = 3.0
+interface = enp0s31f6
 format-connected-padding = 1
 format-disconnected-padding = 1
 format-connected = <label-connected>
-label-connected =%downspeed:9%  %essid:0:8:…%
-label-disconnected = 
+label-connected =  %downspeed:9%
+label-disconnected =  OFF
 label-disconnected-foreground = ${colors.lgrey}
-{{- end }}
+
+
+[module/wlan]
+type = internal/network
+interface = wlp3s0
+format-connected-padding = 1
+format-disconnected-padding = 1
+format-connected = <label-connected>
+label-connected =  %downspeed:9% %essid:0:4:…%
+label-disconnected =  OFF
+label-disconnected-foreground = ${colors.lgrey}
 
 
 [module/vpn]
