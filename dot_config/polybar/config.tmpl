@@ -16,8 +16,7 @@ background = #222d32
 foreground = #ebdbb2
 urgent = #cc241d
 inactive = #887964
-i3mode = #d79921
-accent = #00bcd4
+orange = #d79921
 
 [bar/top]
 width = 100%
@@ -85,24 +84,24 @@ index-sort = true
 
 format = <label-state> <label-mode>
 
-label-mode = %mode%
 label-mode-foreground = ${colors.background}
-label-mode-background = ${colors.i3mode}
+label-mode-background = ${colors.orange}
 label-mode-padding = 5
 
-label-focused-foreground = ${colors.accent}
-label-focused-background = ${colors.background}
-label-focused-underline = ${colors.accent}
-label-focused-padding = 1
+label-unfocused = "  %name%  "
 
-label-unfocused-padding = 1
+label-focused = "  %name%  "
+label-focused-foreground = ${colors.background}
+label-focused-background = ${colors.foreground}
 
-label-urgent-background = ${colors.background}
-label-urgent-underline = ${colors.urgent}
-label-urgent-padding = 1
+label-urgent = "  %name%  "
+label-urgent-foreground = ${colors.background}
+label-urgent-background = ${colors.urgent}
 
-label-visible-underline = ${colors.foreground}
-label-visible-padding = 1
+label-visible = "  %name%  "
+label-visible-foreground = ${colors.background}
+label-visible-background = ${colors.inactive}
+;label-visible-underline = ${colors.foreground}
 
 
 [module/temperature]
@@ -175,12 +174,12 @@ format-volume-padding = 1
 [module/date]
 type = internal/date
 interval = 1
-date = "  %d.%m.%Y"
-date-alt = "  %A, %d. %B"
+date = "%d.%m.%Y"
+date-alt = "%A, %d %B %Y"
 time = "%H:%M"
 time-alt = "%H:%M:%S"
 format-padding = 1
-label = "%{A3:$HOME/.config/polybar/scripts/calendar.sh:}%date%    %time%%{A}"
+label = "%{A3:$HOME/.config/polybar/scripts/calendar.sh:}%date%  -  %time%%{A}"
 
 
 [module/filesystem]
