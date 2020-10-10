@@ -1,3 +1,4 @@
 #!/bin/sh
 
-xdg-open https://calendar.google.com/calendar
+# xdg-open https://calendar.google.com/calendar
+gsimplecal
