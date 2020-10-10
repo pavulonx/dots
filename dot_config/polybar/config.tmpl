@@ -18,34 +18,10 @@ margin-bottom = 0
 transparent = #00000000
 background = #222d32
 foreground = #ebdbb2
-black = #7c6f64
-dgrey = #928374
-dred = #cc241d
-red = #fb4934
-dgreen = #98971a
-green = #b8bb26
-dyellow = #d79921
-yellow = #fabd2f
-dblue = #458588
-blue = #83a598
-dmagenta = #b16286
-magenta = #d3869b
-dcyan = #689d6a
-cyan = #8ec07c
-lgrey = #a89984
-white = #ebdbb2
-accentblue = #00bcd4
-
-tblack = #222d32
-tred = #222d32
-tgreen = #222d32
-tyellow = #222d32
-tblue = #222d32
-tmagenta = #222d32
-tcyan = #222d32
-twhite = #222d32
-tgrey = #222d32
-
+urgent = #cc241d
+inactive = #887964
+i3mode = #d79921
+accent = #00bcd4
 
 [bar/top]
 width = 100%
@@ -114,23 +90,23 @@ index-sort = true
 
 format = <label-state> <label-mode>
 
+label-mode = %mode%
 label-mode-foreground = ${colors.background}
-label-mode-background = ${colors.dyellow}
-label-mode-padding = 1
+label-mode-background = ${colors.i3mode}
+label-mode-padding = 5
 
-label-focused-foreground = ${colors.accentblue}
-label-focused-background = ${colors.tblue}
-label-focused-underline = ${colors.accentblue}
+label-focused-foreground = ${colors.accent}
+label-focused-background = ${colors.background}
+label-focused-underline = ${colors.accent}
 label-focused-padding = 1
 
 label-unfocused-padding = 1
 
-label-urgent-background = ${colors.tred}
-label-urgent-underline = ${colors.dred}
+label-urgent-background = ${colors.background}
+label-urgent-underline = ${colors.urgent}
 label-urgent-padding = 1
 
-label-visible-background = ${colors.tgreen}
-label-visible-underline = ${colors.dgreen}
+label-visible-underline = ${colors.foreground}
 label-visible-padding = 1
 
 
@@ -201,7 +177,6 @@ ramp-volume-1 = 
 ramp-volume-2 = 
 format-padding = 1
 format-volume-padding = 1
-format-volume-background = ${colors.tgreen}
 
 
 [module/date]
@@ -213,7 +188,6 @@ time = "%H:%M"
 time-alt = "%H:%M:%S"
 format-padding = 1
 label = "%{A3:$HOME/.config/polybar/scripts/calendar.sh:}%date%    %time%%{A}"
-format-background = ${colors.tcyan}
 
 
 [module/filesystem]
@@ -285,8 +259,8 @@ format-connected-padding = 1
 format-disconnected-padding = 1
 format-connected = <label-connected>
 label-connected = %{A3:networkmanager_dmenu:} %downspeed:10%%{A}
-label-disconnected = %{A3:networkmanager_dmenu:} OFF%{A}
-label-disconnected-foreground = ${colors.lgrey}
+label-disconnected = %{A3:networkmanager_dmenu:}   OFF%{A}
+label-disconnected-foreground = ${colors.inactive}
 
 
 [module/wlan]
@@ -297,7 +271,7 @@ format-disconnected-padding = 1
 format-connected = <label-connected>
 label-connected = %{A3:networkmanager_dmenu:} %downspeed:9% %essid:0:4:…%%{A}
 label-disconnected = %{A3:networkmanager_dmenu:} OFF%{A}
-label-disconnected-foreground = ${colors.lgrey}
+label-disconnected-foreground = ${colors.inactive}
 
 
 [module/vpn]
@@ -339,8 +313,6 @@ animation-charging-2 = 
 animation-charging-3 = 
 animation-charging-4 = 
 animation-charging-framerate = 750
-
-format-background = ${colors.tblue}
 
 
 [module/weather]
