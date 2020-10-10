@@ -4,10 +4,6 @@
 
 [settings]
 screenchange-reload = true
-;compositing-background = xor
-;compositing-background = screen
-;compositing-foreground = source
-;compositing-border = over
 locale = en_US.UTF-8
 
 [global/wm]
@@ -47,8 +43,9 @@ module-margin-bottom = 2
 background = ${colors.background}
 foreground = ${colors.foreground}
 line-color = #f00
-
 line-size = 1
+underline-size = 1
+
 font-0 = Segoe UI:size=9:fontformat=truetype
 font-1 = Noto Sans:size=9:fontformat=truetype
 font-2 = NotoSans-Regular:size=8;-1
@@ -71,8 +68,6 @@ modules-right = music weather vpn lan filesystem temperature cpu memory xdpms pu
 {{- else }}
 modules-right = music weather vpn wlan lan backlight filesystem temperature cpu memory xdpms battery pulseaudio
 {{- end }}
-
-underline-size = 1
 
 ;----------------
 ; Modules
