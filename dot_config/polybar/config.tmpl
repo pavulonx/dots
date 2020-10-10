@@ -126,14 +126,13 @@ ramp-6 = 
 ramp-7 = 
 ramp-7-foreground = #fba922
 
-{{- if ne .pctype "desktop" }}
+
 [module/backlight]
 type = internal/backlight
 card = intel_backlight
 format = <label>
 format-padding = 1
 label =   %percentage%
-{{- end }}
 
 
 [module/xdpms]
@@ -151,7 +150,6 @@ exec = $HOME/.config/polybar/scripts/mediaplayer.sh
 label = %output:0:40:…%
 format-padding = 1
 interval = 2
-;exec-if = pgrep -x spotify || pgrep -x deadbeef
 exec-if = test `playerctl -l | grep -v playerctl | wc -l` -gt 0
 click-left = playerctl play-pause --player=playerctld
 click-middle = playerctl previous --player=playerctld
