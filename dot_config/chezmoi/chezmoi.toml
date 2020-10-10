@@ -1,3 +1,4 @@
 [data]
     pctype = "desktop"
     browser = "/usr/bin/firefox"
+    browser_desktop = "firefox.desktop"
