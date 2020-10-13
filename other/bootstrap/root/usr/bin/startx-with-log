@@ -3,9 +3,7 @@ log_dir=~/.xsessionlogs
 mkdir -p  "$log_dir"
 log_file_path="$log_dir/$(date +'%F_%H-%M-%S').log"
 
-# remove old logs reamin only newest
-#rm "$(ls -1t "$log_dir" | tail -n +2 | xargs -I {} echo $log_dir/{})" &> /dev/null || true
-# rm "$(ls -1t "$log_dir" | tail -n +2 | xargs -I {} echo $log_dir/{} | xargs)" || true
+# remove old logs leave only newest
 ls -1t "$log_dir" | tail -n +2 | xargs -r -I {} rm $log_dir/{} || true
 
 ln -sf "$log_file_path" "$log_dir/current.log"

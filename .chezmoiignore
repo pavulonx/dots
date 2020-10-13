@@ -1,6 +1,6 @@
 # https://github.com/twpayne/chezmoi/issues/721
-init-scripts/**
-init-scripts*
+other/**
+other*
 backups/**
 backups*
 docs/**
