@@ -8,7 +8,8 @@ install_all() {
 ###############################################################################
 echo "CORE"
 core=(
-adapta-gtk-theme
+#adapta-gtk-theme
+plata-theme
 adwaita-icon-theme
 arandr
 autorandr
@@ -31,9 +32,9 @@ geoclue
 rofi
 scrot
 thunar
+tumbler
 thunar-archive-plugin
 thunar-volman
-volumeicon
 xautomation
 xclip
 xdotool

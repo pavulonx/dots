@@ -1,5 +1,4 @@
-# i3 config file (v4)
-# Please see http://i3wm.org/docs/userguide.html for a complete reference!
+# shellcheck disable=SC2086
 
 # Set mod key (Mod1=<Alt>, Mod4=<Super>)
 set $mod Mod4
@@ -162,29 +161,19 @@ bindsym $mod+Ctrl+n exec networkmanager_dmenu
 ################
 
 # Color definition
-  set $base00 #101218
-  set $base01 #263238
-  set $base02 #37474f
-  set $base03 #cfd8dc
-  set $base04 #C0C5CE
-  set $base05 #d1d4e0
-  set $base06 #C9CCDB
-  set $base07 #ffffff
-  set $base08 #e91e63
-  set $base09 #f99170
-  set $base0A #ffefcc
-  set $base0B #a5ffe1
-  set $base0C #97e0ff
-  set $base0D #97bbf7
-  set $base0E #c0b7f9
-  set $base0F #fcc09e
+  set $c_focusd   #080808
+  set $c_inactive #1D1D1D
+  set $c_text     #ebdbb2
+  set $c_urgent   #cc241d
+  set $c_accent   #ebdbb2
 
-#  Widow Colours           border  backgr. text    indic.
-#                          border  backgr. text    indicator child_border
-  client.focused          $base01 $base01 $base07 $base0F $base01
-  client.focused_inactive $base02 $base02 $base03 $base0F $base02
-  client.unfocused        $base02 $base02 $base03 $base0F $base02
-  client.urgent           $base02 $base08 $base00 $base0F $base08
+#  Widow Colours
+#                         border        backgr.       text      indic.      child_border
+  client.focused          $c_focusd     $c_focusd     $c_text   $c_accent   $c_focusd
+  client.focused_inactive $c_inactive   $c_inactive   $c_text   $c_accent   $c_inactive
+  client.unfocused        $c_inactive   $c_inactive   $c_text   $c_accent   $c_inactive
+  client.urgent           $c_urgent     $c_urgent     $c_text   $c_accent   $c_urgent
+  client.background       $c_focusd
 
 
 

@@ -2,7 +2,7 @@
 # Any customization should be done in ~/.gtkrc-2.0.mine instead.
 
 include "/home/jrozen/.gtkrc-2.0.mine"
-gtk-theme-name="Adapta-Nokto-Eta"
+gtk-theme-name="Plata-Noir-Compact"
 gtk-icon-theme-name="Flat-Remix-Blue-Dark"
 gtk-font-name="Segoe UI 9"
 gtk-cursor-theme-name="Adwaita"

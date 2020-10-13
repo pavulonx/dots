@@ -37,30 +37,30 @@ font:
 
 colors:
   primary:
-    background: '#263238'
-    foreground: '#eceff1'
+    background: '#080808'
+    foreground: '#ebdbb2'
 
   # Normal colors
   normal:
-    black:   '#2c3e50'
-    red:     '#c0392b'
-    green:   '#27ae60'
-    yellow:  '#f39c12'
-    blue:    '#2980b9'
-    magenta: '#8e44ad'
-    cyan:    '#16a085'
-    white:   '#bdc3c7'
+    black:   '#263238'
+    red:     '#e53935'
+    green:   '#43a047'
+    yellow:  '#ffb300'
+    blue:    '#1e88e5'
+    magenta: '#8e24aa'
+    cyan:    '#00acc1'
+    white:   '#eeeeee'
 
   # Bright colors
   bright:
-    black:   '#34495e'
-    red:     '#e74c3c'
-    green:   '#2ecc71'
-    yellow:  '#f1c40f'
-    blue:    '#3498db'
-    magenta: '#9b59b6'
-    cyan:    '#2AA198'
-    white:   '#ecf0f1'
+    black:   '#37474f'
+    red:     '#ef5350'
+    green:   '#66bb6a'
+    yellow:  '#ffd54f'
+    blue:    '#42a5f5'
+    magenta: '#ab47bc'
+    cyan:    '#26c6da'
+    white:   '#f5f5f5'
 
 
 #cursor:
