@@ -57,6 +57,8 @@ alias drps="docker ps"
 alias dre="docker exec"
 alias dreit="docker exec -it"
 alias drk="docker kill"
+alias drrit="docker run -it -rm"
+alias drb="docker build"
 alias drc=docker-compose
 alias drcip="docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"
 
