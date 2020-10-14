@@ -1,17 +1,20 @@
 configuration {
     modi: "combi,run,keys,window";
-    /*font: "DejaVuSansMono Nerd Font Mono 12";*/
-    combi-modi: "window,drun";
+    width: 45;
     lines: 16;
-    width: 50;
+    /*columns: 1;*/
+    bw: 1;
+    /*	location: 0;*/
     padding: 10;
+    terminal: "alacritty";
     sidebar-mode: true;
-    /*show-icons: true;*/
-    /*icon-theme: "Flat-Remix-Blue";*/
-    /*STATE:        'bg',    'fg',    'bgalt', 'hlbg',  'hlfg'  */
+    combi-modi: "window,drun";
+    scrollbar-width: 5;
+    /*            'bg',    'fg',    'bgalt', 'hlbg',  'hlfg'  */
     color-normal: "#080808, #ebdbb2, #080808, #ebdbb2, #1D1D1D";
     color-urgent: "#080808, #cc241d, #080808, #cc241d, #ebdbb2";
     color-active: "#786954, #ebdbb2, #080808, #ebdbb2, #080808";
-    /*STATE:      backgrnd  border   separator */
+    /*            backgrnd  border   separator */
     color-window: "#080808, #ebdbb2, #ebdbb2";
+    combi-hide-mode-prefix: true;
 }
