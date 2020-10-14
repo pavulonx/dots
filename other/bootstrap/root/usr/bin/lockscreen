@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$(command -v betterlockscreen)" ]; then
-	betterlockscreen -l
+	betterlockscreen -l blur
 else
 	i3lock -c000000
 fi
