@@ -4,14 +4,14 @@ configuration {
     combi-modi: "window,drun";
     lines: 16;
     width: 50;
-    padding: 8;
+    padding: 10;
     sidebar-mode: true;
     /*show-icons: true;*/
     /*icon-theme: "Flat-Remix-Blue";*/
     /*STATE:        'bg',    'fg',    'bgalt', 'hlbg',  'hlfg'  */
-    color-normal: "#1D1D1D, #ebdbb2, #1D1D1D, #ebdbb2, #1D1D1D";
-    color-urgent: "#1D1D1D, #cc241d, #1D1D1D, #cc241d, #1D1D1D";
-    color-active: "#080808, #ebdbb2, #1D1D1D, #ebdbb2, #080808";
+    color-normal: "#080808, #ebdbb2, #080808, #ebdbb2, #1D1D1D";
+    color-urgent: "#080808, #cc241d, #080808, #cc241d, #ebdbb2";
+    color-active: "#786954, #ebdbb2, #080808, #ebdbb2, #080808";
     /*STATE:      backgrnd  border   separator */
-    color-window: "#1D1D1D, #080808, #080808";
+    color-window: "#080808, #ebdbb2, #ebdbb2";
 }
