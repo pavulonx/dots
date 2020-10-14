@@ -5,10 +5,13 @@ configuration {
     lines: 16;
     width: 50;
     padding: 8;
+    sidebar-mode: true;
     /*show-icons: true;*/
     /*icon-theme: "Flat-Remix-Blue";*/
-    color-normal: "#37474f, #eceff1, #263238, #03a9f4, #eceff1";
-    color-urgent: "#263238, #ff9800, #263238, #ffa74d, #eceff1";
-    color-active: "#263238, #03a9f4, #263238, #03a9f4, #263238";
-    color-window: "#263238, #1f222d, #263238";
+    /*STATE:        'bg',    'fg',    'bgalt', 'hlbg',  'hlfg'  */
+    color-normal: "#1D1D1D, #ebdbb2, #1D1D1D, #ebdbb2, #1D1D1D";
+    color-urgent: "#1D1D1D, #cc241d, #1D1D1D, #cc241d, #1D1D1D";
+    color-active: "#080808, #ebdbb2, #1D1D1D, #ebdbb2, #080808";
+    /*STATE:      backgrnd  border   separator */
+    color-window: "#1D1D1D, #080808, #080808";
 }
