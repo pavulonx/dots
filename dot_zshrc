@@ -109,16 +109,11 @@ zinit light agkozak/zsh-z
 zinit light andrewferrier/fzf-z
 
 
-
-
 # prompt theme
 setopt prompt_subst
-zinit ice src"agnosterzak.zsh-theme"
-zinit light jakubrozenbajger/agnosterzak-ohmyzsh-theme
+zinit load rozenj/salt
+
 
 autoload -U compinit && compinit
 #setopt globdots # find a way to toggle globdots
-
-
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
