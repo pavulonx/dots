@@ -7,8 +7,7 @@ install_systemwise() {
     printf "\n"
     echo "Found changes while installing $2"
     read -r -p "Is this change ok? [y/N] " response </dev/tty
-    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]
-    then
+    if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
         sudo cp -v "$src"  "$2"
         printf "\n\n"
     fi

@@ -12,7 +12,8 @@ In `~/.config/chezmoi/chezmoi.toml` set:
     browser = "/usr/bin/firefox"
     browser_desktop = "firefox.desktop"
 ```
-
+Run [`other/bootstrap/configure.sh`](other/bootstrap/configure.sh) `<machine_type>` `<browser>` `[<browser_desktop>]` to apply config
+`other/bootstrap/configure.sh laptop firefox firefox.desktop`
 ___
 #### TODO:
 - use current_player script
