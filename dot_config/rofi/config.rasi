@@ -7,6 +7,7 @@ configuration {
     /*	location: 0;*/
     padding: 10;
     terminal: "alacritty";
+    show-icons: true;
     sidebar-mode: true;
     combi-modi: "window,drun";
     scrollbar-width: 5;

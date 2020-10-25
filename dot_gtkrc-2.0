@@ -3,7 +3,7 @@
 
 include "/home/jrozen/.gtkrc-2.0.mine"
 gtk-theme-name="Plata-Noir-Compact"
-gtk-icon-theme-name="Flat-Remix-Blue-Dark"
+gtk-icon-theme-name="Flatery-Dark"
 gtk-font-name="Segoe UI 9"
 gtk-cursor-theme-name="Adwaita"
 gtk-cursor-theme-size=0
