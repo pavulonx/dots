@@ -21,6 +21,7 @@ template="
 echo "$template"
 read -r -p "Is this configuration ok? [y/N] " response </dev/tty
 if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
+  mkdir -p "$(dirname "$config_file")"
   echo "$template" >"$config_file"
   echo "Saved to $config_file"
   printf "\nDone\n"
