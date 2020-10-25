@@ -9,4 +9,10 @@ docs*
 **/.idea*
 TODO.md
 README.md
-
+{{- if eq .machine_type "server" }}
+*
+!.zsh.d
+!.zsh.d/**
+!.vimrc
+!.zprofile
+{{- end }}
