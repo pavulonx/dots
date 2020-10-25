@@ -1,16 +1,21 @@
 # Screenshots:
 # ![Current setup](https://raw.githubusercontent.com/rozenj/dots/master/other/scrot/2020-10-25-012729_2560x1440_scrot.png)
 
-# Env specific setup
-Specify pc type in `~/.config/chezmoi/chezmoi.toml`, eg.:
+# Required configuration:
+In `~/.config/chezmoi/chezmoi.toml` set:
+ - **machine_type** - to one of `desktop`, `server`, `laptop`
+ - **browser** - path to browser
+ - **browser_desktop** - browser desktop file name
 ```
 [data]
-    pctype = "desktop"
+    machine_type = "desktop"
+    browser = "/usr/bin/firefox"
+    browser_desktop = "firefox.desktop"
 ```
 
-#TODO:
-- use current_player
+___
+#### TODO:
+- use current_player script
 - auto configure crontab - backup
-- cht.sh/chect.sh tab completition
 - https://stackoverflow.com/a/38980986/8156320
 

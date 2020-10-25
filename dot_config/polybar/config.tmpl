@@ -61,7 +61,7 @@ tray-scale = 1
 
 modules-left = i3 xwindow
 modules-center = date
-{{- if eq .pctype "desktop" }}
+{{- if eq .machine_type "desktop" }}
 modules-right = music weather vpn lan filesystem temperature cpu memory xdpms pulseaudio
 {{- else }}
 modules-right = music weather vpn wlan lan backlight filesystem temperature cpu memory xdpms battery pulseaudio

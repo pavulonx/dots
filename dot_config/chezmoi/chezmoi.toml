@@ -1,4 +1,4 @@
 [data]
-    pctype = "desktop"
+    machine_type = "desktop"
     browser = "/usr/bin/brave-beta"
     browser_desktop = "brave-browser.desktop"
