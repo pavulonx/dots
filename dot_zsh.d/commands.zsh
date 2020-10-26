@@ -57,7 +57,8 @@ alias drps="docker ps"
 alias dre="docker exec"
 alias dreit="docker exec -it"
 alias drk="docker kill"
-alias drrit="docker run -it -rm"
+alias drrit="docker run -it --rm"
+alias drrithere='docker run -it --rm --workdir=/ctx --volume "$PWD:/ctx"'
 alias drb="docker build"
 alias drc=docker-compose
 alias drcip="docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"
@@ -69,8 +70,9 @@ alias gdcao='git diff --cached origin/"$(git_current_branch)"'
 alias glogf='~/.bin/git_log_tree_fancy'
 alias gitroot='git rev-parse --show-toplevel'
 
+DEFAULT_GIT_TICKER=""
 function gcmsgj {
-    git commit -m "$(git_current_branch | grep -Eo '[A-Z]+-[0-9]+') $1"
+    git commit -m "$(git_current_branch | grep -Eo '[A-Z]+-[0-9]+' || echo "$DEFAULT_GIT_TICKER") $1"
 }
 
 # clipboard

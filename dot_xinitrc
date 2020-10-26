@@ -42,6 +42,7 @@ xsetroot -cursor_name left_ptr &
 # dpms off it does nothind for destop
 xset dpms 1200 3600 7200 
 xset +dpms
+# disable screensaver todo: enable if using xscreensaver
 xset s off
 # autolock
 xautolock -time 10 -notify 20 -notifier 'notify-send -u critical -t 20 "Screen lock in 20s"' -corners '000-' -locker 'lockscreen' &
