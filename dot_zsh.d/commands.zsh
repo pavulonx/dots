@@ -12,6 +12,8 @@ alias grep='grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox}'
 alias fcl='fc -li 1'
 alias :q='exit'
 
+alias S='sudo systemctl'
+
 alias chm="chezmoi"
 
 # ls
