@@ -1,0 +1,5 @@
+#!/bin/sh
+
+LOCATION=${LOCATION:-'51.84:16.92'}
+
+redshift -l "$LOCATION"
