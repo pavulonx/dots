@@ -1,0 +1,19 @@
+#!/bin/sh
+
+_conf=$HOME/.config/sshot.conf
+
+if ! [ -f $_conf ]; then
+	echo "scrot_dir=$(xdg-user-dir PICTURES)" > $_conf
+fi
+
+source $_conf
+
+if ! [ -d $scrot_dir ]; then
+	mkdir -p $scrot_dir
+fi
+
+filename="${scrot_dir}/$(date +'%F_%H-%S')_sshot.png"
+
+maim $@ "$filename"
+notify-send "Screenshot saved" "$filename"
+echo "$filename" | xclip -selection clipboard

@@ -20,8 +20,7 @@ flat-remix
 flat-remix-gtk
 i3-gaps
 i3lock-color
-i3-scrot #aur
-i3status
+maim
 imagemagick
 lxappearance
 picom

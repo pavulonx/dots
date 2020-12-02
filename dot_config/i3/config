@@ -58,8 +58,7 @@ bindsym $mod+Shift+t --release exec --no-startup-id "toggleprogram picom -b --ex
 bindsym $mod+Shift+d --release exec --no-startup-id "toggleprogram dunst; exec notify-send 'Dunst restart'"
 
 # screenshots
-bindsym $mod+Print --release exec --no-startup-id i3-scrot -w
-bindsym $mod+Shift+Print --release exec --no-startup-id i3-scrot -s
+bindsym $mod+Print --release exec --no-startup-id sshot -s
 
 # xkill
 bindsym $mod+Shift+Ctrl+x --release exec --no-startup-id xkill
@@ -292,8 +291,7 @@ bindsym $mod+Mod1+l exec --no-startup-id lockscreen
 
 # Autostart applications
 exec --no-startup-id nm-applet
-exec --no-startup-id redshift
-exec --no-startup-id /usr/lib/geoclue-2.0/demos/agent & redshift -P
+exec --no-startup-id redshiftw
 exec --no-startup-id autorandr -c
 #exec --no-startup-id xbindkeys
 
