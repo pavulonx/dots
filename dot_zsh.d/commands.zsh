@@ -74,7 +74,12 @@ alias gitroot='git rev-parse --show-toplevel'
 
 DEFAULT_GIT_TICKER=""
 function gcmsgj {
-    git commit -m "$(git_current_branch | grep -Eo '[A-Z]+-[0-9]+' || echo "$DEFAULT_GIT_TICKER") $1"
+    if echo $1 | grep -q '[A-Z]+-[0-9]+'; then
+        message="$1";
+    else
+        message="$(git_current_branch | grep -Eo '[A-Z]+-[0-9]+' || echo "$DEFAULT_GIT_TICKER") $1";
+    fi
+    git commit -m "$message"
 }
 
 # clipboard
