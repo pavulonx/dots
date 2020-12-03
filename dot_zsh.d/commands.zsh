@@ -72,7 +72,7 @@ alias gdcao='git diff --cached origin/"$(git_current_branch)"'
 alias glogf='~/.bin/git_log_tree_fancy'
 alias gitroot='git rev-parse --show-toplevel'
 
-DEFAULT_GIT_TICKER=""
+DEFAULT_GIT_TICKER="${DEFAULT_GIT_TICKER:-}"
 function gcmsgj {
     if echo $1 | grep -q '[A-Z]+-[0-9]+'; then
         message="$1";
