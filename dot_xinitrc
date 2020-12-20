@@ -51,11 +51,10 @@ xautolock -time 10 -notify 20 -notifier 'notify-send -u critical -t 20 "Screen l
 dunst &
 udiskie -s &
 picom -b --experimental-backends &
-/usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 &
+/usr/lib/mate-polkit/polkit-mate-authentication-agent-1 &
 clipmenud &
 xbindkeys &
-
-setxkbmap pl
+setxkbmap -option caps:swapescape pl
 # select session
 session='i3 --shmlog-size 0'
 #session='bspwm'

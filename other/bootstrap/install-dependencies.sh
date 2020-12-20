@@ -43,7 +43,7 @@ xf86-input-void
 zsh
 chezmoi
 polkit
-polkit-gnome
+mate-polkit
 dunst
 moreutils
 gnome-calculator
