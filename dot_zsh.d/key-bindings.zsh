@@ -7,9 +7,16 @@ if (( ${+terminfo[smkx]} )) && (( ${+terminfo[rmkx]} )); then
   function zle-line-finish() {
     echoti rmkx
   }
+  function zle-keymap-select() {
+    zle reset-prompt
+    zle -R
+  }
   zle -N zle-line-init
   zle -N zle-line-finish
+  zle -N zle-keymap-select 
 fi
+
+bindkey -v
 
 typeset -A key
 
@@ -35,6 +42,7 @@ key[Down]=${terminfo[kcud1]}
 [[ -n "${key[PageUp]}"   ]]  && bindkey  "${key[PageUp]}"   up-line-or-history
 [[ -n "${key[PageDown]}" ]]  && bindkey  "${key[PageDown]}" down-line-or-history
 [[ -n "${key[ShiftTab]}" ]]  && bindkey  "${key[ShiftTab]}" reverse-menu-complete
+
 
 if [[ -n "${key[Up]}" ]]; then
   autoload -U up-line-or-beginning-search
