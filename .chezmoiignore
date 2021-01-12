@@ -1,4 +1,5 @@
 # https://github.com/twpayne/chezmoi/issues/721
+LICENSE
 other/**
 other*
 backups/**
