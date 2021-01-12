@@ -15,11 +15,12 @@ mapping='
 
 all_players="$(playerctl metadata -af ":{{status}}::{{playerName}}:{{playerName}}")"
 
-
 current_player="$(echo "$all_players" |
   sed "$(echo "$mapping" | grep  . |
   awk '{print "s/:"$1"[^:]*:/"$3":/"}')" |
   sort -t : -k 1,2 | head -n1 | cut -d : -f3-
 )"
+
+[ -z "$current_player" ] && echo "Could not determine current player" >&2 && exit 1
 
 playerctl "$@" --player="$current_player"

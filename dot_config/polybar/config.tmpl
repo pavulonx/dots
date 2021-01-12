@@ -153,10 +153,10 @@ exec = $HOME/.config/polybar/scripts/mediaplayer.sh
 label = %output:0:40:…%
 format-padding = 1
 interval = 2
-exec-if = test `playerctl -l | grep -v playerctl | wc -l` -gt 0
-click-left = playerctl play-pause --player=playerctld
-click-middle = playerctl previous --player=playerctld
-click-right = playerctl next --player=playerctld
+exec-if = test `current_player -l | grep -v playerctl | wc -l` -gt 0
+click-left = current_player play-pause 2&> /dev/null
+click-middle = current_player previous 2&> /dev/null
+click-right = current_player next 2&> /dev/null
 
 
 [module/pulseaudio]

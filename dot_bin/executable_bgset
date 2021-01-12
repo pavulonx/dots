@@ -1,0 +1,21 @@
+#!/usr/bin/env sh
+
+WALLPAPERS_DIR="${WALLPAPERS_DIR:-"$HOME/Pictures/Wallpapers"}"
+
+bg="$1"
+[ -z "$bg" ] && echo "Usage $0 <path to image> or <image name in WALLPAPERS_DIR=$WALLPAPERS_DIR>" && exit 1
+
+[ -d "$WALLPAPERS_DIR" ] || mkdir -p "$WALLPAPERS_DIR"
+
+BG_SETTER="betterlockscreen -u"
+BG_CURRENT="$WALLPAPERS_DIR/current"
+
+[ ! -f "$bg" ] && bg="$WALLPAPERS_DIR/$bg"
+[ ! -f "$bg" ] && echo "No such file!" && exit 1
+
+echo "Setting $bg as background"
+
+ln -fs "$bg" "$BG_CURRENT"
+
+$BG_SETTER "$BG_CURRENT"
+

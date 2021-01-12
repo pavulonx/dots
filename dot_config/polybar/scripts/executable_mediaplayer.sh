@@ -1,6 +1,6 @@
 #!/bin/sh
 
-player_metadata=$(playerctl metadata -af "{{status}}:{{artist}} - {{title}}" --player=playerctld)
+player_metadata=$(current_player metadata -af "{{status}}:{{artist}} - {{title}}")
 player_status=$(echo "$player_metadata" | cut -d ":" -f1)
 player_info=$(echo "$player_metadata"  | cut -d ":" -f2-)
 

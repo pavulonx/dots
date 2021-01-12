@@ -2,6 +2,7 @@
 alias zshconf='$EDITOR ~/.zshrc'
 alias ssha="eval $(ssh-agent)"
 
+alias shck="shellcheck"
 alias i3conf="vim ~/.config/i3/config"
 alias ccat='pygmentize -g'
 alias diff="diff --color"
