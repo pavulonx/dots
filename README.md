@@ -16,7 +16,6 @@ Run [`other/bootstrap/configure.sh`](other/bootstrap/configure.sh) `<machine_typ
 `other/bootstrap/configure.sh laptop firefox firefox.desktop`
 ___
 #### TODO:
-- use current_player script
 - auto configure crontab - backup
 - https://stackoverflow.com/a/38980986/8156320
 

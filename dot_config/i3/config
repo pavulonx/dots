@@ -40,10 +40,10 @@ bindsym $mod+Ctrl+m exec pavucontrol
 ################################################################################################
 
 # Media player controls
-bindsym XF86AudioPlay         exec playerctl --player=playerctld play-pause
-bindsym XF86AudioPause        exec playerctl --player=playerctld play-pause
-bindsym XF86AudioNext         exec playerctl --player=playerctld next
-bindsym XF86AudioPrev         exec playerctl --player=playerctld previous
+bindsym XF86AudioPlay         exec current_player play-pause
+bindsym XF86AudioPause        exec current_player play-pause
+bindsym XF86AudioNext         exec current_player next
+bindsym XF86AudioPrev         exec current_player previous
 bindsym XF86AudioRaiseVolume  exec pamixer -i 5
 bindsym XF86AudioLowerVolume  exec pamixer -d 5
 bindsym XF86AudioMute         exec pamixer -t
@@ -214,8 +214,10 @@ bindsym $mod+Shift+0 move container to workspace $ws0; workspace $ws0
 
 # Open applications on specific workspaces
 assign [class="[cC]hromium"] $ws1
-assign [class="[sS]potify"] $ws8
-for_window [class="Spotify"] move to workspace $ws8
+assign [class="[bB]rave-browser*"] $ws1
+#assign [class="[sS]potify"] $ws8
+for_window [class="[sS]potify"] move to workspace $ws8
+assign [class="[sS]ignal [bB]eta"] $ws7
 assign [class="[sS]lack"] $ws7
 assign [class="[cC]aprine"] $ws7
 assign [class="Steam"] $ws6
