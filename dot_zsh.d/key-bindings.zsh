@@ -20,6 +20,9 @@ zle -N zle-keymap-select
 
 bindkey -v
 
+# instantly handle escape
+export KEYTIMEOUT=1
+
 ## some common keybindings
 typeset -A key
 key[ShiftTab]=${terminfo[kcbt]}
