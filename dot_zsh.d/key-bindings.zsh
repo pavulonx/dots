@@ -7,19 +7,21 @@ if (( ${+terminfo[smkx]} )) && (( ${+terminfo[rmkx]} )); then
   function zle-line-finish() {
     echoti rmkx
   }
-  function zle-keymap-select() {
-    zle reset-prompt
-    zle -R
-  }
   zle -N zle-line-init
   zle -N zle-line-finish
-  zle -N zle-keymap-select 
 fi
+
+function zle-keymap-select() {
+  zle reset-prompt
+#  zle -R
+}
+zle -N zle-keymap-select
+
 
 bindkey -v
 
+## some common keybindings
 typeset -A key
-
 key[ShiftTab]=${terminfo[kcbt]}
 key[Home]=${terminfo[khome]}
 key[End]=${terminfo[kend]}
@@ -31,7 +33,6 @@ key[Left]=${terminfo[kcub1]}
 key[Right]=${terminfo[kcuf1]}
 key[Up]=${terminfo[kcuu1]}
 key[Down]=${terminfo[kcud1]}
-
 # setup key accordingly
 [[ -n "${key[Home]}"     ]]  && bindkey  "${key[Home]}"     beginning-of-line
 [[ -n "${key[End]}"      ]]  && bindkey  "${key[End]}"      end-of-line
@@ -44,6 +45,7 @@ key[Down]=${terminfo[kcud1]}
 [[ -n "${key[ShiftTab]}" ]]  && bindkey  "${key[ShiftTab]}" reverse-menu-complete
 
 
+## keyup and  keydown search
 if [[ -n "${key[Up]}" ]]; then
   autoload -U up-line-or-beginning-search
   zle -N up-line-or-beginning-search
@@ -63,8 +65,7 @@ bindkey '^[[1;5C' forward-word                        # [Ctrl-RightArrow] - move
 bindkey '^[[1;5D' backward-word                       # [Ctrl-LeftArrow] - move backward one word
 bindkey '^r' history-incremental-search-backward      # [Ctrl-r] - Search backward incrementally for a specified string. The string may begin with ^ to anchor the search to the beginning of the line.
 
-# Edit the current command line in $EDITOR
+## Edit the current command line in $EDITOR
 autoload -U edit-command-line
 zle -N edit-command-line
-#bindkey '\C-x\C-e' edit-command-line # for emacs key bindings :  # bindkey -e
 bindkey '^v' edit-command-line
