@@ -1,21 +1,20 @@
 #!/bin/sh
 
-_metadata=$(current_player metadata -af "{{status}}:{{artist}}:{{album}}:{{title}}")
+_prompt() {
+  fst=$(echo "$2"  | cut -d ":" -f2-3)
+  fst="${fst#:}"
+  fst="${fst%:*}"
+  sep=${fst+" - "}
+  snd=$(echo "$2"  | cut -d ":" -f4)
+  echo "$1  $fst$sep$snd"
+}
 
+_metadata=$(current_player metadata -af "{{status}}:{{artist}}:{{album}}:{{title}}")
 _status=$(echo "$_metadata" | cut -d ":" -f1)
 
-artist=$(echo "$_metadata"  | cut -d ":" -f2)
-album=$(echo "$_metadata"  | cut -d ":" -f3)
-title=$(echo "$_metadata"  | cut -d ":" -f4)
-
-fst=${artist:-$album}
-player_info="${fst+"$fst - "}$title"
-
 if [ "$_status" = "Playing" ]; then
-    echo "  $player_info"
+    _prompt "" "$_metadata"
 elif [ "$_status" = "Paused" ]; then
-    echo "  $player_info"
-else
-    echo ""
+    _prompt "" "$_metadata"
 fi
 
