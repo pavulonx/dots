@@ -1,10 +1,29 @@
 #!/bin/sh
 
-weather="$(curl -s "wttr.in/${1:-Wroclaw}?format=%c%t")"
-notify-send "$weather"
+_show_details=false
+_send_notification=false
+_wait_for_user_input=false
+
+for arg; do
+    case "$arg" in
+        -s) _show_details=true ;;
+        -n) _send_notification=true ;;
+        -w) _wait_for_user_input=true ;;
+         *) [ -z "$location" ] && location="$arg";
+    esac
+done
+
+weather="$(curl -s "wttr.in/$location?format=1")"
 
 if echo "$weather" | grep -qE "(Unknown|curl|HTML)" ; then
-    echo "WEATHER UNAVAILABLE"
-else
-    echo " $weather"
+    echo "  Weather unavailable"
+    exit 1
 fi
+
+echo "$weather"
+
+$_send_notification && notify-send "$weather"
+$_show_details && curl -s "wttr.in/$location"
+
+$_wait_for_user_input && read -r
+
