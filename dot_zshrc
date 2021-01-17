@@ -110,7 +110,6 @@ zinit light andrewferrier/fzf-z
 
 # prompt theme
 setopt prompt_subst
-zinit ice ver"vimmode"
 zinit load rozenj/salt
 
 autoload -U compinit && compinit
