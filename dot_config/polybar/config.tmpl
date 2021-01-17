@@ -299,5 +299,5 @@ animation-charging-framerate = 750
 type = custom/script
 exec = $HOME/.config/polybar/scripts/weather.sh Wroclaw
 label = "%output%"
-click-right = xdg-open https://wttr.in/Wroclaw
-interval = 1800
+click-right = alacritty -e $HOME/.config/polybar/scripts/weather.sh Wroclaw -s -w
+interval = 900
