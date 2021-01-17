@@ -54,7 +54,7 @@ picom -b --experimental-backends &
 /usr/lib/mate-polkit/polkit-mate-authentication-agent-1 &
 clipmenud &
 xbindkeys &
-setxkbmap -option caps:swapescape pl
+
 # select session
 session='i3 --shmlog-size 0'
 #session='bspwm'
