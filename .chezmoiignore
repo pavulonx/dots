@@ -12,6 +12,7 @@ TODO.md
 README.md
 {{- if eq .machine_type "server" }}
 *
+!.zshrc
 !.zsh.d
 !.zsh.d/**
 !.vimrc
