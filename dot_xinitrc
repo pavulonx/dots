@@ -58,6 +58,7 @@ xbindkeys &
 # select session
 session='i3 --shmlog-size 0'
 #session='bspwm'
+#session='xmonad'
 
 # shellcheck disable=SC2086
 exec $session
