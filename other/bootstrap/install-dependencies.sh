@@ -53,6 +53,10 @@ python-pygments
 udiskie
 bashtop
 networkmanager_dmenu
+ripgrep
+tldr
+bat
+fd
 )
 
 echo "Installing core packages"
