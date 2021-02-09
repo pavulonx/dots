@@ -1,5 +1,3 @@
-{{- if eq .chezmoi.hostname "jrdesktop" -}}
-DESTINATION=/mnt/hdd1/backups/main_linux
-{{- else if eq .chezmoi.hostname "jrarch" -}}
+{{- if eq .chezmoi.hostname "jrarch" -}}
 DESTINATION=/mnt/hdd1/backups/jrarch/
 {{- end }}
