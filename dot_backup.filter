@@ -1,12 +1,8 @@
-+ .bin/
-+ .config/
 + .docker/
 + .gnupg/
 + .ssh/
-+ .xmonad/
-+ .zsh.d/
-- .*/
-+ .*
+- /.*/
++ /.*
 - Private
 - tmp
 - **/.directory

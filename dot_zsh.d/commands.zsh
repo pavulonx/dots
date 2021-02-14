@@ -4,11 +4,12 @@ alias ssha="eval $(ssh-agent)"
 
 alias shck="shellcheck"
 alias i3conf="vim ~/.config/i3/config"
-alias ccat='pygmentize -g'
 alias diff="diff --color"
 
 alias pacman-clean='sudo pacman -R `pacman -Qdtq`'
-alias yaygit='yay -S `pacman -Q | grep "\-git" | cut -d" " -f1`'
+alias update='paru -Syu --upgrademenu'
+alias update-pkg-git='paru -S --upgrademenu `pacman -Q | awk '\''/-git / {print $1}'\''`'
+
 alias grep='grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox}'
 alias fcl='fc -li 1'
 alias :q='exit'

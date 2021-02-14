@@ -6,39 +6,35 @@ REAL_RUN="no"
 
 # 2. config overrides
 _backup_conf_file="$HOME/.backuprc"
-if ! [ -f "$_backup_conf_file" ]; then
-	echo "# backup config
-	" > "$_backup_conf_file"
-fi
+[ ! -f "$_backup_conf_file" ] && "No config file found!" && exit 1 
 source "$_backup_conf_file"
 
-[ "$1" == "-c" ]  && REAL_RUN="yes"
+[ "$DESTINATION" == "/" ] && echo "Destination needs to be provided in $_backup_conf_file" && exit 1
+[ "$1" == "-c" ] && REAL_RUN="yes"
 
 ## CONSTANTS
 FILTER_FILE="$HOME/.backup.filter"
 SOURCE="$HOME/"
 
-# Exit if destination is not provided
-if [ "$DESTINATION" == "/" ]; then
-    echo "Destination needs to be provided in $_backup_conf_file"
-    exit 1
-fi
-
 # Append current PC (hostname) and username to destination
 DESTINATION="${DESTINATION%/}/$(hostname)_$USER-$(id -u "$USER")"
-
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
+
+# backup dotfiles
+_chm_managed="/tmp/chm_managed_$TIMESTAMP"
+touch "$_chm_managed"
+command -v chezmoi && chezmoi managed -i d | cut -d '/' -f4- | grep -Ev '^.config$' | awk 'BEGIN{print "+ .config/"} {print "+ " $0 "/***"} END{print "- .config/**"}' >> "$_chm_managed" 
 
 rsync_commands=(
     "-av"
     "--progress"
     "--human-readable"
     "--log-file=/tmp/rsync.$TIMESTAMP.log"
-    "--prune-empty-dirs"
     "--delete"
     "--delete-excluded"
-    "--filter=: $FILTER_FILE"
-    "--filter=:- .gitignore"
+    "--filter=merge $_chm_managed"
+    "--filter=merge $FILTER_FILE"
+    "--filter=dir-merge,- .gitignore"
     "$SOURCE"
     "$DESTINATION"
 )
@@ -55,13 +51,8 @@ echo "Source:       $SOURCE"
 echo "Destination:  $DESTINATION"
 echo
 if [ "$REAL_RUN" == "yes" ]; then
-    echo "Starting backup..."
-    echo
     do_rsync
 else
-    echo "Starting dry run..."
-    echo
     do_rsync_dry_run
-    echo
-    echo "Run command with -c to backup"
+    printf "\n\nRun command with -c to backup\n"
 fi
