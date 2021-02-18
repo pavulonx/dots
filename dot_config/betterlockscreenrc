@@ -32,3 +32,5 @@ datecolor=$white
 # only for update
 #blur_level=
 loginbox=$dimmed
+
+res="2560x1440"

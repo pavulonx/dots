@@ -4,9 +4,9 @@ _prompt() {
   fst=$(echo "$2"  | cut -d ":" -f2-3)
   fst="${fst#:}"
   fst="${fst%:*}"
-  sep=${fst+" - "}
+  [ -z "$fst" ] || sep=" - "
   snd=$(echo "$2"  | cut -d ":" -f4)
-  echo "$1  $fst$sep$snd"
+  echo "$1  $fst${sep:-""}$snd"
 }
 
 _metadata=$(current_player metadata -af "{{status}}:{{artist}}:{{album}}:{{title}}")
