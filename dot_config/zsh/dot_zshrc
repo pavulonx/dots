@@ -12,8 +12,8 @@ for src in $SOURCES; do
   source "$ZDOTDIR/$src"
 done
 
-#source local setups
-source ~/.profile.local
+#source local environment - move to .zshenv
+source ~/.env.local
 
 ## OPTS
 setopt interactivecomments # adds comments in input
