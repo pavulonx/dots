@@ -1,7 +1,6 @@
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
 
-ZSHD="$HOME/.zsh.d"
 SOURCES=(
   commands.zsh
   completion.zsh
@@ -10,7 +9,7 @@ SOURCES=(
   termsupport.zsh
 )
 for src in $SOURCES; do
-  source "$ZSHD/$src"
+  source "$ZDOTDIR/$src"
 done
 
 #source local setups
