@@ -2,8 +2,13 @@
 + .gnupg/
 + .ssh/
 - /.*/
+- .viminfo
+- .zsh_history
+- .z
+- .backup.log
 + /.*
 - Private
 - tmp
+- **/blockchain_data
 - **/.directory
 - **/node_modules/**

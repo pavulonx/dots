@@ -10,6 +10,9 @@ docs*
 **/.idea*
 TODO.md
 README.md
+{{- if ne .chezmoi.hostname "jrarch" }}
+dot_config/backup/backuprc
+{{- end }}
 {{- if eq .machine_type "server" }}
 *
 !.zshrc

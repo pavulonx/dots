@@ -14,7 +14,7 @@ for src in $SOURCES; do
 done
 
 #source local setups
-source ~/.local-setup.sh
+source ~/.profile.local
 
 ## OPTS
 setopt interactivecomments # adds comments in input

@@ -1,5 +1,5 @@
 #!/usr/bin/env sh
-log_dir=~/.xsessionlogs
+log_dir="$XDG_CACHE_HOME/xsessionlogs"
 mkdir -p  "$log_dir"
 log_file_path="$log_dir/$(date +'%F_%H-%M-%S').log"
 

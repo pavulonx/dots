@@ -115,7 +115,7 @@ interval = 1
 {{- if eq .chezmoi.hostname "LT33693" }}
 hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon9/temp1_input
 {{- else }}
-hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon2/temp1_input
+hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon1/temp1_input
 {{- end }}
 base-temperature = 35
 warn-temperature = 75

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+rm ~/.config/JetBrains/IntelliJ*/eval/idea*.evaluation.key && \
+sed -i '/evlsprt/d' ~/.config/JetBrains/IntelliJ*/options/other.xml && \
+rm -rf ~/.java/.userPrefs/jetbrains
+

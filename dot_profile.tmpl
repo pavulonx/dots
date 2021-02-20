@@ -1,13 +1,32 @@
-export QT_QPA_PLATFORMTHEME="qt5ct"
 export VISUAL=/usr/bin/vim
 export EDITOR="$VISUAL"
-export GTK2_RC_FILES="$HOME/.gtkrc-2.0"
 export BROWSER="{{- .browser }}"
 export PATH=$HOME/.bin:$PATH
 export LANG=en_US.UTF-8
 
-# clipmenu config
+# xdg config
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CACHE_HOME="$HOME/.cache"
+
+# cleanup home dir
+export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
+export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc-2.0"
+export WGETRC="$XDG_CONFIG_HOME/wgetrc"
+export DOCKER_CONFIG="$XDG_CONFIG_HOME/docker"
+export GRADLE_USER_HOME="$XDG_DATA_HOME/gradle"
+export STACK_ROOT="$XDG_DATA_HOME/stack"
+export CARGO_HOME="$XDG_DATA_HOME/cargo"
+export _Z_DATA="$XDG_DATA_HOME/z"
+export LESSHISTFILE="-"
+export ELECTRUMDIR="$XDG_DATA_HOME/electrum"
+#export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
+
+
+# system settings
 export CM_LAUNCHER=rofi
+export QT_QPA_PLATFORMTHEME="qt5ct"
+
 
 # automatically run startx if not running
 if ! pgrep startx; then
