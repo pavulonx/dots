@@ -8,7 +8,6 @@ alias diff="diff --color"
 
 alias pacman-clean='sudo pacman -R `pacman -Qdtq`'
 alias update='paru -Syu --upgrademenu'
-alias update-pkg-git='paru -S --upgrademenu `pacman -Q | awk '\''/-git / {print $1}'\''`'
 
 alias grep='grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox}'
 alias fcl='fc -li 1'
