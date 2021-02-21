@@ -32,6 +32,7 @@ alias ....='../../..'
 alias .....='../../../..'
 alias ......='../../../../..'
 alias cdgr='$(gitroot)'
+alias cdw='cd ~/Workspace'
 
 alias -- -='cd -'
 alias 1='cd -'
@@ -106,7 +107,7 @@ function ex {
       *.zip)       unzip $1       ;;
       *.Z)         uncompress $1  ;;
       *.7z)        7z x $1        ;;
-      *)           [ -z "$1" ] && printf "Usage:\n\t$0 [path-to-archive]\n" || 
+      *)           [ -z "$1" ] && printf "Usage:\n\t%s [path-to-archive]\n" "$0" ||
                                   echo "$1 cannot be extracted via ex" ;;
     esac
   else

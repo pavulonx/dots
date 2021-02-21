@@ -3,9 +3,7 @@
 # usage: title short_tab_title [long_window_title]
 #
 # See: http://www.faqs.org/docs/Linux-mini/Xterm-Title.html#ss3.1
-# Fully supports screen, iterm, and probably most modern xterm and rxvt
 # (In screen, only short_tab_title is used)
-# Limited support for Apple Terminal (Terminal can't set window and tab separately)
 function title {
   [ "$DISABLE_AUTO_TITLE" != "true" ] || return
   : "${2=$1}"
