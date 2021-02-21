@@ -70,7 +70,7 @@ alias drcip="docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}
 alias gitunmodlastcommit='git ls-files --full-name | grep -v "$(git diff --name-only HEAD)"'
 alias gdo='git diff origin/"$(git_current_branch)"'
 alias gdcao='git diff --cached origin/"$(git_current_branch)"'
-alias glogf='~/.bin/git_log_tree_fancy'
+alias glogf='git_log_tree_fancy'
 alias gitroot='git rev-parse --show-toplevel'
 
 DEFAULT_GIT_TICKER="${DEFAULT_GIT_TICKER:-}"

@@ -1,13 +1,13 @@
 # https://github.com/twpayne/chezmoi/issues/721
 LICENSE
 other/**
-other*
+other/
 backups/**
-backups*
+backups/
 docs/**
-docs*
+docs/
 **/.idea/**
-**/.idea*
+**/.idea/
 TODO.md
 README.md
 {{- if ne .chezmoi.hostname "jrarch" }}
@@ -15,9 +15,14 @@ dot_config/backup/backuprc
 {{- end }}
 {{- if eq .machine_type "server" }}
 *
-!.zshrc
-!.zsh.d
-!.zsh.d/**
+!.config/shell/**
+!.config/shell/
+!.config/zsh/**
+!.config/zsh/
+!.local/bin/**
+!.local/bin/
 !.vimrc
 !.zprofile
+!.bash_profile
+!.profile
 {{- end }}
