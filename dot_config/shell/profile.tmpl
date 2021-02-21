@@ -1,5 +1,9 @@
-export PATH="$PATH:${$(find ~/.local/bin -type d -printf %p:)%%:}"
+# set up path
+_user_path="$(find ~/.local/bin -type d -printf %p:)"
+_user_path="${_user_path%%:}"
+export PATH="$PATH:$_user_path"
 
+# default programs
 export TERMINAL="alacritty"
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
@@ -7,8 +11,6 @@ export BROWSER="{{- .browser }}"
 export READER="zathura"
 export VISUAL="nvim"
 export PAGER="less"
-
-export LANG=en_US.UTF-8
 
 # xdg config
 export XDG_CONFIG_HOME="$HOME/.config"
@@ -34,10 +36,8 @@ export GNUPGHOME="$XDG_DATA_HOME/gnupg"
 # system settings
 export CM_LAUNCHER=rofi
 export QT_QPA_PLATFORMTHEME="qt5ct"
-#export QT_QPA_PLATFORMTHEME="gtk2"
 
-
-#startx
+# start graphical interface on login on tty1
 _debug=true
 if [ "$(tty)" = "/dev/tty1" ] && ! pgrep startx; then
   if $_debug && command -v startx-with-log &> /dev/null; then
