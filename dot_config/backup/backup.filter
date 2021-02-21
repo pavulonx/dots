@@ -1,5 +1,5 @@
-+ .docker/
-+ .gnupg/
++ .local/gnupg/
++ .config/docker/
 + .ssh/
 - /.*/
 - .viminfo

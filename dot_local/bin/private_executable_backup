@@ -25,7 +25,7 @@ TIMESTAMP=$(date +%Y%m%d%H%M%S)
 # backup dotfiles
 _filterfile="/tmp/filterfile_$TIMESTAMP"
 touch "$_filterfile"
-command -v chezmoi && chezmoi managed -i d | cut -d '/' -f4- | grep -Ev '^.config$' | awk 'BEGIN{print "+ .config/"} {print "+ " $0 "/***"} END{print "- .config/**"}' >> "$_filterfile" 
+command -v chezmoi && chezmoi managed -i d | cut -d '/' -f4- | grep -Ev '^.(config|local(/share)?)$' | awk 'BEGIN{print "+ /.config/\n+ /.local/"} {print "+ " $0 "/***"} END{print "- /.config/**\n- /.local/**"}' >> "$_filterfile"
 cat "$FILTER_FILE" >> "$_filterfile"
 
 rsync_commands=(
