@@ -1,0 +1,36 @@
+#!/bin/sh
+
+userresources="$HOME/.config/x11/xresources"
+userkeybindings="$HOME/.config/x11/xbindkeysrc"
+
+[ -f "$userresources" ]   && xrdb -merge "$userresources"
+[ -f "$userkeybindings" ] && xbindkeys -f "$userkeybindings"
+
+if [ -d /etc/X11/xinit/xinitrc.d ] ; then
+    for f in /etc/X11/xinit/xinitrc.d/?*.sh ; do
+        [ -x "$f" ] && . "$f"
+    done
+    unset f
+fi
+
+# X server settings
+xsetroot -cursor_name left_ptr &
+# env > .xenv # debug
+xset dpms 1200 3600 7200
+xset +dpms
+xset s off # disable screensaver todo: enable if using xscreensaver
+xautolock -time 10 -notify 20 -notifier 'notify-send -u critical -t 20 "Screen lock in 20s"' -corners '000-' -locker 'lockscreen' &
+
+# startup programs
+dunst &
+udiskie -s &
+picom -b --experimental-backends &
+/usr/lib/mate-polkit/polkit-mate-authentication-agent-1 &
+clipmenud &
+xbindkeys &
+
+session='i3 --shmlog-size 0'
+#session='xmonad'
+
+# shellcheck disable=SC2086
+exec $session

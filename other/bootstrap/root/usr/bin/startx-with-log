@@ -1,12 +1,14 @@
-#!/usr/bin/env sh
-log_dir="$XDG_CACHE_HOME/xsessionlogs"
-mkdir -p  "$log_dir"
-log_file_path="$log_dir/$(date +'%F_%H-%M-%S').log"
+#!/bin/sh
 
-# remove old logs leave only newest
-ls -1t "$log_dir" | tail -n +2 | xargs -r -I {} rm $log_dir/{} || true
+_log_dir="$XDG_CACHE_HOME/xsessionlogs"
+mkdir -p "$_log_dir"
 
-ln -sf "$log_file_path" "$log_dir/current.log"
+# remove old logs
+_hist=5
+find "$_log_dir" -type f -printf "%T@:%p\n" | sort -nr | tail -n "+$_hist" | cut -d: -f2- | xargs rm || true
+
+_log_file="$_log_dir/$(date +'%F_%H-%M-%S').log"
+ln -sf "$_log_file" "$_log_dir/current.log"
 
 # startx
-startx | ts '[%Y-%m-%d %H:%M:%S]' &> "$log_file_path"
+startx "$@" | ts '[%Y-%m-%d %H:%M:%S]' > "$_log_file" 2>&1
