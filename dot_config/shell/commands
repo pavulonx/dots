@@ -1,39 +1,55 @@
-# Common aliases
-alias zshconf='$EDITOR $ZDOTDIR/.zshrc'
-alias ssha='eval $(ssh-agent)'
+# files
+alias \
+  zshconf='$EDITOR $ZDOTDIR/.zshrc' \
+  i3conf="vim ~/.config/i3/config"
 
-alias shck="shellcheck"
-alias i3conf="vim ~/.config/i3/config"
-alias diff="diff --color"
+# system
+alias \
+ 	ka="killall" \
+	sdn="sudo shutdown -h now" \
+	pac="sudo pacman" \
+	sys='systemctl' \
+	ssys='sudo systemctl' \
+  pacman-clean='sudo pacman -R `pacman -Qdtq`' \
+  update='paru -Syu --upgrademenu'
 
-alias pacman-clean='sudo pacman -R `pacman -Qdtq`'
-alias update='paru -Syu --upgrademenu'
+# Use neovim for vim if present.
+[ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
 
-alias grep='grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox}'
-alias fcl='fc -li 1'
-alias :q='exit'
+alias \
+	cp="cp -iv" \
+	mv="mv -iv" \
+	rm="rm -vI" \
+	md='mkdir -pv' \
+	diff="diff --color=auto" \
+	grep='grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox}' \
+	ccat="highlight --out-format=ansi" \
+	h='fc -li 1' \
+  :q='exit'
 
-alias S='sudo systemctl'
-
-alias chm="chezmoi"
+# abbreviations
+alias \
+	o="xdg-open" \
+	v="$EDITOR" \
+	z="zathura" \
+	chm="chezmoi" \
+	shck="shellcheck" \
+	ssha='eval $(ssh-agent)' \
+	yt="youtube-dl --add-metadata -i" \
+	yta="yt -x -f bestaudio/best"
 
 # ls
-alias ls='ls --color=auto'
-alias l='ls -lah'
-alias ll='ls -lh'
-alias la='ls -lAh'
-alias lt='ls -lat'
+alias \
+  ls='ls --color=auto --group-directories-first' \
+  l='ls -la' \
+  ll='ls -l' \
+  lt='ls -lat'
 
 # dirs
+alias d='dirs -v | head -10'
+
 alias cd..="cd .."
 alias ..="cd .."
-alias ...='../..'
-alias ....='../../..'
-alias .....='../../../..'
-alias ......='../../../../..'
-alias cdgr='$(gitroot)'
-alias cdw='cd ~/Workspace'
-
 alias -- -='cd -'
 alias 1='cd -'
 alias 2='cd -2'
@@ -44,35 +60,28 @@ alias 6='cd -6'
 alias 7='cd -7'
 alias 8='cd -8'
 alias 9='cd -9'
+alias cdgr='$(gitroot)'
+alias cdw='cd ~/Workspace'
 
-alias md='mkdir -p'
+# docker
+alias \
+  dr=docker \
+  drps='docker ps' \
+  drk='docker kill' \
+  drb='docker build' \
+  dre='docker exec' \
+  drei='docker exec -it' \
+  drri='docker run -it --rm' \
+  drri.='docker run -it --rm --workdir=/ctx --volume "$PWD:/ctx"' \
+  drc='docker-compose' \
+  drip='docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"'
 
-function d () {
-  if [[ -n $1 ]]; then
-    dirs "$@"
-  else
-    dirs -v | head -10
-  fi
-}
-
-# docker aliases
-alias dr=docker
-alias drps="docker ps"
-alias dre="docker exec"
-alias dreit="docker exec -it"
-alias drk="docker kill"
-alias drrit="docker run -it --rm"
-alias drrithere='docker run -it --rm --workdir=/ctx --volume "$PWD:/ctx"'
-alias drb="docker build"
-alias drc=docker-compose
-alias drcip="docker inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}'"
-
-# git aliases
-alias gitunmodlastcommit='git ls-files --full-name | grep -v "$(git diff --name-only HEAD)"'
-alias gdo='git diff origin/"$(git_current_branch)"'
-alias gdcao='git diff --cached origin/"$(git_current_branch)"'
-alias glogf='git_log_tree_fancy'
-alias gitroot='git rev-parse --show-toplevel'
+# git
+alias \
+  gdo='git diff origin/"$(git_current_branch)"' \
+  gdcao='git diff --cached origin/"$(git_current_branch)"' \
+  glogf='git_log_tree_fancy' \
+  gitroot='git rev-parse --show-toplevel'
 
 DEFAULT_GIT_TICKER="${DEFAULT_GIT_TICKER:-}"
 function gcmsgj {

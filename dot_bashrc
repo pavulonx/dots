@@ -11,3 +11,5 @@ if [ -z "$PS1"  ]; then
     PS1='\u@\h \w \$ '
   fi
 fi
+
+source "$XDG_CONFIG_HOME/shell/commands"

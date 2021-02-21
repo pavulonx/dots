@@ -1,6 +1,8 @@
 # If not running interactively, don't do anything
 # [[ $- != *i* ]] && return
 
+alias reload='. $ZDOTDIR/.zshrc'
+
 source "$XDG_CONFIG_HOME/shell/commands"
 source "$ZDOTDIR/completion.zsh"
 source "$ZDOTDIR/key-bindings.zsh"
