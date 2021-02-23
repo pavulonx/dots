@@ -36,7 +36,6 @@ eval "$(ssh-agent)" >> /dev/null;
 ## HISTORY yyyy-mm-dd"
 HISTSIZE=90000
 SAVEHIST=90000
-#HISTFILE=~/.zsh_history
 HISTFILE=~/.local/share/zsh/history
 
 setopt extended_history       # record timestamp of command in HISTFILE
