@@ -11,7 +11,8 @@ docs/
 TODO.md
 README.md
 {{- if ne .chezmoi.hostname "jrarch" }}
-dot_config/backup/backuprc
+.config/backup/**
+.config/backup/
 {{- end }}
 {{- if eq .machine_type "server" }}
 *
