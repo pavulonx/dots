@@ -36,6 +36,10 @@ set noshowmode
 set noruler
 set laststatus=0
 set noshowcmd
+set history=1000
+set so=7
+set ruler
+set wildmenu
 
 " Some basics:
 	nnoremap c "_c

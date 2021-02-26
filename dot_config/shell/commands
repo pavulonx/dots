@@ -1,7 +1,8 @@
 # files
 alias \
   zshconf='$EDITOR $ZDOTDIR/.zshrc' \
-  i3conf="vim ~/.config/i3/config"
+  i3conf="$EDITOR ~/.config/i3/config" \
+  xmconf="$EDITOR ~/.config/xmonad/xmonad.hs"
 
 # system
 alias \
@@ -25,7 +26,7 @@ alias \
 	grep='grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox}' \
 	ccat="highlight --out-format=ansi" \
 	h='fc -li 1' \
-  :q='exit'
+        :q='exit'
 
 # abbreviations
 alias \
@@ -123,4 +124,3 @@ function ex {
     echo "'$1' is not a valid file"
   fi
 }
-

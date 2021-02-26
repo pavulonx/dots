@@ -1,3 +1,4 @@
+#!/bin/sh
 # set up path
 _user_path="$(find ~/.local/bin -type d -printf %p:)"
 _user_path="${_user_path%%:}"
@@ -32,6 +33,9 @@ export ELECTRUMDIR="$XDG_DATA_HOME/electrum"
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 export LESSHISTFILE="-"
 export GNUPGHOME="$XDG_DATA_HOME/gnupg"
+export XMONAD_DATA_DIR="$XDG_DATA_HOME/xmonad"
+export XMONAD_CONFIG_DIR="$XDG_CONFIG_HOME/xmonad"
+export XMONAD_CACHE_DIR="$XDG_CACHE_HOME/xmonad"
 
 # system settings
 export CM_LAUNCHER=rofi
@@ -39,8 +43,9 @@ export QT_QPA_PLATFORMTHEME="qt5ct"
 
 # start graphical interface on login on tty1
 _debug=true
-if [ "$(tty)" = "/dev/tty1" ] && ! pgrep startx; then
-  if $_debug && command -v startx-with-log &> /dev/null; then
+_autostartx=false
+if $_autostartx && [ "$(tty)" = "/dev/tty1" ] && ! pgrep startx; then
+  if $_debug && command -v startx-with-log > /dev/null 2>&1; then
     startx-with-log "$XDG_CONFIG_HOME/x11/xinitrc"
   else
     startx "$XDG_CONFIG_HOME/x11/xinitrc"
