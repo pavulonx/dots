@@ -1,0 +1,36 @@
+#!/bin/sh
+
+cmd="$(echo "
+  lock
+  exit
+  suspend
+  hibernate
+  reboot
+  shutdown
+" | xargs -n1 | rofi -dmenu -width 15 -hide-scrollbar -lines 6 -i -no-custom -p "Exit?")"
+
+case "$cmd" in
+    lock)
+        lockscreen
+        ;;
+    exit)
+        i3-msg exit #todo: support for xmonad
+        ;;
+    suspend)
+        lockscreen &
+        sleep 1; systemctl suspend
+        ;;
+    hibernate)
+        lockscreen &
+        sleep 1; systemctl hibernate
+        ;;
+    reboot)
+        systemctl reboot
+        ;;
+    shutdown)
+        systemctl poweroff
+        ;;
+    *)
+        echo "missing or invalid argument"
+        exit 2
+esac
