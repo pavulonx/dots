@@ -11,10 +11,10 @@ core=(
 #adapta-gtk-theme
 exa
 plata-theme
+nitrogen
 adwaita-icon-theme
 arandr
 autorandr
-betterlockscreen
 clipmenu
 feh
 flat-remix

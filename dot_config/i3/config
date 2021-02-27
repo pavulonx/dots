@@ -285,7 +285,7 @@ exec --no-startup-id redshiftw
 exec --no-startup-id autorandr -c
 #exec --no-startup-id xbindkeys
 
-exec_always --no-startup-id betterlockscreen -w
+exec_always --no-startup-id nitrogen --restore
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 # exec_always --no-startup-id fix_xcursor
 
