@@ -1,13 +1,15 @@
 #!/bin/sh
 
 cmd="$(echo "
-  lock
-  exit
-  suspend
-  hibernate
-  reboot
-  shutdown
-" | xargs -n1 | rofi -dmenu -width 15 -hide-scrollbar -lines 6 -i -no-custom -p "Exit?")"
+ lock
+ exit
+ suspend
+ reboot
+ shutdown
+" | xargs -n2 \
+  | rofi -dmenu -width 15 -hide-scrollbar -lines 5 -i -no-custom -p "Exit?" \
+  | awk '{print $2}'
+)"
 
 case "$cmd" in
     lock)
@@ -19,10 +21,6 @@ case "$cmd" in
     suspend)
         lockscreen &
         sleep 1; systemctl suspend
-        ;;
-    hibernate)
-        lockscreen &
-        sleep 1; systemctl hibernate
         ;;
     reboot)
         systemctl reboot
