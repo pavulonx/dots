@@ -7,7 +7,7 @@ import qualified XMonad.StackSet as W
 
     -- Actions
 import XMonad.Actions.CopyWindow (kill1)
-import XMonad.Actions.CycleWS (moveTo, shiftTo, WSType(..), nextScreen, prevScreen)
+import XMonad.Actions.CycleWS (moveTo, shiftTo, WSType(..), nextScreen, prevScreen, nextWS, prevWS)
 import XMonad.Actions.GridSelect
 import XMonad.Actions.MouseResize
 import XMonad.Actions.Promote
@@ -70,6 +70,7 @@ import XMonad.Prompt.Shell
 import XMonad.Prompt.Ssh
 import XMonad.Prompt.Unicode
 import XMonad.Prompt.XMonad
+
 import Control.Arrow (first)
 
    -- Utilities
@@ -112,7 +113,7 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 
 myStartupHook :: X ()
 myStartupHook = do
-          -- spawnOnce "lxsession &"
+       --   spawnOnce "~/.config/polybar/launch.sh &"
           spawnOnce "nitrogen --restore &"
           spawnOnce "picom --experimental-backends &"
 	  spawnOnce "redshiftw &"
@@ -151,117 +152,6 @@ spawnSelected' lst = gridselect conf lst >>= flip whenJust spawn
                    , gs_font         = myFont
                    }
 
-
-dtXPConfig :: XPConfig
-dtXPConfig = def
-      { font                = myFont
-      , bgColor             = "#282c34"
-      , fgColor             = "#bbc2cf"
-      , bgHLight            = "#c792ea"
-      , fgHLight            = "#000000"
-      , borderColor         = "#535974"
-      , promptBorderWidth   = 0
-      , promptKeymap        = dtXPKeymap
-      , position            = Top
-      -- , position            = CenteredAt { xpCenterY = 0.3, xpWidth = 0.3 }
-      , height              = 23
-      , historySize         = 256
-      , historyFilter       = id
-      , defaultText         = []
-      , autoComplete        = Just 100000  -- set Just 100000 for .1 sec
-      , showCompletionOnTab = False
-      -- , searchPredicate     = isPrefixOf
-      , searchPredicate     = fuzzyMatch
-      , defaultPrompter     = id $ map toUpper  -- change prompt to UPPER
-      -- , defaultPrompter     = unwords . map reverse . words  -- reverse the prompt
-      -- , defaultPrompter     = drop 5 .id (++ "XXXX: ")  -- drop first 5 chars of prompt and add XXXX:
-      , alwaysHighlight     = True
-      , maxComplRows        = Nothing      -- set to 'Just 5' for 5 rows
-      }
-
--- The same config above minus the autocomplete feature which is annoying
--- on certain Xprompts, like the search engine prompts.
-dtXPConfig' :: XPConfig
-dtXPConfig' = dtXPConfig
-      { autoComplete        = Nothing
-      }
-
-calcPrompt c ans =
-    inputPrompt c (trim ans) ?+ \input ->
-        liftIO(runProcessWithInput "qalc" [input] "") >>= calcPrompt c
-    where
-        trim  = f . f
-            where f = reverse . dropWhile isSpace
-
-dtXPKeymap :: M.Map (KeyMask,KeySym) (XP ())
-dtXPKeymap = M.fromList $
-     map (first $ (,) controlMask)      -- control + <key>
-     [ (xK_z, killBefore)               -- kill line backwards
-     , (xK_k, killAfter)                -- kill line forwards
-     , (xK_a, startOfLine)              -- move to the beginning of the line
-     , (xK_e, endOfLine)                -- move to the end of the line
-     , (xK_m, deleteString Next)        -- delete a character foward
-     , (xK_b, moveCursor Prev)          -- move cursor forward
-     , (xK_f, moveCursor Next)          -- move cursor backward
-     , (xK_BackSpace, killWord Prev)    -- kill the previous word
-     , (xK_y, pasteString)              -- paste a string
-     , (xK_g, quit)                     -- quit out of prompt
-     , (xK_bracketleft, quit)
-     ]
-     ++
-     map (first $ (,) altMask)          -- meta key + <key>
-     [ (xK_BackSpace, killWord Prev)    -- kill the prev word
-     , (xK_f, moveWord Next)            -- move a word forward
-     , (xK_b, moveWord Prev)            -- move a word backward
-     , (xK_d, killWord Next)            -- kill the next word
-     , (xK_n, moveHistory W.focusUp')   -- move up thru history
-     , (xK_p, moveHistory W.focusDown') -- move down thru history
-     ]
-     ++
-     map (first $ (,) 0) -- <key>
-     [ (xK_Return, setSuccess True >> setDone True)
-     , (xK_KP_Enter, setSuccess True >> setDone True)
-     , (xK_BackSpace, deleteString Prev)
-     , (xK_Delete, deleteString Next)
-     , (xK_Left, moveCursor Prev)
-     , (xK_Right, moveCursor Next)
-     , (xK_Home, startOfLine)
-     , (xK_End, endOfLine)
-     , (xK_Down, moveHistory W.focusUp')
-     , (xK_Up, moveHistory W.focusDown')
-     , (xK_Escape, quit)
-     ]
-
-archwiki, ebay, news, reddit, urban, yacy :: S.SearchEngine
-
-archwiki = S.searchEngine "archwiki" "https://wiki.archlinux.org/index.php?search="
-ebay     = S.searchEngine "ebay" "https://www.ebay.com/sch/i.html?_nkw="
-news     = S.searchEngine "news" "https://news.google.com/search?q="
-reddit   = S.searchEngine "reddit" "https://www.reddit.com/search/?q="
-urban    = S.searchEngine "urban" "https://www.urbandictionary.com/define.php?term="
-yacy     = S.searchEngine "yacy" "http://localhost:8090/yacysearch.html?query="
-
--- This is the list of search engines that I want to use. Some are from
--- XMonad.Actions.Search, and some are the ones that I added above.
-searchList :: [(String, S.SearchEngine)]
-searchList = [ ("a", archwiki)
-             , ("d", S.duckduckgo)
-             , ("e", ebay)
-             , ("g", S.google)
-             , ("h", S.hoogle)
-             , ("i", S.images)
-             , ("n", news)
-             , ("r", reddit)
-             , ("s", S.stackage)
-             , ("t", S.thesaurus)
-             , ("v", S.vocabulary)
-             , ("b", S.wayback)
-             , ("u", urban)
-             , ("w", S.wikipedia)
-             , ("y", S.youtube)
-             , ("S-y", yacy)
-             , ("z", S.amazon)
-             ]
 
 myScratchPads :: [NamedScratchpad]
 myScratchPads = [ NS "terminal" spawnTerm findTerm manageTerm
@@ -302,8 +192,8 @@ tall     = renamed [Replace "tall"]
            $ addTabs shrinkText myTabTheme
            $ subLayout [] (smartBorders Simplest)
            $ limitWindows 12
-           $ mySpacing 8
-           $ ResizableTall 1 (3/100) (1/2) []
+           $ mySpacing 4
+           $ ResizableTall 1 (2/100) (1/2) []
 magnify  = renamed [Replace "magnify"]
            $ windowNavigation
            $ addTabs shrinkText myTabTheme
@@ -358,19 +248,19 @@ tabs     = renamed [Replace "tabs"]
 
 -- setting colors for tabs layout and tabs sublayout.
 myTabTheme = def { fontName            = myFont
-                 , activeColor         = "#46d9ff"
-                 , inactiveColor       = "#313846"
-                 , activeBorderColor   = "#46d9ff"
-                 , inactiveBorderColor = "#282c34"
-                 , activeTextColor     = "#282c34"
-                 , inactiveTextColor   = "#d0d0d0"
+                 , activeColor         = "#ebdbb2"
+                 , inactiveColor       = "#080808"
+                 , activeBorderColor   = "#ebdbb2"
+                 , inactiveBorderColor = "#080808"
+                 , activeTextColor     = "#080808"
+                 , inactiveTextColor   = "#ebdbb2"
                  }
 
 -- Theme for showWName which prints current workspace when you change workspaces.
 myShowWNameTheme :: SWNConfig
 myShowWNameTheme = def
-    { swn_font              = "xft:Segoe UI:bold:size=60"
-    , swn_fade              = 1.0
+    { swn_font              = "xft:Font Awesome:bold:size=60"
+    , swn_fade              = 0.2
     , swn_bgcolor           = "#080808"
     , swn_color             = "#ebdbb2"
     }
@@ -389,9 +279,10 @@ myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ T.toggleLayouts float
                                  ||| threeCol
                                  ||| threeRow
 
-myWorkspaces = [" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 ", " 9 ", "0"]
+--myWorkspaces = [" 1 ", " 2 ", " 3 ", " 4 ", " 5 ", " 6 ", " 7 ", " 8 ", " 9 ", "0"]
 --myWorkspaces = ["", "", "", "", "", ",", ",", "", "", ""]
---myWorkspaces = ["\61612", "\61728", "\61729", "\61897", "\61717", "\61723", "\61574,", "\61477", "\61451", "\61459"]
+--myWorkspaces = zipWith (\x y -> show x ++ y) [1..] ["\61612", "\61728", "\61729", "\61897", "\61717", "\61723", "\61574", "\61477", "\61451", "\61459"]
+myWorkspaces = ["\61612", "\61728", "\61729", "\61897", "\61717", "\61723", "\61574", "\61477", "\61451", "\61459"]
 myWorkspaceIndices = M.fromList $ zipWith (,) myWorkspaces [1..] -- (,) == \x y -> (x,y)
 
 clickable ws = "<action=xdotool key super+"++show i++">"++ws++"</action>"
@@ -413,7 +304,7 @@ myManageHook = composeAll
 
 myLogHook :: X ()
 myLogHook = fadeInactiveLogHook fadeAmount
-    where fadeAmount = 1.0
+    where fadeAmount = 0.8
 
 myKeys :: [(String, X ())]
 myKeys =
@@ -422,20 +313,9 @@ myKeys =
         , ("M-S-r", spawn "xmonad --recompile && xmonad  --restart")   -- Restarts xmonad
         , ("M-S-e", io exitSuccess)             -- Quits xmonad
 
-    -- Run Prompt
-        -- , ("M-S-<Return>", shellPrompt dtXPConfig) -- Xmonad Shell Prompt
-        -- , ("M-S-<Return>", spawn "dmenu_run -i -p \"Run: \"") -- Dmenu
+    -- Launcher
         , ("M-d", spawn "rofi -show") -- Rofi
         , ("M-x", spawn "rofi -show run") -- Rofi
-
-    -- Other Prompts
-        , ("M-p c", calcPrompt dtXPConfig' "qalc") -- calcPrompt
-        , ("M-p m", manPrompt dtXPConfig)          -- manPrompt
-        , ("M-p p", passPrompt dtXPConfig)         -- passPrompt
-        , ("M-p g", passGeneratePrompt dtXPConfig) -- passGeneratePrompt
-        , ("M-p r", passRemovePrompt dtXPConfig)   -- passRemovePrompt
-        , ("M-p s", sshPrompt dtXPConfig)          -- sshPrompt
-        , ("M-p x", xmonadPrompt dtXPConfig)       -- xmonadPrompt
 
     -- Useful programs to have a keybinding for launch
         , ("M-<Return>", spawn myTerminal)
@@ -478,6 +358,24 @@ myKeys =
         , ("M-<Backspace>", promote)      -- Moves focused window to master, others maintain order
         , ("M-S-<Tab>", rotSlavesDown)    -- Rotate all windows except master and keep focus in place
         , ("M-C-<Tab>", rotAllDown)       -- Rotate all the windows in the current stack
+
+
+        --, ("M-C-h", prevWS)   -- Swap focused window with next window
+        , ("M-C-<Left>", prevWS)   -- Swap focused window with next window
+        --, ("M-C-l", nextWS)   -- Swap focused window with next window
+        , ("M-C-<Right>", nextWS)   -- Swap focused window with next window
+--        , ((modm,               xK_Down),  nextWS)
+--        , ((modm,               xK_Up),    prevWS)
+--  	, ((modm .|. shiftMask, xK_Down), shiftToNext >> nextWS)
+--  	, ((modm .|. shiftMask, xK_Up),   shiftToPrev >> prevWS)
+--        , ((modm .|. shiftMask, xK_Down),  shiftToNext)
+--        , ((modm .|. shiftMask, xK_Up),    shiftToPrev)
+--        , ((modm,               xK_Right), nextScreen)
+--        , ((modm,               xK_Left),  prevScreen)
+--        , ((modm .|. shiftMask, xK_Right), shiftNextScreen)
+--        , ((modm .|. shiftMask, xK_Left),  shiftPrevScreen)
+--        , ((modm,               xK_z),     toggleWS)
+
 
     -- Layouts
         , ("M-<Tab>", sendMessage NextLayout)           -- Switch to next layout
@@ -529,10 +427,6 @@ myKeys =
         , ("<XF86HomePage>", spawn "$BROWSER")
         , ("<XF86Calculator>", runOrRaise "gnome-calculator" (resource =? "gnome-calculator"))
         ]
-    -- Appending search engine prompts to keybindings list.
-    -- Look at "search engines" section of this config for values for "k".
-        ++ [("M-s " ++ k, S.promptSearch dtXPConfig' f) | (k,f) <- searchList ]
-        ++ [("M-S-s " ++ k, S.selectSearch f) | (k,f) <- searchList ]
     -- The following lines are needed for named scratchpads.
           where nonNSP          = WSIs (return (\ws -> W.tag ws /= "nsp"))
                 nonEmptyNonNSP  = WSIs (return (\ws -> isJust (W.stack ws) && W.tag ws /= "nsp"))
@@ -540,6 +434,7 @@ myKeys =
 main :: IO ()
 main = do
     -- Launching three instances of xmobar on their monitors.
+    -- _ <- spawnPipe "~/.config/polybar/launch.sh"
     xmproc0 <- spawnPipe "xmobar -x 0 $XMONAD_CONFIG_DIR/xmobar/bar0.hs"
 --    xmproc1 <- spawnPipe "xmobar -x 1 $XMONAD_CONFIG_DIR/xmobar/bar2.hs"
 --    xmproc2 <- spawnPipe "xmobar -x 2 $XMONAD_CONFIG_DIR/xmobar/bar1.hs"
