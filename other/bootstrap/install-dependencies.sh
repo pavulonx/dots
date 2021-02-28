@@ -9,6 +9,7 @@ install_all() {
 echo "CORE"
 core=(
 #adapta-gtk-theme
+exa
 plata-theme
 adwaita-icon-theme
 arandr

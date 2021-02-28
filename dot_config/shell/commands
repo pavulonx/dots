@@ -41,10 +41,12 @@ alias \
 
 # ls
 alias \
-  ls='ls --color=auto --group-directories-first' \
-  l='ls -la' \
-  ll='ls -l' \
-  lt='ls -lat'
+  exa='exa --color=auto --group-directories-first' \
+  ls='exa' \
+  l='exa -la' \
+  ll='exa -l' \
+  lt='exa -lasnew' \
+  lg='exa --git -l -snew'
 
 # dirs
 alias d='dirs -v | head -10'
