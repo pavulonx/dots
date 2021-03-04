@@ -19,7 +19,7 @@ inactive = #786954
 orange = #faa00f
 red = #f94144
 
-[bar/top]
+[bar/i3]
 width = 100%
 height = 22
 fixed-center = true
@@ -69,6 +69,104 @@ modules-right = music weather vpn wlan lan backlight filesystem temperature cpu 
 
 separator =
 
+[bar/xmonad]
+width = 100%
+height = 22
+fixed-center = true
+monitor = ${env:MONITOR:}
+enable-ipc = true
+
+spacing = 0
+padding-left = 0
+padding-right = 2
+module-margin-left = 2
+module-margin-right = 2
+module-margin-top = 2
+module-margin-bottom = 2
+
+;colors
+background = ${colors.background}
+foreground = ${colors.foreground}
+line-color = ${colors.background}
+line-size = 1
+underline-size = 1
+
+font-0 = Segoe UI:size=9:fontformat=truetype
+font-1 = Noto Sans:size=9:fontformat=truetype
+font-2 = NotoSans-Regular:size=8;-1
+font-3 = MaterialIcons:size=10;0
+font-4 = FontAwesome:size=10;0
+font-5 = DejaVuSansMono Nerd Font:size=10;0
+
+;; tray
+tray-position = right
+tray-padding = 5
+tray-background = ${colors.background}
+tray-detached = false
+tray-maxsize = 15
+tray-scale = 1
+
+modules-left = ewmh xwindow
+modules-center = date
+{{- if eq .machine_type "desktop" }}
+modules-right = music weather vpn lan filesystem temperature cpu memory xdpms pulseaudio
+{{- else }}
+modules-right = music weather vpn wlan lan backlight filesystem temperature cpu memory xdpms battery pulseaudio
+{{- end }}
+separator =
+
+
+[bar/bspwm]
+width = 100%
+height = 22
+fixed-center = true
+monitor = ${env:MONITOR:}
+enable-ipc = true
+
+scroll-up = #bspwm.prev
+scroll-down = #bspwm.next
+
+
+spacing = 0
+padding-left = 0
+padding-right = 2
+module-margin-left = 2
+module-margin-right = 2
+module-margin-top = 2
+module-margin-bottom = 2
+
+;colors
+background = ${colors.background}
+foreground = ${colors.foreground}
+line-color = ${colors.background}
+line-size = 1
+underline-size = 1
+
+font-0 = Segoe UI:size=9:fontformat=truetype
+font-1 = Noto Sans:size=9:fontformat=truetype
+font-2 = NotoSans-Regular:size=8;-1
+font-3 = MaterialIcons:size=10;0
+font-4 = FontAwesome:size=10;0
+font-5 = DejaVuSansMono Nerd Font:size=10;0
+
+;; tray
+tray-position = right
+tray-padding = 5
+tray-background = ${colors.background}
+tray-detached = false
+tray-maxsize = 15
+tray-scale = 1
+
+modules-left = bspwm xwindow
+modules-center = date
+{{- if eq .machine_type "desktop" }}
+modules-right = music weather vpn lan filesystem temperature cpu memory xdpms pulseaudio
+{{- else }}
+modules-right = music weather vpn wlan lan backlight filesystem temperature cpu memory xdpms battery pulseaudio
+{{- end }}
+separator =
+
+
 ;----------------
 ; Modules
 ;----------------
@@ -103,6 +201,74 @@ label-visible = "  %name%  "
 label-visible-foreground = ${colors.background}
 label-visible-background = ${colors.inactive}
 ;label-visible-underline = ${colors.foreground}
+
+
+[module/ewmh]
+type = internal/xworkspaces
+
+pin-workspaces = false
+enable-click = true
+enable-scroll = true
+reverse-scroll = true
+
+
+format = <label-state>   <label-monitor>
+label-monitor = %name%
+
+label-mode-foreground = ${colors.background}
+label-mode-background = ${colors.orange}
+label-mode-padding = 5
+
+label-unfocused = "  %name%  "
+
+label-active = "  %name%  "
+label-active-foreground = ${colors.background}
+label-active-background = ${colors.foreground}
+
+label-urgent = "  %name%  "
+label-urgent-foreground = ${colors.background}
+label-urgent-background = ${colors.urgent}
+
+label-occupied = "  %name%  "
+;label-occupied-foreground = ${colors.background}
+;label-occupied-background = ${colors.inactive}
+
+;label-empty = "  %name%  "
+label-empty = ""
+;format-foreground = ${colors.foreground}
+;format-background = ${colors.background}
+
+
+; alternatively xmonad-log support
+[module/xmonad-log]
+type = custom/script
+exec = xmonad-log
+
+tail = true
+
+
+[module/bspwm]
+type = internal/bspwm
+
+format = <label-state> <label-mode>
+
+label-mode-foreground = ${colors.background}
+label-mode-background = ${colors.orange}
+label-mode-padding = 5
+
+label-unfocused = "  %name%  "
+
+label-focused = "  %name%  "
+label-focused-foreground = ${colors.background}
+label-focused-background = ${colors.foreground}
+
+label-urgent = "  %name%  "
+label-urgent-foreground = ${colors.background}
+label-urgent-background = ${colors.urgent}
+
+label-visible = "  %name%  "
+label-visible-foreground = ${colors.background}
+label-visible-background = ${colors.inactive}
 
 
 [module/temperature]

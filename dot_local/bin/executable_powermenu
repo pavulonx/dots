@@ -11,12 +11,18 @@ cmd="$(echo "
   | awk '{print $2}'
 )"
 
+case $DESKTOP_SESSION in
+	bspwm) _exit_cmd="bspc quit" ;;
+	i3)    _exit_cmd="i3-msg exit" ;;
+	*)     _exit_cmd="notify-send 'Exiting for session $DESKTOP_SESSION not supporrted'"
+esac
+
 case "$cmd" in
     lock)
         lockscreen
         ;;
     exit)
-        i3-msg exit #todo: support for xmonad
+	      eval "$_exit_cmd"
         ;;
     suspend)
         lockscreen &
