@@ -1,0 +1,33 @@
+[settings]
+screenchange-reload = true
+
+[global/wm]
+margin-top = 0
+margin-bottom = 0
+
+[variables]
+{{- if eq .chezmoi.hostname "LT33693" }}
+hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon9/temp1_input
+battery = BAT1
+{{- else }}
+hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon1/temp1_input
+battery = hidpp_battery_0
+{{- end }}
+
+{{- if eq .machine_type "desktop" }}
+modules-right = music weather vpn lan filesystem temperature cpu memory xdpms pulseaudio updates
+{{- else }}
+modules-right = music weather vpn wlan lan backlight filesystem temperature cpu memory xdpms battery pulseaudio updates
+{{- end }}
+
+[colors]
+transparent = #00000000
+background = #080808
+foreground = #ebdbb2
+urgent = #cc241d
+inactive = #786954
+orange = #faa00f
+red = #f94144
+
+; vim:syntax=dosini
+;

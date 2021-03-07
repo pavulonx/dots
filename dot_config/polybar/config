@@ -1,0 +1,3 @@
+include-file = $XDG_CONFIG_HOME/polybar/variables.ini
+include-file = $XDG_CONFIG_HOME/polybar/modules.ini
+include-file = $XDG_CONFIG_HOME/polybar/bars.ini

@@ -1,0 +1,42 @@
+#!/bin/sh
+
+locktext="%A %d.%m.%Y"
+
+transparent=00000000
+white=ffffffff
+red=c0392b
+blue=2980b9
+
+insidecolor=$transparent
+ringcolor=$white
+verifcolor=$white
+separatorcolor=$transparent
+
+keyhlcolor=$blue
+bshlcolor=$blue
+
+insidevercolor=$white
+ringvercolor=$white
+
+insidewrongcolor=$red
+ringwrongcolor=$red
+
+timecolor=$white
+datecolor=$white
+
+i3lock \
+	-t -c "000000" \
+	--timepos='x+110:h-70' \
+	--datepos='x+43:h-45' \
+	--clock --date-align 1 --datestr "$locktext" \
+	--insidecolor=$insidecolor --ringcolor=$ringcolor --line-uses-inside \
+	--keyhlcolor=$keyhlcolor --bshlcolor=$bshlcolor --separatorcolor=$separatorcolor \
+	--insidevercolor=$insidevercolor --insidewrongcolor=$insidewrongcolor \
+	--ringvercolor=$ringvercolor --ringwrongcolor=$ringwrongcolor --indpos='x+280:h-70' \
+	--radius=20 --ring-width=4 --veriftext='' --wrongtext='' \
+	--verifcolor="$verifcolor" --timecolor="$timecolor" --datecolor="$datecolor" \
+	--noinputtext='' --force-clock -n "$@"
+
+sleep 1
+
+exit 0
