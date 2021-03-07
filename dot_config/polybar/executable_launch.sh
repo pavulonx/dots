@@ -3,10 +3,10 @@
 killall -q polybar
 
 case $DESKTOP_SESSION in
-	bspwm)  bar=bspwm ;;
-	xmonad) bar=xmonad ;;
-	i3)     bar=i3 ;;
-	*)      bar="" ;;
+	bspwm)  bar=bspwm   ;;
+	xmonad) bar=xmonad  ;;
+	i3)     bar=i3      ;;
+	*)      bar=""      ;;
 esac
 
 [ -z "$bar" ] && exit 1
