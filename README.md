@@ -1,6 +1,6 @@
 # Screenshots:
 
-# ![Current setup](https://raw.githubusercontent.com/rozenj/dots/master/other/scrot/2020-10-25-012729_2560x1440_scrot.png)
+# ![Current setup](https://raw.githubusercontent.com/rozenj/dots/master/extras/scrot/2020-10-25-012729_2560x1440_scrot.png)
 
 # Required configuration:
 
@@ -15,9 +15,9 @@ In `~/.config/chezmoi/chezmoi.toml` set:
     browser = "/usr/bin/firefox"
 ```
 
-Run [`extras/bootstrap/configure.sh`](other/bootstrap/configure.sh) `<machine_type>` `<browser>` to
+Run [`extras/bootstrap/configure.sh`](extras/bootstrap/configure.sh) `<machine_type>` `<browser>` to
 apply config
-`other/bootstrap/configure.sh laptop firefox firefox.desktop`
+`extras/bootstrap/configure.sh laptop firefox firefox.desktop`
 ___
 
 #### TODO:
