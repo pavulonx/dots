@@ -14,18 +14,11 @@ install_systemwise() {
   fi
 }
 
-find "$DIR/root" -type f | awk -F'root' '{ print $2}' |
+tree_dir=tree
+
+find "$DIR/$tree_dir" -type f | awk -F"$tree_dir" '{ print $2}' |
 while read -r location; do
-    install_systemwise root "$location";
+    install_systemwise "$tree_dir" "$location";
 done;
-
-
-# override preinstalled manjaro stuff todo: remove manjaro support
-if grep -q "manjaro" /etc/os-release; then
-  find "$DIR/manjaro" -type f | awk -F'manjaro' '{ print $2}' |
-  while read -r location; do
-    install_systemwise manjaro "$location";
-  done;
-fi
 
 echo "Done!"
