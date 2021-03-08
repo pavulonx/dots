@@ -1,12 +1,8 @@
 # https://github.com/twpayne/chezmoi/issues/721
 LICENSE
-other/**
 other/
-backups/**
 backups/
-docs/**
 docs/
-**/.idea/**
 **/.idea/
 TODO.md
 README.md
@@ -15,15 +11,21 @@ README.md
 .config/backup/
 {{- end }}
 {{- if eq .machine_type "server" }}
-*
 !.config/shell/**
-!.config/shell/
+!.config/shell
 !.config/zsh/**
-!.config/zsh/
-!.local/bin/**
-!.local/bin/
+!.config/zsh
+!.config/nvim/**
+!.config/nvim
+!.config/git/**
+!.config/git
+!.config/
+.config/*
+!.local/
+!.local/**
 !.vimrc
 !.zprofile
 !.bash_profile
 !.profile
+*
 {{- end }}
