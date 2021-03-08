@@ -8,16 +8,14 @@ In `~/.config/chezmoi/chezmoi.toml` set:
 
 - **machine_type** - to one of `desktop`, `server`, `laptop`
 - **browser** - path to browser
-- **browser_desktop** - browser desktop file name
 
 ```
 [data]
     machine_type = "desktop"
     browser = "/usr/bin/firefox"
-    browser_desktop = "firefox.desktop"
 ```
 
-Run [`other/bootstrap/configure.sh`](other/bootstrap/configure.sh) `<machine_type>` `<browser>` `[<browser_desktop>]` to
+Run [`other/bootstrap/configure.sh`](other/bootstrap/configure.sh) `<machine_type>` `<browser>` to
 apply config
 `other/bootstrap/configure.sh laptop firefox firefox.desktop`
 ___

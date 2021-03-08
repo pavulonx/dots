@@ -10,14 +10,12 @@ _machine_type="$1"
 _browser="$(command -v "$2" || echo "$2")"
 [ -z "$_browser" ] && echo "Browser is invalid!" && exit 1
 
-_browser_desktop="${3}"
-
 template="
 [data]
     machine_type = \"$_machine_type\"
     browser = \"$_browser\"
-    browser_desktop = \"$_browser_desktop\"
 "
+
 echo "$template"
 read -r -p "Is this configuration ok? [y/N] " response </dev/tty
 if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
