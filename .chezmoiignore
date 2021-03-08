@@ -1,6 +1,6 @@
 # https://github.com/twpayne/chezmoi/issues/721
 LICENSE
-other/
+extras/
 backups/
 docs/
 **/.idea/

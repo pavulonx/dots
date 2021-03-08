@@ -15,7 +15,7 @@ In `~/.config/chezmoi/chezmoi.toml` set:
     browser = "/usr/bin/firefox"
 ```
 
-Run [`other/bootstrap/configure.sh`](other/bootstrap/configure.sh) `<machine_type>` `<browser>` to
+Run [`extras/bootstrap/configure.sh`](other/bootstrap/configure.sh) `<machine_type>` `<browser>` to
 apply config
 `other/bootstrap/configure.sh laptop firefox firefox.desktop`
 ___
