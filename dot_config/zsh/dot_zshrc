@@ -34,7 +34,7 @@ zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 ## HISTORY yyyy-mm-dd"
 HISTSIZE=90000
 SAVEHIST=90000
-HISTFILE=~/.local/share/zsh/history
+HISTFILE="$XDG_DATA_HOME/zsh/history"
 
 setopt extended_history       # record timestamp of command in HISTFILE
 setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
