@@ -8,7 +8,7 @@ function title {
   [ "$DISABLE_AUTO_TITLE" != "true" ] || return
   : "${2=$1}"
   case "$TERM" in
-    xterm*|cygwin|putty*|rxvt*|konsole*|ansi)
+    xterm*|putty*|rxvt*|konsole*|ansi|mlterm*|alacritty|st*)
       print -Pn "\e]2;$2:q\a" # set window name
       print -Pn "\e]1;$1:q\a" # set tab name
       ;;

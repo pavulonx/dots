@@ -12,4 +12,5 @@ if [ -z "$PS1"  ]; then
   fi
 fi
 
-source "$XDG_CONFIG_HOME/shell/commands"
+source "$XDG_CONFIG_HOME/shell/commands"    # general commands
+source "$XDG_CONFIG_HOME/shell/local"       # local config

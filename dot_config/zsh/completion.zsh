@@ -1,13 +1,14 @@
 # fixme - the load process here seems a bit bizarre
 zmodload -i zsh/complist
 
-WORDCHARS=''
+#WORDCHARS='' # where not to stop hen moving word (ctrl+left/right) default stop only on space
 
 unsetopt menu_complete   # do not autoselect the first completion entry
 unsetopt flowcontrol
 setopt auto_menu         # show completion menu on successive tab press
 setopt complete_in_word
 setopt always_to_end
+setopt auto_list         # automatically list choices on ambiguous completion.
 
 # should this be in keybindings?
 bindkey -M menuselect '^o' accept-and-infer-next-history
