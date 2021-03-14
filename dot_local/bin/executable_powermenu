@@ -2,7 +2,7 @@
 
 cmd="$(echo "
  lock
- exit
+ exit
  suspend
  reboot
  shutdown
