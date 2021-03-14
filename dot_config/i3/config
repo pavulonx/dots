@@ -17,7 +17,7 @@ bindsym $mod+b border toggle
 # bindsym $mod+n border normal
 
 # Font for window titles. Will also be used by the bar unless a different font
-font xft:Segoe UI 9
+font pango:Segoe UI Semibold 9
 
 # Use Mouse+$mod to drag floating windows
 floating_modifier $mod
@@ -162,19 +162,17 @@ bindsym $mod+Ctrl+n exec networkmanager_dmenu
 ################
 
 # Color definition
-  set $c_focusd   #080808
-  set $c_inactive #1D1D1D
-  set $c_text     #ebdbb2
-  set $c_urgent   #cc241d
-  set $c_accent   #ebdbb2
+  set $c_black   #080808
+  set $c_accnt   #ebdbb2
+  set $c_urgnt   #cc241d
 
 #  Widow Colours
 #                         border        backgr.       text      indic.      child_border
-  client.focused          $c_focusd     $c_focusd     $c_text   $c_accent   $c_focusd
-  client.focused_inactive $c_inactive   $c_inactive   $c_text   $c_accent   $c_inactive
-  client.unfocused        $c_inactive   $c_inactive   $c_text   $c_accent   $c_inactive
-  client.urgent           $c_urgent     $c_urgent     $c_text   $c_accent   $c_urgent
-  client.background       $c_focusd
+  client.focused          $c_accnt      $c_accnt    $c_black   $c_accnt   $c_accnt
+  client.focused_inactive $c_black      $c_black    $c_accnt   $c_accnt   $c_black
+  client.unfocused        $c_black      $c_black    $c_accnt   $c_accnt   $c_black
+  client.urgent           $c_urgnt      $c_urgnt    $c_accnt   $c_accnt   $c_urgnt
+  client.background       $c_black
 
 
 
