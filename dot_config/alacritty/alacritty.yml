@@ -16,8 +16,8 @@ env:
   # each instance of Alacritty. If it is not present, alacritty will
   # check the local terminfo database and use `alacritty` if it is
   # available, otherwise `xterm-256color` is used.
-  # TERM: alacritty
-  TERM: xterm-256color
+  #TERM: xterm-256color
+  TERM: alacritty
 
 scrolling:
   history: 55000
@@ -29,33 +29,82 @@ font:
 
   size: 10
 
-colors:
-  primary:
-    background: '#080808'
-    foreground: '#ebdbb2'
 
-  # Normal colors
-  normal:
-    black:   '#263238'
-    red:     '#e53935'
-    green:   '#43a047'
-    yellow:  '#ffb300'
-    blue:    '#1e88e5'
-    magenta: '#8e24aa'
-    cyan:    '#00acc1'
-    white:   '#eeeeee'
+schemes:
+  default: &default
+    primary:
+      background: '#080808'
+      foreground: '#ebdbb2'
+    normal:
+      black:   '#263238'
+      red:     '#e53935'
+      green:   '#43a047'
+      yellow:  '#ffb300'
+      blue:    '#1e88e5'
+      magenta: '#8e24aa'
+      cyan:    '#00acc1'
+      white:   '#eeeeee'
+    bright:
+      black:   '#37474f'
+      red:     '#ef5350'
+      green:   '#66bb6a'
+      yellow:  '#ffd54f'
+      blue:    '#42a5f5'
+      magenta: '#ab47bc'
+      cyan:    '#26c6da'
+      white:   '#f5f5f5'
 
-  # Bright colors
-  bright:
-    black:   '#37474f'
-    red:     '#ef5350'
-    green:   '#66bb6a'
-    yellow:  '#ffd54f'
-    blue:    '#42a5f5'
-    magenta: '#ab47bc'
-    cyan:    '#26c6da'
-    white:   '#f5f5f5'
+  solarized_light: &solarized_light
+    primary:
+      background: '#fdf6e3'
+      foreground: '#657b83'
+    normal:
+      black:   '#073642'
+      red:     '#dc322f'
+      green:   '#859900'
+      yellow:  '#b58900'
+      blue:    '#268bd2'
+      magenta: '#d33682'
+      cyan:    '#2aa198'
+      white:   '#eee8d5'
 
+    bright:
+      black:   '#002b36'
+      red:     '#cb4b16'
+      green:   '#586e75'
+      yellow:  '#657b83'
+      blue:    '#839496'
+      magenta: '#6c71c4'
+      cyan:    '#93a1a1'
+      white:   '#fdf6e3'
+
+  solarized_dark: &solarized_dark
+    primary:
+      background: '#002b36'
+      foreground: '#839496'
+    normal:
+      black:   '#073642'
+      red:     '#dc322f'
+      green:   '#859900'
+      yellow:  '#b58900'
+      blue:    '#268bd2'
+      magenta: '#d33682'
+      cyan:    '#2aa198'
+      white:   '#eee8d5'
+    bright:
+      black:   '#002b36'
+      red:     '#cb4b16'
+      green:   '#586e75'
+      yellow:  '#657b83'
+      blue:    '#839496'
+      magenta: '#6c71c4'
+      cyan:    '#93a1a1'
+      white:   '#fdf6e3'
+
+
+colors: *default
+# colors: *solarized_light
+# colors: *solarized_dark
 
 # Shell
 #
