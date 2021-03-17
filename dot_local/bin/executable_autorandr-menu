@@ -1,23 +1,36 @@
-#!/usr/bin/env sh
+#!/bin/sh
 
-cmd="$({ autorandr | awk '{print "load " $0}'; echo "
-  run common
-  run horizontal
-  run vertical
-  run change
-" | xargs -n2; } | rofi -dmenu -i -p "Autorandr")"
+LAYOUTS_DIR="$HOME/.screenlayout"
 
-autorandr_args=''
-case "$cmd" in
+cmd="$({
+
+find "$LAYOUTS_DIR" -maxdepth 1 -type f -printf "exec %f\n";
+autorandr | awk '{print "autorandr load " $0}';
+echo "
+  autorandr run common
+  autorandr run horizontal
+  autorandr run vertical
+  autorandr run change
+" | xargs -n2;
+
+}| rofi -dmenu -i -p "Screen layout")"
+
+
+to_exec="$(echo "$cmd" | awk '/^exec/ {print "'$LAYOUTS_DIR'/"$2}')"
+if [ -n "$to_exec" ]; then
+  $to_exec
+  notify-send "Screenlayout: exec $to_exec";
+else
+  autorandr_args=''
+  case "$cmd" in
     run\ change*)   autorandr_args="-c" ;;
     run\ *)         autorandr_args="$(echo "$cmd" | cut -d " " -f2)" ;;
     load\ *)        autorandr_args="--load $(echo "$cmd" | cut -d " " -f2)" ;;
     *) exit 0;
-esac
-
-# shellcheck disable=SC2086
-autorandr $autorandr_args
-
-notify-send "Screen: autorandr $autorandr_args";
+  esac
+  # shellcheck disable=SC2086
+  autorandr $autorandr_args
+  notify-send "Screenlayout: autorandr $autorandr_args";
+fi
 
 exit 0
