@@ -55,7 +55,7 @@ bindsym $mod+Ctrl+b exec terminal -e 'bmenu'
 bindsym $mod+F2 exec $BROWSER
 bindsym $mod+F3 exec thunar
 bindsym $mod+Shift+F12  --release exec --no-startup-id "autorandr common; exec notify-send 'autorandr common'; true"
-bindsym $mod+Shift+plus --release exec --no-startup-id "autorandr-menu"
+bindsym $mod+Shift+plus --release exec --no-startup-id "xrandr-menu"
 bindsym $mod+Shift+t --release exec --no-startup-id "toggleprogram picom -b --experimental-backends"
 bindsym $mod+Shift+d --release exec --no-startup-id "toggleprogram dunst; exec notify-send 'Dunst restart'"
 
@@ -281,11 +281,9 @@ bindsym $mod+Mod1+l exec --no-startup-id lockscreen
 exec --no-startup-id nm-applet
 exec --no-startup-id redshiftw
 exec --no-startup-id autorandr -c
-#exec --no-startup-id xbindkeys
 
 exec_always --no-startup-id nitrogen --restore
 exec_always --no-startup-id ~/.config/polybar/launch.sh
-# exec_always --no-startup-id fix_xcursor
 
 ##
 # 'bar' section has been removed, using polybar instead
