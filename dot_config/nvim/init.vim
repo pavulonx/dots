@@ -12,7 +12,6 @@ Plug 'tpope/vim-surround'
 Plug 'preservim/nerdtree'
 Plug 'junegunn/goyo.vim'
 Plug 'jreybert/vimagit'
-Plug 'lukesmithxyz/vimling'
 Plug 'vimwiki/vimwiki'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -22,25 +21,39 @@ Plug 'lifepillar/vim-solarized8'
 call plug#end()
 
 colorscheme solarized8
+let g:solarized_statusline=''
 let g:airline_theme='solarized_flood'
 
 set termguicolors
 set title
 "set bg=light
 set bg=dark
-set go=a
 set mouse=a
-set nohlsearch
 set clipboard+=unnamedplus
-set noshowmode
-set noruler
-set laststatus=0
-set noshowcmd
+set noshowmode " If in Insert, Replace or Visual mode put a message on the last line.
 set history=1000
 set so=7
 set ruler
 set wildmenu
-set cursorline
+set cursorline " highlight line
+"set cursorcolum " highlight column
+" Ignore case when searching
+set ignorecase
+
+" When searching try to be smart about cases
+set smartcase
+
+" Highlight search results
+set hlsearch
+" set foldcolumn=1 " Add a bit extra margin to the left
+
+" Turn backup off, since most stuff is in SVN, git et.c anyway...
+set nobackup
+set nowb
+set noswapfile
+
+" Makes search act like search in modern browsers
+set incsearch
 
 " Some basics:
 nnoremap c "_c
@@ -63,6 +76,8 @@ map <leader>o :setlocal spell! spelllang=en_us<CR>
 set splitbelow splitright
 " Case insensitive search
 set ignorecase
+" When searching try to be smart about cases
+set smartcase
 
 """ " TAB & text settings
 " Use spaces instead of tabs
@@ -93,13 +108,6 @@ else
 	let NERDTreeBookmarksFile = '~/.vim' . '/NERDTreeBookmarks'
 endif
 
-" vimling:
-nm <leader><leader>d :call ToggleDeadKeys()<CR>
-imap <leader><leader>d <esc>:call ToggleDeadKeys()<CR>a
-nm <leader><leader>i :call ToggleIPA()<CR>
-imap <leader><leader>i <esc>:call ToggleIPA()<CR>a
-nm <leader><leader>q :call ToggleProse()<CR>
-
 " Shortcutting split navigation, saving a keypress:
 map <C-h> <C-w>h
 map <C-j> <C-w>j
@@ -124,9 +132,6 @@ map <leader>c :w! \| !compiler "<c-r>%"<CR>
 
 " Open corresponding .pdf/.html or preview
 map <leader>p :!opout <c-r>%<CR><CR>
-
-" Runs a script that cleans out tex build files whenever I close out of a .tex file.
-autocmd VimLeave *.tex !texclear %
 
 " Ensure files are read as what I want:
 let g:vimwiki_ext2syntax = {'.Rmd': 'markdown', '.rmd': 'markdown','.md': 'markdown', '.markdown': 'markdown', '.mdown': 'markdown'}
@@ -157,21 +162,12 @@ if &diff
 	highlight! link DiffText MatchParen
 endif
 
-" Function for toggling the bottom statusbar:
-let s:hidden_all = 1
-function! ToggleHiddenAll()
-	if s:hidden_all  == 0
-		let s:hidden_all = 1
-		set noshowmode
-		set noruler
-		set laststatus=0
-		set noshowcmd
-	else
-		let s:hidden_all = 0
-		set showmode
-		set ruler
-		set laststatus=2
-		set showcmd
-	endif
-endfunction
-nnoremap <leader>h :call ToggleHiddenAll()<CR>
+
+
+" Visual mode pressing * or # searches for the current selection
+" Super useful! From an idea by Michael Naumann
+vnoremap <silent> * :<C-u>call VisualSelection('', '')<CR>/<C-R>=@/<CR><CR>
+vnoremap <silent> # :<C-u>call VisualSelection('', '')<CR>?<C-R>=@/<CR><CR>
+
+" Return to last edit position when opening files (You want this!)
+au BufReadPost * if line("'\"") > 1 && line("'\"") <= line("$") | exe "normal! g'\"" | endif
