@@ -12,8 +12,15 @@ _browser="$(command -v "$2" || echo "$2")"
 
 template="
 [data]
-    machine_type = \"$_machine_type\"
-    browser = \"$_browser\"
+  machine_type = \"$_machine_type\"
+  browser = \"$_browser\"
+
+[diff]
+  pager = \"\"
+
+[merge]
+  command = \"nvim\"
+  args = \"-d\"
 "
 
 echo "$template"
