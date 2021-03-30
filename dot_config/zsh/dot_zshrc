@@ -45,24 +45,18 @@ setopt inc_append_history     # add commands to HISTFILE in order of execution
 
 
 zinit light-mode for \
-    zsh-users/zsh-autosuggestions \
-    zsh-users/zsh-completions \
-    zdharma/history-search-multi-word \
-    simnalamburt/cgitc \
-    simnalamburt/ctrlf \
-    MichaelAquilina/zsh-you-should-use \
-    OMZ::plugins/docker-compose \
-    OMZL::git.zsh
+  zsh-users/zsh-autosuggestions \
+  zsh-users/zsh-completions \
+  zdharma/fast-syntax-highlighting \
+  zdharma/history-search-multi-word \
+  simnalamburt/cgitc \
+  simnalamburt/ctrlf \
+  MichaelAquilina/zsh-you-should-use \
+  OMZP::colored-man-pages \
+  OMZ::plugins/docker-compose \
+  OMZL::git.zsh
 
-zinit wait lucid for \
-  atinit"zicompinit; zicdreplay"  \
-        zdharma/fast-syntax-highlighting \
-        OMZP::colored-man-pages
-#        OMZP::colored-man-pages \
-#  as"completion" \
-#        OMZP::docker/_docker
-        # docker-compose completion
-#        https://github.com/docker/cli/blob/master/contrib/completion/zsh/_docker
+# todo: see https://github.com/zdharma/zinit#calling-compinit-with-turbo-mode
 zinit ice wait'1' lucid as'completion'
 zinit snippet https://raw.githubusercontent.com/docker/compose/master/contrib/completion/zsh/_docker-compose
 
@@ -78,5 +72,6 @@ zinit light andrewferrier/fzf-z
 zinit ice ver"minimal"
 zinit load rozenj/salt
 
-autoload -U compinit && compinit
-setopt globdots # find a way to toggle globdots
+autoload -U compinit
+compinit
+_comp_options+=(globdots)
