@@ -101,6 +101,7 @@ set wrap "Wrap lines
 
 " Nerd tree
 map <leader>n :NERDTreeToggle<CR>
+let NERDTreeShowHidden=1
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 if has('nvim')
 	let NERDTreeBookmarksFile = stdpath('data') . '/NERDTreeBookmarks'

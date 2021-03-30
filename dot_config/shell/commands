@@ -1,8 +1,9 @@
 # files
 alias \
-  zshconf='$EDITOR $ZDOTDIR/.zshrc' \
+  zshconf='$EDITOR $ZDOTDIR/' \
   i3conf="$EDITOR ~/.config/i3/config" \
-  xmconf="$EDITOR ~/.config/xmonad/xmonad.hs"
+  xmconf="$EDITOR ~/.config/xmonad/xmonad.hs" \
+  vconf="$EDITOR ~/.config/nvim/init.vim"
 
 # system
 alias \

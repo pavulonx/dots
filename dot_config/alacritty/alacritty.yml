@@ -16,6 +16,10 @@ font:
 
   size: 10
 
+window:
+  padding:
+    x: 4
+    y: 4
 
 schemes:
   default: &default
