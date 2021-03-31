@@ -18,6 +18,7 @@ Plug 'vim-airline/vim-airline-themes'
 Plug 'tpope/vim-commentary'
 Plug 'ap/vim-css-color'
 Plug 'lifepillar/vim-solarized8'
+Plug 'airblade/vim-gitgutter'
 call plug#end()
 
 colorscheme solarized8
