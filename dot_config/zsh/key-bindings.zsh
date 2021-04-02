@@ -1,80 +1,66 @@
-# Make sure that the terminal is in application mode when zle is active, since
-# only then values from $terminfo are valid
-if (( ${+terminfo[smkx]} )) && (( ${+terminfo[rmkx]} )); then
-  function zle-line-init() {
-    echoti smkx
-    zle -K viins # initiate `vi insert` as keymap (can be removed if `bindkey -V` has been set elsewhere)
-    echo -ne "\e[5 q"
-  }
-  function zle-line-finish() {
-    echoti rmkx
-  }
-  zle -N zle-line-init
-  zle -N zle-line-finish
-fi
+function zle-line-init() {
+  zle -K viins # initiate `vi insert` as keymap (can be removed if `bindkey -V` has been set elsewhere)
+  echo -ne "\e[5 q"
+}
+zle -N zle-line-init
 
 function zle-keymap-select() {
   if [[ ${KEYMAP} == vicmd ]] ||
-     [[ $1 = 'block' ]]; then
-    echo -ne '\e[2 q'
-  elif [[ ${KEYMAP} == main ]] ||
-       [[ ${KEYMAP} == viins ]] ||
-       [[ ${KEYMAP} = '' ]] ||
-       [[ $1 = 'beam' ]]; then
-    echo -ne '\e[5 q'
+    [[ $1 = 'block' ]]; then
+      echo -ne '\e[2 q'
+    elif [[ ${KEYMAP} == main ]] ||
+      [[ ${KEYMAP} == viins ]] ||
+      [[ ${KEYMAP} = '' ]] ||
+      [[ $1 = 'beam' ]]; then
+          echo -ne '\e[5 q'
   fi
   zle reset-prompt
-#  zle -R
+  #  zle -R
 }
 zle -N zle-keymap-select
 
 
 bindkey -v
-
-# instantly handle escape
 export KEYTIMEOUT=1
 
-## some common keybindings
-typeset -A key
-key[ShiftTab]=${terminfo[kcbt]}
-key[Home]=${terminfo[khome]}
-key[End]=${terminfo[kend]}
-key[Insert]=${terminfo[kich1]}
-key[Delete]=${terminfo[kdch1]}
-key[PageUp]=${terminfo[kpp]}
-key[PageDown]=${terminfo[knp]}
-key[Left]=${terminfo[kcub1]}
-key[Right]=${terminfo[kcuf1]}
-key[Up]=${terminfo[kcuu1]}
-key[Down]=${terminfo[kcud1]}
 # setup key accordingly
-[[ -n "${key[Home]}"     ]]  && bindkey  "${key[Home]}"     beginning-of-line
-[[ -n "${key[End]}"      ]]  && bindkey  "${key[End]}"      end-of-line
-[[ -n "${key[Insert]}"   ]]  && bindkey  "${key[Insert]}"   overwrite-mode
-[[ -n "${key[Delete]}"   ]]  && bindkey  "${key[Delete]}"   delete-char
-[[ -n "${key[Left]}"     ]]  && bindkey  "${key[Left]}"     backward-char
-[[ -n "${key[Right]}"    ]]  && bindkey  "${key[Right]}"    forward-char
-[[ -n "${key[PageUp]}"   ]]  && bindkey  "${key[PageUp]}"   up-line-or-history
-[[ -n "${key[PageDown]}" ]]  && bindkey  "${key[PageDown]}" down-line-or-history
-[[ -n "${key[ShiftTab]}" ]]  && bindkey  "${key[ShiftTab]}" reverse-menu-complete
+bindkey  "^[[H"  beginning-of-line      # Home
+bindkey  "^[[F"  end-of-line            # End
+bindkey  "^[[2~" overwrite-mode         # Insert
+bindkey  "^[[3~" delete-char            # Delete
+bindkey  "^[[D"  backward-char          # Left
+bindkey  "^[[C"  forward-char           # Right
+bindkey  "^[[5~" up-line-or-history     # PageUp
+bindkey  "^[[6~" down-line-or-history   # PageDown
+bindkey  "^[[Z"  reverse-menu-complete  # ShiftTab
 
+# ci", ci', ci`, di", etc
+autoload -U select-quoted
+zle -N select-quoted
+for m in visual viopp; do
+  for c in {a,i}{\',\",\`}; do
+    bindkey -M $m $c select-quoted
+  done
+done
+
+# ci{, ci(, ci<, di{, etc
+autoload -U select-bracketed
+zle -N select-bracketed
+for m in visual viopp; do
+  for c in {a,i}${(s..)^:-'()[]{}<>bB'}; do
+    bindkey -M $m $c select-bracketed
+  done
+done
 
 ## keyup and  keydown search
-if [[ -n "${key[Up]}" ]]; then
-  autoload -U up-line-or-beginning-search
-  zle -N up-line-or-beginning-search
-#  bindkey  "${key[Up]}"       history-substring-search-up
-  bindkey "${key[Up]}" up-line-or-beginning-search
-fi
+autoload -U up-line-or-beginning-search && zle -N up-line-or-beginning-search
+#bindkey  "^[[A"       history-substring-search-up
+bindkey "^[[A" up-line-or-beginning-search
 
-if [[ -n "${key[Down]}"  ]]; then
-  autoload -U down-line-or-beginning-search
-  zle -N down-line-or-beginning-search
-#  bindkey  "${key[Down]}"     history-substring-search-down
-  bindkey "${key[Down]}" down-line-or-beginning-search
-fi
+autoload -U down-line-or-beginning-search && zle -N down-line-or-beginning-search
+#bindkey  "^[[B"     history-substring-search-down
+bindkey "^[[B" down-line-or-beginning-search
 
-bindkey ' ' magic-space                               # [Space] - do history expansion
 bindkey '^[[1;5C' forward-word                        # [Ctrl-RightArrow] - move forward one word
 bindkey '^[[1;5D' backward-word                       # [Ctrl-LeftArrow] - move backward one word
 bindkey '^r' history-incremental-search-backward      # [Ctrl-r] - Search backward incrementally for a specified string. The string may begin with ^ to anchor the search to the beginning of the line.
