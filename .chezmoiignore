@@ -11,6 +11,8 @@ README.md
 .config/backup/
 {{- end }}
 {{- if eq .machine_type "server" }}
+!.config/systemd/**
+!.config/systemd
 !.config/shell/**
 !.config/shell
 !.config/zsh/**
