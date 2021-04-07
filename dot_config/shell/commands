@@ -1,6 +1,6 @@
 # files
 alias \
-  zshconf='$EDITOR $ZDOTDIR/' \
+  zshconf='$EDITOR $ZDOTDIR/.zshrc' \
   i3conf="$EDITOR ~/.config/i3/config" \
   xmconf="$EDITOR ~/.config/xmonad/xmonad.hs" \
   vconf="$EDITOR ~/.config/nvim/init.vim"
@@ -8,7 +8,6 @@ alias \
 # system
 alias \
  	ka="killall" \
-	sdn="sudo shutdown -h now" \
 	pac="sudo pacman" \
 	sys='systemctl' \
 	ssys='sudo systemctl' \
@@ -25,15 +24,13 @@ alias \
 	md='mkdir -pv' \
 	diff="diff --color=auto" \
 	grep='grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox}' \
-	ccat="highlight --out-format=ansi" \
 	h='fc -li 1' \
-        :q='exit'
+  :q='exit'
 
 # abbreviations
 alias \
-	o="xdg-open" \
+	open="xdg-open" \
 	v="$EDITOR" \
-	z="zathura" \
 	chm="chezmoi" \
 	shck="shellcheck" \
 	ssha='eval $(ssh-agent)' \
@@ -41,6 +38,7 @@ alias \
 	yta="yt -x -f bestaudio/best"
 
 # ls
+export TIME_STYLE='long-iso' # date format in ls
 alias \
   exa='exa --color=auto --group-directories-first' \
   ls='exa' \
@@ -51,21 +49,19 @@ alias \
 
 # dirs
 alias d='dirs -v | head -10'
-
-alias cd..="cd .."
-alias ..="cd .."
-alias -- -='cd -'
-alias 1='cd -'
-alias 2='cd -2'
-alias 3='cd -3'
-alias 4='cd -4'
-alias 5='cd -5'
-alias 6='cd -6'
-alias 7='cd -7'
-alias 8='cd -8'
-alias 9='cd -9'
-alias cdgr='$(gitroot)'
-alias cdw='cd ~/Workspace'
+alias \
+  cd..="cd .." \
+  -- -='cd -'
+alias \
+  1='cd -'  \
+  2='cd -2' \
+  3='cd -3' \
+  4='cd -4' \
+  5='cd -5' \
+  6='cd -6' \
+  7='cd -7' \
+  8='cd -8' \
+  9='cd -9'
 
 # docker
 alias \
@@ -85,7 +81,8 @@ alias \
   gdo='git diff origin/"$(git_current_branch)"' \
   gdcao='git diff --cached origin/"$(git_current_branch)"' \
   glogf='git_log_tree_fancy' \
-  gitroot='git rev-parse --show-toplevel'
+  gitroot='git rev-parse --show-toplevel' \
+  cdgr='cd $(gitroot)'
 
 DEFAULT_GIT_TICKER="${DEFAULT_GIT_TICKER:-}"
 function gcmsgj {
@@ -127,3 +124,5 @@ function ex {
     echo "'$1' is not a valid file"
   fi
 }
+
+# vi:syntax=sh

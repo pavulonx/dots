@@ -3,20 +3,14 @@
 
 alias reload='. $ZDOTDIR/.zshrc'
 
-# ZSH CONFIG FILES
-source "$ZDOTDIR/completion.zsh"
-source "$ZDOTDIR/key-bindings.zsh"
-source "$ZDOTDIR/termsupport.zsh"
-source "$ZDOTDIR/zinit.zsh"
-
-source "$XDG_CONFIG_HOME/shell/commands"    # general commands
-source "$XDG_CONFIG_HOME/shell/local"       # local config
+# source common config
+source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/commands"    # general commands
+source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/local"       # local config
 
 ### general tweaks
 setopt long_list_jobs       # jobs
 setopt interactivecomments  # recognize comments in input
 setopt multios              # implicit tee and cat
-# setopt correct_all          # corects broken commands
 
 # dir movement
 setopt auto_pushd           # cd but with pushing onto dir stack
@@ -24,17 +18,17 @@ setopt pushd_ignore_dups    # ignore pushd duplicates
 setopt pushdminus           # - instead of + in cd
 setopt auto_cd              # if command cannot be executed and it is dir cd into it
 
-# lscolors
-autoload -U colors && colors  # needed for fg_bold and fg_no_bold
+###
+### colors
+# autoload -U colors && colors  # needed for fg_bold and fg_no_bold
 export LSCOLORS="Gxfxcxdxbxegedabagacad"
 export LS_COLORS='rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arj=01;31:*.taz=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.zip=01;31:*.z=01;31:*.Z=01;31:*.dz=01;31:*.gz=01;31:*.lz=01;31:*.xz=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.rar=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.jpg=01;35:*.jpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.axv=01;35:*.anx=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.axa=00;36:*.oga=00;36:*.spx=00;36:*.xspf=00;36:';
-export TIME_STYLE='long-iso'
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
-### history config
+###
+### history
 HISTSIZE=90000
 SAVEHIST=90000
-HISTFILE="$XDG_DATA_HOME/zsh/history"
+HISTFILE="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/history"
 setopt extended_history       # record timestamp of command in HISTFILE
 setopt hist_expire_dups_first # delete duplicates first when HISTFILE size exceeds HISTSIZE
 setopt hist_ignore_dups       # ignore duplicated commands history list
@@ -43,6 +37,41 @@ setopt hist_verify            # show command with history expansion to user befo
 setopt share_history          # share command history data
 setopt inc_append_history     # add commands to HISTFILE in order of execution
 
+###
+### completion
+zmodload -i zsh/complist
+unsetopt menu_complete   # do not autoselect the first completion entry
+unsetopt flowcontrol
+setopt auto_menu         # show completion menu on successive tab press
+setopt complete_in_word
+setopt always_to_end
+setopt auto_list         # automatically list choices on ambiguous completion.
+
+bindkey -M menuselect '^@' accept-and-infer-next-history
+zstyle ':completion:*' menu select
+zstyle ':completion:*' verbose yes
+zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
+zstyle ':completion:*:*:*:*:processes' command "ps -u $user -o pid,user,comm -w -w"
+zstyle ':completion:*:cd:*' tag-order local-directories directory-stack path-directories # disable named-directories autocompletion
+zstyle ':completion::complete:*' use-cache 1 # Use caching so that commands like apt and dpkg complete are useable
+zstyle ':completion::complete:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+# automatically load bash completion functions
+autoload -U +X bashcompinit && bashcompinit
+
+
+###
+### zinit
+if [ ! -f $ZDOTDIR/.zinit/bin/zinit.zsh ]; then
+    print -P "%F{33}Installing zdharma/zinit%f"
+    command mkdir -p "$ZDOTDIR/.zinit" && command chmod g-rwX "$ZDOTDIR/.zinit"
+    command git clone https://github.com/zdharma/zinit "$ZDOTDIR/.zinit/bin" && \
+    print -P "Installation successful" || print -P "%F{160}The clone has failed.%f"
+fi
+source "$ZDOTDIR/.zinit/bin/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
 
 zinit light-mode for \
   zsh-users/zsh-autosuggestions \
@@ -55,7 +84,6 @@ zinit light-mode for \
   OMZP::colored-man-pages \
   OMZ::plugins/docker-compose \
   OMZL::git.zsh
-
 # todo: see https://github.com/zdharma/zinit#calling-compinit-with-turbo-mode
 zinit ice wait'1' lucid as'completion'
 zinit snippet https://raw.githubusercontent.com/docker/compose/master/contrib/completion/zsh/_docker-compose
@@ -72,6 +100,103 @@ zinit light andrewferrier/fzf-z
 zinit ice ver"minimal"
 zinit load rozenj/salt
 
-autoload -U compinit
-compinit
-_comp_options+=(globdots)
+autoload -U compinit && compinit && _comp_options+=(globdots)
+
+
+###
+### key bindings
+function zle-line-init() {
+  zle -K viins # initiate `vi insert` as keymap (can be removed if `bindkey -V` has been set elsewhere)
+  echo -ne "\e[5 q"
+}
+zle -N zle-line-init
+
+function zle-keymap-select() {
+  if [[ ${KEYMAP} == vicmd ]] ||
+    [[ $1 = 'block' ]]; then
+      echo -ne '\e[2 q'
+    elif [[ ${KEYMAP} == main ]] ||
+      [[ ${KEYMAP} == viins ]] ||
+      [[ ${KEYMAP} = '' ]] ||
+      [[ $1 = 'beam' ]]; then
+          echo -ne '\e[5 q'
+  fi
+  zle reset-prompt
+  #  zle -R
+}
+zle -N zle-keymap-select
+
+
+bindkey -v
+export KEYTIMEOUT=1
+
+# setup key accordingly
+bindkey  "^[[H"  beginning-of-line      # Home
+bindkey  "^[[F"  end-of-line            # End
+bindkey  "^[[2~" overwrite-mode         # Insert
+bindkey  "^[[3~" delete-char            # Delete
+bindkey  "^[[D"  backward-char          # Left
+bindkey  "^[[C"  forward-char           # Right
+bindkey  "^[[5~" up-line-or-history     # PageUp
+bindkey  "^[[6~" down-line-or-history   # PageDown
+bindkey  "^[[Z"  reverse-menu-complete  # ShiftTab
+
+# ci", ci', ci`, di", etc
+autoload -U select-quoted
+zle -N select-quoted
+for m in visual viopp; do
+  for c in {a,i}{\',\",\`}; do
+    bindkey -M $m $c select-quoted
+  done
+done
+
+# ci{, ci(, ci<, di{, etc
+autoload -U select-bracketed
+zle -N select-bracketed
+for m in visual viopp; do
+  for c in {a,i}${(s..)^:-'()[]{}<>bB'}; do
+    bindkey -M $m $c select-bracketed
+  done
+done
+
+## keyup and  keydown search
+autoload -U up-line-or-beginning-search && zle -N up-line-or-beginning-search
+#bindkey  "^[[A"       history-substring-search-up
+bindkey "^[[A" up-line-or-beginning-search
+
+autoload -U down-line-or-beginning-search && zle -N down-line-or-beginning-search
+#bindkey  "^[[B"     history-substring-search-down
+bindkey "^[[B" down-line-or-beginning-search
+
+bindkey '^[[1;5C' forward-word                        # [Ctrl-RightArrow] - move forward one word
+bindkey '^[[1;5D' backward-word                       # [Ctrl-LeftArrow] - move backward one word
+bindkey '^r' history-incremental-search-backward      # [Ctrl-r] - Search backward incrementally
+
+# Edit line in vim buffer ctrl-v
+autoload edit-command-line; zle -N edit-command-line; bindkey '^v' edit-command-line
+# Enter vim buffer from normal mode
+autoload -U edit-command-line && zle -N edit-command-line && bindkey -M vicmd "^v" edit-command-line
+
+
+###
+### terminal window name ##
+function _term_set_title {
+  print -Pn "\e]2;$1:q\a" # set window name
+  print -Pn "\e]1;$1:q\a" # set window name
+}
+
+function termsupport_precmd {
+  _term_set_title "%n@%m: %50<..<%~%<<"
+}
+
+function termsupport_preexec {
+  _term_set_title "%100>...>$1%<<"
+}
+
+case "$TERM" in
+  xterm*|rxvt*|alacritty|st*)
+    autoload -U add-zsh-hook
+    add-zsh-hook precmd termsupport_precmd
+    add-zsh-hook preexec termsupport_preexec
+    ;;
+esac
