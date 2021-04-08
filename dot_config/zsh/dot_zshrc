@@ -30,6 +30,7 @@ setopt share_history          # share command history data
 
 
 # ---[ completion ]-------------------------------------------------------------------------------------
+# todo: move?
 zmodload -i zsh/complist
 setopt always_to_end
 setopt complete_in_word
@@ -47,6 +48,8 @@ zstyle ':completion::complete:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh
 # automatically load bash completion functions
 autoload -U +X bashcompinit && bashcompinit
 
+# todo: move?
+autoload -U compinit && compinit && _comp_options+=(globdots)
 
 # ---[ zinit ]-------------------------------------------------------------------------------------
 if [ ! -f $ZDOTDIR/.zinit/bin/zinit.zsh ]; then
@@ -59,6 +62,7 @@ source "$ZDOTDIR/.zinit/bin/zinit.zsh"
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
 
+# todo: see https://github.com/zdharma/zinit#calling-compinit-with-turbo-mode
 zinit light-mode for \
   zsh-users/zsh-autosuggestions \
   zsh-users/zsh-completions \
@@ -70,10 +74,6 @@ zinit light-mode for \
   OMZP::colored-man-pages \
   OMZ::plugins/docker-compose \
   OMZL::git.zsh
-# todo: see https://github.com/zdharma/zinit#calling-compinit-with-turbo-mode
-zinit ice wait'1' lucid as'completion'
-zinit snippet https://raw.githubusercontent.com/docker/compose/master/contrib/completion/zsh/_docker-compose
-
 
 # Easily access the directories you visit most often.
 # Usage:
@@ -85,8 +85,6 @@ zinit light andrewferrier/fzf-z
 # prompt theme
 zinit ice ver"minimal"
 zinit load rozenj/salt
-
-autoload -U compinit && compinit && _comp_options+=(globdots)
 
 
 # ---[ Key bindings ]-------------------------------------------------------------------------------------
