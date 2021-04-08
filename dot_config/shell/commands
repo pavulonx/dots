@@ -1,96 +1,95 @@
 # files
 alias \
-  zshconf='$EDITOR $ZDOTDIR/.zshrc' \
-  i3conf="$EDITOR ~/.config/i3/config" \
-  xmconf="$EDITOR ~/.config/xmonad/xmonad.hs" \
-  vconf="$EDITOR ~/.config/nvim/init.vim"
+        zshconf='$EDITOR $ZDOTDIR/.zshrc' \
+        i3conf="$EDITOR ~/.config/i3/config" \
+        xmconf="$EDITOR ~/.config/xmonad/xmonad.hs" \
+        vconf="$EDITOR ~/.config/nvim/init.vim";
 
 # system
 alias \
- 	ka="killall" \
-	pac="sudo pacman" \
-	sys='systemctl' \
-	ssys='sudo systemctl' \
-  pacman-clean='sudo pacman -R `pacman -Qdtq`' \
-  update='paru -Syu --upgrademenu'
+        ka="killall" \
+        pac="sudo pacman" \
+        sys='systemctl' \
+        ssys='sudo systemctl' \
+        pacman-clean='sudo pacman -R `pacman -Qdtq`' \
+        update='paru -Syu --upgrademenu';
 
 # Use neovim for vim if present.
 [ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
 
 alias \
-	cp="cp -iv" \
-	mv="mv -iv" \
-	rm="rm -vI" \
-	md='mkdir -pv' \
-	diff="diff --color=auto" \
-	grep='grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox}' \
-	h='fc -li 1' \
-  :q='exit'
+        cp="cp -iv" \
+        mv="mv -iv" \
+        rm="rm -vI" \
+        md='mkdir -pv' \
+        diff="diff --color=auto" \
+        grep='grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox}' \
+        h='fc -li 1' \
+        :q='exit';
 
 # abbreviations
 alias \
-	open="xdg-open" \
-	v="$EDITOR" \
-	chm="chezmoi" \
-	shck="shellcheck" \
-	ssha='eval $(ssh-agent)' \
-	yt="youtube-dl --add-metadata -i" \
-	yta="yt -x -f bestaudio/best"
+        open="xdg-open" \
+        v="$EDITOR" \
+        chm="chezmoi" \
+        shck="shellcheck" \
+        ssha='eval $(ssh-agent)' \
+        yt="youtube-dl --add-metadata -i" \
+        yta="yt -x -f bestaudio/best";
 
 # ls
 export TIME_STYLE='long-iso' # date format in ls
 alias \
-  exa='exa --color=auto --group-directories-first' \
-  ls='exa' \
-  l='exa -la' \
-  ll='exa -l' \
-  lt='exa -lasnew' \
-  lg='exa --git -l -snew'
+        exa='exa --color=auto --group-directories-first' \
+        ls='exa' \
+        l='exa -la' \
+        ll='exa -l' \
+        lt='exa -lasnew' \
+        lg='exa --git -l -snew';
 
 # dirs
-alias d='dirs -v | head -10'
 alias \
-  cd..="cd .." \
-  -- -='cd -'
-alias \
-  1='cd -'  \
-  2='cd -2' \
-  3='cd -3' \
-  4='cd -4' \
-  5='cd -5' \
-  6='cd -6' \
-  7='cd -7' \
-  8='cd -8' \
-  9='cd -9'
+        d='dirs -v | head -10' \
+        cd..="cd .." \
+        -- -='cd -' \
+        1='cd -'  \
+        2='cd -2' \
+        3='cd -3' \
+        4='cd -4' \
+        5='cd -5' \
+        6='cd -6' \
+        7='cd -7' \
+        8='cd -8' \
+        9='cd -9';
 
 # docker
 alias \
-  dr=docker \
-  drps='docker ps' \
-  drk='docker kill' \
-  drb='docker build' \
-  dre='docker exec' \
-  drei='docker exec -it' \
-  drri='docker run -it --rm' \
-  drri.='docker run -it --rm --workdir=/ctx --volume "$PWD:/ctx"' \
-  drc='docker-compose' \
-  drip='docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"'
+        dr=docker \
+        drps='docker ps' \
+        drk='docker kill' \
+        drb='docker build' \
+        dre='docker exec' \
+        drei='docker exec -it' \
+        drri='docker run -it --rm' \
+        drri.='docker run -it --rm --workdir=/ctx --volume "$PWD:/ctx"' \
+        drc='docker-compose' \
+        drip='docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"';
 
 # git
 alias \
-  gdo='git diff origin/"$(git_current_branch)"' \
-  gdcao='git diff --cached origin/"$(git_current_branch)"' \
-  glogf='git_log_tree_fancy' \
-  gitroot='git rev-parse --show-toplevel' \
-  cdgr='cd $(gitroot)'
+        gdo='git diff origin/"$(git_current_branch)"' \
+        gdcao='git diff --cached origin/"$(git_current_branch)"' \
+        glogf='git_log_tree_fancy' \
+        gitroot='git rev-parse --show-toplevel' \
+        cdgr='cd $(gitroot)';
 
 DEFAULT_GIT_TICKER="${DEFAULT_GIT_TICKER:-}"
 function gcmsgj {
-    if echo $1 | grep -q '[A-Z]+-[0-9]+'; then
-        message="$1";
-    else
-        message="$(git_current_branch | grep -Eo '[A-Z]+-[0-9]+' || echo "$DEFAULT_GIT_TICKER") $1";
-    fi
+  if echo $1 | grep -q '[A-Z]+-[0-9]+'; then
+    message="$1";
+  else
+    message="$(git_current_branch | grep -Eo '[A-Z]+-[0-9]+' || echo "$DEFAULT_GIT_TICKER") $1";
+  fi
     git commit -m "$message"
 }
 
@@ -99,7 +98,7 @@ function clip {
   case "$1" in
     "p")  xclip -out -selection clipboard;;
     *)  xclip -in -selection clipboard < "${1:-/dev/stdin}";;
-  esac
+    esac
 }
 
 # archives
