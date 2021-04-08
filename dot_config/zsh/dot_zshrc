@@ -2,8 +2,8 @@
 
 alias reload='. $ZDOTDIR/.zshrc'
 
-source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/commands"    # general commands
-source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/local"       # local config
+source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/config"         # common config
+source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/config.local"   # local config
 
 # ---[ options ]-------------------------------------------------------------------------------------
 # general tweaks
