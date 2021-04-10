@@ -82,7 +82,8 @@ alias \
 alias \
         gdo='git diff origin/"$(git_current_branch)"' \
         gdcao='git diff --cached origin/"$(git_current_branch)"' \
-        glogf='git_log_tree_fancy' \
+        glogf='git_log_tree_fzf' \
+        gstf='git_status_fzf' \
         gitroot='git rev-parse --show-toplevel' \
         cdgr='cd $(gitroot)';
 

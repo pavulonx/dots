@@ -1,0 +1,6 @@
+#!/bin/bash
+set -euo pipefail
+
+FILE="$(fd -H -t f  | fzf -m --ansi --color=border:0 --layout=reverse --preview="bat --color=always {}")"
+
+eval exec "$EDITOR" ${FILE}
