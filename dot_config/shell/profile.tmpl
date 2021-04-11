@@ -1,5 +1,4 @@
-#!/bin/sh
-# set up path
+# setup path
 _user_path="$(find ~/.local/bin -type d -printf %p:)"
 _user_path="${_user_path%%:}"
 export PATH="$PATH:$_user_path"
@@ -45,7 +44,7 @@ export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 
 # start graphical interface on login on tty1
 _debug=true
-_autostartx=false
+_autostartx=true
 if $_autostartx && [ "$(tty)" = "/dev/tty1" ] && ! pgrep startx; then
   if $_debug && command -v startx-with-log > /dev/null 2>&1; then
     startx-with-log "$XDG_CONFIG_HOME/x11/xinitrc"
@@ -53,3 +52,4 @@ if $_autostartx && [ "$(tty)" = "/dev/tty1" ] && ! pgrep startx; then
     startx "$XDG_CONFIG_HOME/x11/xinitrc"
   fi
 fi
+# vi:syntax=sh
