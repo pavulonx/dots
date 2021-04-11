@@ -17,7 +17,7 @@ bindsym $mod+b border toggle
 # bindsym $mod+n border normal
 
 # Font for window titles. Will also be used by the bar unless a different font
-font pango:Segoe UI Semibold 9
+font pango:Lato Bold 9
 
 # Use Mouse+$mod to drag floating windows
 floating_modifier $mod

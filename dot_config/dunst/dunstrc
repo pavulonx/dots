@@ -1,7 +1,7 @@
 [global]
     # font = Cantarell 10
     # font = Noto Sans 10
-    font = "Segoe UI 10"
+    font = "Lato 10"
 
     max_icon_size = 72
 
@@ -10,7 +10,7 @@
     #   <i>italic</i>
     #   <s>strikethrough</s>
     #   <u>underline</u>
-    # 
+    #
     # For a complete reference see
     # <http://developer.gnome.org/pango/stable/PangoMarkupFormat.html>.
     # If markup is not allowed, those tags will be stripped out of the
@@ -78,13 +78,13 @@
     # The transparency of the window.  Range: [0; 100].
     # This option will only work if a compositing windowmanager is
     # present (e.g. xcompmgr, compiz, etc.).
-    # transparency = 5 
+    # transparency = 5
 
     # Don't remove messages, if the user is idle (no mouse or keyboard input)
     # for longer than idle_threshold seconds.
     # Set to 0 to disable.
     # default 120
-    idle_threshold = 120 
+    idle_threshold = 120
 
     # Which monitor should the notifications be displayed on.
     monitor = 0
@@ -93,11 +93,11 @@
     #   mouse: follow mouse pointer
     #   keyboard: follow window with keyboard focus
     #   none: don't follow anything
-    # 
+    #
     # "keyboard" needs a windowmanager that exports the
     # _NET_ACTIVE_WINDOW property.
     # This should be the case for almost all modern windowmanagers.
-    # 
+    #
     # If this option is set to mouse or keyboard, the monitor option
     # will be ignored.
     follow = mouse
@@ -150,7 +150,7 @@
     browser = $BROWSER
 
     # Align icons left/right/off
-    icon_position = right 
+    icon_position = right
 
     # Paths to default icons.
     #icon_folders = /usr/share/icons/Adwaita/16x16/status/:/usr/share/icons/Adwaita/16x16/devices/
@@ -177,7 +177,7 @@
     # Redisplay last message(s).
     # On the US keyboard layout "grave" is normally above TAB and left
     # of "1".
-    history = mod1+mod4+h 
+    history = mod1+mod4+h
 
     # Context menu.
     context = mod1+mod4+c
@@ -213,7 +213,7 @@
 # The script will be called as follows:
 #   script appname summary body icon urgency
 # where urgency can be "LOW", "NORMAL" or "CRITICAL".
-# 
+#
 # NOTE: if you don't want a notification to be displayed, set the format
 # to "".
 # NOTE: It might be helpful to run dunst -print in a terminal in order
