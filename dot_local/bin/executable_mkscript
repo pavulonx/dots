@@ -1,9 +1,13 @@
 #!/bin/sh
-[ -z "${1:-}" ] && echo &2< "usage: $0 <path>" && exit 1 
-[ -f "$1" ] && echo "file exists!" && exit 1 
 
-echo "#!/bin/sh
-"
+[ -z "${1:-}" ] && echo "Usage: $0 <path>" >&2 && exit 1
 
-chmod u+x $1
+[ -f "$1" ] && echo "File '$1' exists!" >&2 && exit 1
 
+echo '#!/bin/sh
+echo "Script $0 build by mkscript"
+' > "$1"
+
+chmod u+x "$1"
+
+eval exec "$EDITOR" "$1" "+2"

@@ -55,9 +55,9 @@ autoload -U +X bashcompinit && bashcompinit
 
 # ---[ zinit ]-------------------------------------------------------------------------------------
 if [ ! -f $ZDOTDIR/.zinit/bin/zinit.zsh ]; then
-    print -P "%F{33}Installing zdharma/zinit%f"
-    command mkdir -p "$ZDOTDIR/.zinit" && command chmod g-rwX "$ZDOTDIR/.zinit"
-    command git clone https://github.com/zdharma/zinit "$ZDOTDIR/.zinit/bin" && \
+  print -P "%F{33}Installing zdharma/zinit%f"
+  command mkdir -p "$ZDOTDIR/.zinit" && command chmod g-rwX "$ZDOTDIR/.zinit"
+  command git clone https://github.com/zdharma/zinit "$ZDOTDIR/.zinit/bin" && \
     print -P "Installation successful" || print -P "%F{160}The clone has failed.%f"
 fi
 source "$ZDOTDIR/.zinit/bin/zinit.zsh"
@@ -72,12 +72,14 @@ zinit light-mode for \
   zdharma/history-search-multi-word \
   MichaelAquilina/zsh-you-should-use
 
-# Easily access the directories you visit most often.
-# Usage:
-#   $ z work
-#   $ <CTRL-G>work
+# z support
+export ZSHZ_CASE=smart
 zinit light agkozak/zsh-z
-zinit light andrewferrier/fzf-z
+fzfz() {
+  _preview_cmd='exa --level 2 --tree --color=always --group-directories-first {}'
+  _target="$(z | tac | sed "s/^[[:digit:].]*[[:space:]]*//" | fzf --no-sort --tiebreak=end,index -m --preview="$_preview_cmd" | head -n1)"
+  cd $_target
+}
 
 # prompt theme
 zinit ice ver"minimal"
@@ -170,6 +172,7 @@ autoload -U edit-command-line && zle -N edit-command-line && bindkey -M vicmd "^
 # terminal programs shortcuts
 bindkey -s "^F" "ctrlf\n"
 bindkey -s "^O" "openf\n"
+bindkey -s "^G" "fzfz\n"
 
 
 # ---[ Window title ]-------------------------------------------------------------------------------------
