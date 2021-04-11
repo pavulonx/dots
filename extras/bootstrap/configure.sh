@@ -15,9 +15,6 @@ template="
   machine_type = \"$_machine_type\"
   browser = \"$_browser\"
 
-[diff]
-  pager = \"\"
-
 [merge]
   command = \"nvim\"
   args = \"-d\"
