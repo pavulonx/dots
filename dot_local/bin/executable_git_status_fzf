@@ -2,6 +2,6 @@
 
 git status -s \
   | fzf --no-sort --reverse \
-  --preview 'git diff --color=always {+2} | diff-so-fancy' \
+  --preview 'git diff HEAD --color=always {+2} | diff-so-fancy' \
   --bind=ctrl-alt-j:preview-down --bind=ctrl-alt-k:preview-up \
   --preview-window=right:60%:wrap

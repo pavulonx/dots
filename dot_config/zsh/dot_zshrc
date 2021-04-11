@@ -70,10 +70,8 @@ zinit light-mode for \
   zsh-users/zsh-completions \
   zdharma/fast-syntax-highlighting \
   zdharma/history-search-multi-word \
-  simnalamburt/cgitc \
   MichaelAquilina/zsh-you-should-use \
-  OMZP::colored-man-pages \
-  OMZL::git.zsh
+  OMZP::colored-man-pages
 
 # Easily access the directories you visit most often.
 # Usage:
