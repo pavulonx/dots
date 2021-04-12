@@ -69,16 +69,10 @@ alias \
 alias \
         d='dirs -v | head -10' \
         cd..="cd .." \
-        -- -='cd -' \
-        1='cd -'  \
-        2='cd -2' \
-        3='cd -3' \
-        4='cd -4' \
-        5='cd -5' \
-        6='cd -6' \
-        7='cd -7' \
-        8='cd -8' \
-        9='cd -9';
+        -='cd -' \
+        1='cd -'  2='cd -2' 3='cd -3' \
+        4='cd -4' 5='cd -5' 6='cd -6' \
+        7='cd -7' 8='cd -8' 9='cd -9';
 
 # docker
 alias \
@@ -192,6 +186,10 @@ clip() {
     "p")  xclip -out -selection clipboard;;
     *)  xclip -in -selection clipboard < "${1:-/dev/stdin}";;
     esac
+}
+
+fpkg() {
+  paru -Sl --color=always | fzf --ansi --multi --preview 'paru -Si {2}' | awk '{print $2}'
 }
 
 # archives
