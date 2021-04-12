@@ -60,40 +60,6 @@ zstyle ':completion:*:cd:*' tag-order local-directories directory-stack path-dir
 autoload -U +X bashcompinit && bashcompinit # automatically load bash completion functions
 
 
-# ---[ zinit ]-------------------------------------------------------------------------------------
-if [ ! -f $ZDOTDIR/.zinit/bin/zinit.zsh ]; then
-  print -P "%F{33}Installing zdharma/zinit%f"
-  command mkdir -p "$ZDOTDIR/.zinit" && command chmod g-rwX "$ZDOTDIR/.zinit"
-  command git clone https://github.com/zdharma/zinit "$ZDOTDIR/.zinit/bin" && \
-    print -P "Installation successful" || print -P "%F{160}The clone has failed.%f"
-fi
-source "$ZDOTDIR/.zinit/bin/zinit.zsh"
-autoload -Uz _zinit
-(( ${+_comps} )) && _comps[zinit]=_zinit
-
-# todo: see https://github.com/zdharma/zinit#calling-compinit-with-turbo-mode
-zinit light-mode for \
-  zsh-users/zsh-autosuggestions \
-  zsh-users/zsh-completions \
-  zdharma/fast-syntax-highlighting \
-  zdharma/history-search-multi-word \
-  MichaelAquilina/zsh-you-should-use
-
-# z support
-export ZSHZ_CASE=smart
-zinit light agkozak/zsh-z
-fzfz() {
-  _preview_cmd='exa --level 2 --tree --color=always --group-directories-first {}'
-  _target="$(z | tac | sed "s/^[[:digit:].]*[[:space:]]*//" | fzf --no-sort --tiebreak=end,index -m --preview="$_preview_cmd" | head -n1)"
-  cd $_target
-}
-
-# prompt theme
-zinit ice ver"minimal"
-zinit load rozenj/salt
-
-# todo: move?
-
 # ---[ Key bindings ]-------------------------------------------------------------------------------------
 # See https://ttssh2.osdn.jp/manual/4/en/usage/tips/vim.html for cursors
 cursor_block='\e[2 q'
@@ -192,3 +158,36 @@ case $TERM in
     preexec () {  print -Pn "\e]0;%n@%m: %50<..<%~%<<  [ ${1} ]\a" }
     ;;
 esac
+
+
+# ---[ zinit ]-------------------------------------------------------------------------------------
+if [ ! -f $ZDOTDIR/.zinit/bin/zinit.zsh ]; then
+  print -P "%F{33}Installing zdharma/zinit%f"
+  command mkdir -p "$ZDOTDIR/.zinit" && command chmod g-rwX "$ZDOTDIR/.zinit"
+  command git clone https://github.com/zdharma/zinit "$ZDOTDIR/.zinit/bin" && \
+    print -P "Installation successful" || print -P "%F{160}The clone has failed.%f"
+fi
+source "$ZDOTDIR/.zinit/bin/zinit.zsh"
+autoload -Uz _zinit
+(( ${+_comps} )) && _comps[zinit]=_zinit
+
+# todo: see https://github.com/zdharma/zinit#calling-compinit-with-turbo-mode
+zinit light-mode for \
+  zsh-users/zsh-autosuggestions \
+  zsh-users/zsh-completions \
+  zdharma/fast-syntax-highlighting \
+  zdharma/history-search-multi-word \
+  MichaelAquilina/zsh-you-should-use
+
+# z support
+export ZSHZ_CASE=smart
+zinit light agkozak/zsh-z
+fzfz() {
+  _preview_cmd='exa --level 2 --tree --color=always --group-directories-first {}'
+  _target="$(z | tac | sed "s/^[[:digit:].]*[[:space:]]*//" | fzf --no-sort --tiebreak=end,index -m --preview="$_preview_cmd" | head -n1)"
+  cd $_target
+}
+
+# prompt theme
+zinit ice ver"minimal"
+zinit load rozenj/salt
