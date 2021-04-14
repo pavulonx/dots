@@ -29,7 +29,6 @@ setopt share_history          # share command history data
 
 
 # ---[ completion ]-------------------------------------------------------------------------------------
-# todo: move?
 autoload -U compinit && compinit && _comp_options+=(globdots)
 
 unsetopt menu_complete   # do not autoselect the first completion entry
@@ -37,7 +36,6 @@ unsetopt flowcontrol
 setopt auto_menu
 setopt always_to_end
 setopt complete_in_word
-
 
 zstyle ':completion::complete:*' use-cache on # Use caching so that commands like apt and dpkg complete are useable
 zstyle ':completion::complete:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
