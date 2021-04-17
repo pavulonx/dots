@@ -15,6 +15,16 @@ docs
 .termux
 {{- end }}
 {{- if eq .chezmoi.os "android" }}
+!.config/shell
+!.config/zsh
+!.config/nvim
+!.config/git
+!.local
+!.vimrc
+!.zprofile
+!.bash_profile
+!.profile
+*
 {{- end }}
 
 {{- if eq .machine_type "server" }}

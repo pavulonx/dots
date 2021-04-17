@@ -1,0 +1,11 @@
+{{ $machine_type := promptString "machine_type [pc/server] " -}}
+{{ $browser := promptString "browser path" -}}
+data:
+  machine_type: "{{ $machine_type }}"
+  browser: "{{ $browser }}"
+
+merge:
+  command: "nvim"
+  args: "-d"
+
+# vi:syntax=yaml

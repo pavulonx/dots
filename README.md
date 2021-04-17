@@ -2,28 +2,8 @@
 
 # ![Current setup](https://raw.githubusercontent.com/rozenj/dots/master/extras/scrot/2020-10-25-012729_2560x1440_scrot.png)
 
-# Required configuration:
-
-In `~/.config/chezmoi/chezmoi.toml` set:
-
-- **machine_type** - to one of `pc`, `server`
-- **browser** - path to browser
-
-```
-[data]
-    machine_type = "pc"
-    browser = "/usr/bin/firefox"
-```
-
-Run [`extras/bootstrap/configure.sh`](extras/bootstrap/configure.sh) `<machine_type>` `<browser>` to
-apply config
-`extras/bootstrap/configure.sh laptop firefox firefox.desktop`
-___
-
 #### TODO:
-
 - auto configure crontab - backup
-- https://stackoverflow.com/a/38980986/8156320
 
 Zsh execution:
 
