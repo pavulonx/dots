@@ -42,6 +42,7 @@ export QT_QPA_PLATFORMTHEME="qt5ct"
 
 export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 
+{{ if eq .machine_type "pc" -}}
 # start graphical interface on login on tty1
 _debug=true
 _autostartx=true
@@ -52,4 +53,5 @@ if $_autostartx && [ "$(tty)" = "/dev/tty1" ] && ! pgrep startx; then
     startx "$XDG_CONFIG_HOME/x11/xinitrc"
   fi
 fi
+{{- end }}
 # vi:syntax=sh

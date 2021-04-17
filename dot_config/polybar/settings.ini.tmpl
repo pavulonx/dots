@@ -9,15 +9,11 @@ margin-bottom = 0
 {{- if eq .chezmoi.hostname "LT33693" }}
 hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon8/temp1_input
 battery = BAT1
+modules-right = music weather vpn wlan lan backlight filesystem temperature cpu memory xdpms battery pulseaudio
 {{- else }}
 hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon1/temp1_input
 battery = hidpp_battery_0
-{{- end }}
-
-{{- if eq .machine_type "desktop" }}
 modules-right = music weather vpn lan filesystem temperature cpu memory xdpms pulseaudio
-{{- else }}
-modules-right = music weather vpn wlan lan backlight filesystem temperature cpu memory xdpms battery pulseaudio
 {{- end }}
 
 [colors]

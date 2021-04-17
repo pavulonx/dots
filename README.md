@@ -6,12 +6,12 @@
 
 In `~/.config/chezmoi/chezmoi.toml` set:
 
-- **machine_type** - to one of `desktop`, `server`, `laptop`
+- **machine_type** - to one of `pc`, `server`
 - **browser** - path to browser
 
 ```
 [data]
-    machine_type = "desktop"
+    machine_type = "pc"
     browser = "/usr/bin/firefox"
 ```
 
