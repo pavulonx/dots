@@ -19,8 +19,11 @@ docs
 !.config/zsh
 !.config/nvim
 !.config/git
+!.config/
+.config/*
 !.local
 !.vimrc
+!.bashrc
 !.zprofile
 !.bash_profile
 !.profile
@@ -33,8 +36,11 @@ docs
 !.config/zsh
 !.config/nvim
 !.config/git
+!.config/
+.config/*
 !.local
 !.vimrc
+!.bashrc
 !.zprofile
 !.bash_profile
 !.profile
