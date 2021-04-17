@@ -164,8 +164,7 @@ zinit light-mode for \
   zsh-users/zsh-autosuggestions \
   zsh-users/zsh-completions \
   zdharma/fast-syntax-highlighting \
-  zdharma/history-search-multi-word \
-  MichaelAquilina/zsh-you-should-use
+  zdharma/history-search-multi-word
 
 # z support
 export ZSHZ_CASE=smart
