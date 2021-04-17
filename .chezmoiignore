@@ -18,20 +18,12 @@ docs
 {{- end }}
 
 {{- if eq .machine_type "server" }}
-!.config/systemd/**
 !.config/systemd
-!.config/shell/**
 !.config/shell
-!.config/zsh/**
 !.config/zsh
-!.config/nvim/**
 !.config/nvim
-!.config/git/**
 !.config/git
-!.config/
-.config/*
-!.local/
-!.local/**
+!.local
 !.vimrc
 !.zprofile
 !.bash_profile
