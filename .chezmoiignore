@@ -1,15 +1,22 @@
-# https://github.com/twpayne/chezmoi/issues/721
-LICENSE
-extras/
-backups/
-docs/
-**/.idea/
-TODO.md
+.git
 README.md
+LICENSE
+extras
+backups
+docs
+**/.idea/
+
 {{- if ne .chezmoi.hostname "jrarch" }}
 .config/backup/**
 .config/backup/
 {{- end }}
+
+{{- if ne .chezmoi.os "android" }}
+.termux
+{{- end }}
+{{- if eq .chezmoi.os "android" }}
+{{- end }}
+
 {{- if eq .machine_type "server" }}
 !.config/systemd/**
 !.config/systemd
