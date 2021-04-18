@@ -28,6 +28,7 @@ docs
 !.zprofile
 !.bash_profile
 !.profile
+!.termux
 *
 {{- end }}
 
