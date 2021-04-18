@@ -85,7 +85,7 @@ alias \
         drri='docker run -it --rm' \
         drri.='docker run -it --rm --workdir=/ctx --volume "$PWD:/ctx"' \
         drc='docker-compose' \
-        drip='docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"';
+        drip='docker inspect -f {{`"{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}`}}"'; {{- /*`# chezmoi template escaping`*/}}
 
 # git
 alias \
@@ -181,12 +181,13 @@ gcmsgj() {
 }
 
 # clipboard
-clip() {
-  case "$1" in
-    "p")  xclip -out -selection clipboard;;
-    *)  xclip -in -selection clipboard < "${1:-/dev/stdin}";;
-    esac
-}
+{{ if eq .chezmoi.os "android" -}}
+clip() { termux-clipboard-set "${1:-/dev/stdin}"; }
+clipp() { termux-clipboard-get; }
+{{ else -}}
+clip() { xclip -in -selection clipboard < "${1:-/dev/stdin}"; }
+clipp() { xclip -out -selection clipboard; }
+{{- end }}
 
 fpkg() {
   paru -Sl --color=always | fzf --ansi --multi --preview 'paru -Si {2}' | awk '{print $2}'
