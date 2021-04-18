@@ -12,6 +12,7 @@ docs
 {{- end }}
 
 {{- if ne .chezmoi.os "android" }}
+90_android_postinstall
 .termux
 {{- end }}
 {{- if eq .chezmoi.os "android" }}
@@ -44,5 +45,6 @@ docs
 !.zprofile
 !.bash_profile
 !.profile
+10_system_settings
 *
 {{- end }}
