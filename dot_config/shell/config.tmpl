@@ -15,7 +15,7 @@ export LESS_TERMCAP_so=$'\e[1;30;47m'
 export LESS_TERMCAP_se=$'\e[0m'
 export LESS_TERMCAP_us=$'\e[1;36m'
 export LESS_TERMCAP_ue=$'\e[0m'
-export LESSOPEN="| /usr/bin/highlight -O ansi %s 2>/dev/null"
+export LESSOPEN='| /usr/bin/highlight -O ansi %s 2>/dev/null'
 
 # files
 alias \
@@ -41,14 +41,14 @@ fpkg() {
 }
 
 # Use neovim for vim if present.
-[ -x "$(command -v nvim)" ] && alias vim="nvim" vimdiff="nvim -d"
+[ -x "$(command -v nvim)" ] && alias vim='nvim' vimdiff='nvim -d';
 
 alias \
-        cp="cp -iv" \
-        mv="mv -iv" \
-        rm="rm -vI" \
+        cp='cp -iv' \
+        mv='mv -iv' \
+        rm='rm -vI' \
         md='mkdir -pv' \
-        diff="diff --color=auto" \
+        diff='diff --color=auto' \
         grep='grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox}' \
         h='fc -li 1' \
         :q='exit';
@@ -57,11 +57,11 @@ alias \
 alias \
         open='xdg-open' \
         v='$EDITOR' \
-        chm="chezmoi" \
-        shck="shellcheck" \
+        chm='chezmoi' \
+        shck='shellcheck' \
         ssha='eval $(ssh-agent)' \
-        yt="youtube-dl --add-metadata -i" \
-        yta="yt -x -f bestaudio/best";
+        yt='youtube-dl --add-metadata -i' \
+        yta='yt -x -f bestaudio/best';
 
 # ls
 alias \
@@ -75,7 +75,7 @@ alias \
 # dirs
 alias \
         d='dirs -v | head -10' \
-        cd..="cd .." \
+        cd..='cd ..' \
         -='cd -' \
         1='cd -'  2='cd -2' 3='cd -3' \
         4='cd -4' 5='cd -5' 6='cd -6' \
