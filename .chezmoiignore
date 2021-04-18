@@ -11,10 +11,10 @@ docs
 .config/backup/
 {{- end }}
 
-{{- if ne .chezmoi.os "android" }}
-90_android_postinstall
-.termux
+{{- if ne .machine_type "pc" }}
+.local/bin/gui
 {{- end }}
+
 {{- if eq .chezmoi.os "android" }}
 !.config/shell
 !.config/zsh
@@ -30,6 +30,9 @@ docs
 !.profile
 !.termux
 *
+{{- else }}
+90_android_postinstall
+.termux
 {{- end }}
 
 {{- if eq .machine_type "server" }}

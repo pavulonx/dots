@@ -27,3 +27,4 @@ $_show_details && curl -s "wttr.in/$location"
 
 $_wait_for_user_input && read -r
 
+exit 0

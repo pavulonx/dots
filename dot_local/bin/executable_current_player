@@ -9,7 +9,7 @@ mapping='
 
   playerctld => 1
   spotify    => 2
-  firefox.* => 3
+  firefox.*  => 3
   chromium.* => 4
 '
 
