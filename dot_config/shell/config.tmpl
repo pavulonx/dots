@@ -187,6 +187,11 @@ gcmsgj() {
     git commit -m "$message"
 }
 
+
+# sbt
+alias \
+        sbt_init_src='sbt "compile;updateClassifiers;updateSbtClassifiers;"';
+
 # clipboard
 {{ if eq .chezmoi.os "android" -}}
 clip() { termux-clipboard-set "${1:-/dev/stdin}"; }
