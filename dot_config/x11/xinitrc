@@ -16,6 +16,7 @@ fi
 # X server settings
 xsetroot -cursor_name left_ptr &
 # env > .xenv # debug
+xset r rate 660 50 # fix key chattering
 xset dpms 1200 3600 7200
 xset +dpms
 xset s off # disable screensaver todo: enable if using xscreensaver
