@@ -62,7 +62,6 @@ autoload -U +X bashcompinit && bashcompinit # automatically load bash completion
 
 
 # ---[ Key bindings ]-------------------------------------------------------------------------------------
-autoload -Uz vi_cursor; vi_cursor # load cursor plugin
 
 bindkey -v
 export KEYTIMEOUT=1
@@ -120,16 +119,10 @@ bindkey -s "^O" "openf\n"
 bindkey -s "^G" "fzfz\n"
 
 
-# ---[ Window title ]-------------------------------------------------------------------------------------
-case $TERM in
-  xterm*|rxvt*|alacritty|st*)
-    precmd () {   print -Pn "\e]0;%n@%m: %50<..<%~%<<\a" }
-    preexec () {  print -Pn "\e]0;%n@%m: %50<..<%~%<<  [ ${1} ]\a" }
-    ;;
-esac
-
-# ---[ Prompt theme ]-------------------------------------------------------------------------------------
-autoload -Uz prompt_theme; prompt_theme
+# ---[ Style plugins ]-------------------------------------------------------------------------------------
+autoload -Uz vi_cursor;         vi_cursor
+autoload -Uz prompt_theme;      prompt_theme
+autoload -Uz term_window_title; term_window_title
 
 # ---[ zinit ]-------------------------------------------------------------------------------------
 if [ ! -f $ZDOTDIR/.zinit/bin/zinit.zsh ]; then
