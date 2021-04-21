@@ -128,6 +128,8 @@ case $TERM in
     ;;
 esac
 
+# ---[ Prompt theme ]-------------------------------------------------------------------------------------
+autoload -Uz prompt_theme; prompt_theme
 
 # ---[ zinit ]-------------------------------------------------------------------------------------
 if [ ! -f $ZDOTDIR/.zinit/bin/zinit.zsh ]; then
@@ -155,7 +157,3 @@ fzfz() {
   _target="$(z | tac | sed "s/^[[:digit:].]*[[:space:]]*//" | fzf --no-sort --tiebreak=end,index -m --preview="$_preview_cmd" | head -n1)"
   cd $_target
 }
-
-# prompt theme
-zinit ice ver"minimal"
-zinit load rozenj/salt
