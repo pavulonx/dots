@@ -14,12 +14,11 @@ git open [options]
 git open [remote] [branch]
 --
   Opens the GitHub page for a repo/branch in your browser.
-  https://github.com/paulirish/git-open/
+  Forked and simplified from https://github.com/paulirish/git-open/
   Available options are
-c,commit!     open current commit
-i,issue!      open issues page
+c,commit      open current commit
 s,suffix=     append this suffix
-p,print!      just print the url
+n,no-open     do not open in browsser - just print address
 "
 
 # https://github.com/koalaman/shellcheck/wiki/SC1090
@@ -28,17 +27,15 @@ SUBDIRECTORY_OK='Yes' . "$(git --exec-path)/git-sh-setup"
 
 # Defaults
 is_commit=0
-is_issue=0
 protocol="https"
-print_only=0
+no_open_flag=false
 suffix_flag=""
 
 while test $# != 0; do
   case "$1" in
   --commit) is_commit=1;;
-  --issue) is_issue=1;;
   --suffix=*) suffix_flag="$1";;
-  --print) print_only=1;;
+  --no-open) no_open_flag=true;;
   --) shift; break ;;
   esac
   shift
@@ -175,15 +172,10 @@ remote_ref=${upstream_branch:-${branch:-$(git describe --tags --exact-match 2>/d
 # Split arguments on '/'
 IFS='/' read -r -a pathargs <<<"$urlpath"
 
-if (( is_issue )); then
-  # For issues, take the numbers and preprend 'issues/'
-  providerBranchRef="/issues/${remote_ref//[^0-9]/}"
-else
-  # Make # and % characters url friendly
-  #   github.com/paulirish/git-open/pull/24
-  remote_ref=${remote_ref//%/%25} remote_ref=${remote_ref//#/%23}
-  providerBranchRef="/tree/$remote_ref"
-fi
+# Make # and % characters url friendly
+#   github.com/paulirish/git-open/pull/24
+remote_ref=${remote_ref//%/%25} remote_ref=${remote_ref//#/%23}
+providerBranchRef="/tree/$remote_ref"
 
 
 openurl="$protocol://$domain/$urlpath"
@@ -200,8 +192,8 @@ if [ "$suffix" ]; then
     openurl="$openurl/$suffix"
 fi
 
-echo "Resoure address: $openurl"
+echo "Resoure address:
+  $openurl"
 # open it in a browser
 
-## if [ "$print_only" -ne 1 ]; then
-"${BROWSER:-xdg-open}" "$openurl"
+"$no_open_flag" || "${BROWSER:-xdg-open}" "$openurl"
