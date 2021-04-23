@@ -8,8 +8,7 @@ alias reload='. $ZDOTDIR/.zshrc'
 source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/config"         # common config
 source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/config.local"   # local config
 
-# ---[ options ]-------------------------------------------------------------------------------------
-# general tweaks
+# ---[ options ]---
 setopt long_list_jobs         # job notifications in the long format
 setopt interactive_comments   # recognize comments in input
 setopt auto_cd                # if command cannot be executed and it is dir cd into it
@@ -17,8 +16,7 @@ setopt auto_pushd             # cd but with pushing onto dir stack
 setopt pushd_ignore_dups      # ignore pushd duplicates
 setopt pushd_minus            # - instead of + in cd
 
-
-# ---[ history ]-------------------------------------------------------------------------------------
+# ---[ history ]---
 HISTSIZE=90000
 SAVEHIST=90000
 HISTFILE="${XDG_DATA_HOME:-$HOME/.local/share}/zsh/history"
@@ -30,9 +28,9 @@ setopt hist_verify            # show command with history expansion to user befo
 setopt inc_append_history     # add commands to HISTFILE in order of execution
 setopt share_history          # share command history data
 
-
-# ---[ completion ]-------------------------------------------------------------------------------------
+# ---[ completion ]---
 autoload -U compinit && compinit && _comp_options+=(globdots)
+autoload -U +X bashcompinit && bashcompinit # automatically load bash completion functions
 
 unsetopt menu_complete   # do not autoselect the first completion entry
 unsetopt flowcontrol
@@ -47,6 +45,7 @@ zstyle ':completion:*' menu select
 zstyle ':completion:*' verbose yes
 zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*' # Case-insensitive completion
 zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+
 # Fuzzy match mistyped completions.
 zstyle ':completion:*' completer _complete _match _approximate
 zstyle ':completion:*:match:*' original only
@@ -58,15 +57,11 @@ zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-
 zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
 zstyle ':completion:*:cd:*' tag-order local-directories directory-stack path-directories # disable named-directories autocompletion
 
-autoload -U +X bashcompinit && bashcompinit # automatically load bash completion functions
-
-
-# ---[ Key bindings ]-------------------------------------------------------------------------------------
-
+# ---[ Key bindings ]---
 bindkey -v
 export KEYTIMEOUT=1
 
-# menu navigarrion  vim keys
+# menu navigation  vim keys
 zmodload -i zsh/complist
 bindkey -M menuselect '^@'  accept-and-infer-next-history  # ctrl + <space>
 bindkey -M menuselect 'h'   vi-backward-char               # left
@@ -74,7 +69,7 @@ bindkey -M menuselect 'k'   vi-up-line-or-history          # up
 bindkey -M menuselect 'l'   vi-forward-char                # right
 bindkey -M menuselect 'j'   vi-down-line-or-history        # bottom
 
-# setup key accordingly
+# key bindings
 bindkey  "^[[H"   beginning-of-line      # Home
 bindkey  "^[[F"   end-of-line            # End
 bindkey  "^[[2~"  overwrite-mode         # Insert
@@ -110,21 +105,24 @@ bindkey "^[j" down-line-or-beginning-search   # Alt+J
 
 #bindkey '^R' history-incremental-search-backward      # [Ctrl-r] - Search backward incrementally currently handled by plugin
 
-autoload edit-command-line; zle -N edit-command-line; bindkey '^v' edit-command-line                  # Edit line in vim buffer ctrl-v
-autoload -U edit-command-line && zle -N edit-command-line && bindkey -M vicmd "^v" edit-command-line  # Enter vim buffer from normal mode
+# Edit line in vim buffer ctrl-v
+autoload edit-command-line; zle -N edit-command-line;
+bindkey '^v' edit-command-line
+# Enter vim buffer from normal mode
+autoload -U edit-command-line && zle -N edit-command-line;
+bindkey -M vicmd "^v" edit-command-line
 
 # terminal programs shortcuts
 bindkey -s "^F" "ctrlf\n"
 bindkey -s "^O" "openf\n"
 bindkey -s "^G" "fzfz\n"
 
-
-# ---[ Style plugins ]-------------------------------------------------------------------------------------
+# ---[ Style plugins ]---
 autoload -Uz vi_style_suppport;   vi_style_suppport
 autoload -Uz prompt_theme;        prompt_theme
 autoload -Uz term_window_title;   term_window_title
 
-# ---[ zinit ]-------------------------------------------------------------------------------------
+# ---[ zinit ]---
 if [ ! -f $ZDOTDIR/.zinit/bin/zinit.zsh ]; then
   print -P "%F{33}Installing zdharma/zinit%f"
   command mkdir -p "$ZDOTDIR/.zinit" && command chmod g-rwX "$ZDOTDIR/.zinit"
@@ -143,6 +141,7 @@ zinit light-mode for \
   zdharma/history-search-multi-word
 
 # z support
+# tab completion works only if compinit is called after zshz init https://github.com/agkozak/zsh-z/issues/16
 export ZSHZ_CASE=smart
 zinit light agkozak/zsh-z
 fzfz() {
