@@ -120,9 +120,9 @@ bindkey -s "^G" "fzfz\n"
 
 
 # ---[ Style plugins ]-------------------------------------------------------------------------------------
-autoload -Uz vi_cursor;         vi_cursor
-autoload -Uz prompt_theme;      prompt_theme
-autoload -Uz term_window_title; term_window_title
+autoload -Uz vi_style_suppport;   vi_style_suppport
+autoload -Uz prompt_theme;        prompt_theme
+autoload -Uz term_window_title;   term_window_title
 
 # ---[ zinit ]-------------------------------------------------------------------------------------
 if [ ! -f $ZDOTDIR/.zinit/bin/zinit.zsh ]; then

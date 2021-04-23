@@ -1,4 +1,4 @@
-vi_cursor() {
+vi_style_suppport() {
   # See https://ttssh2.osdn.jp/manual/4/en/usage/tips/vim.html for cursors
   cursor_block='\e[2 q';
   cursor_beam='\e[5 q';
@@ -13,6 +13,8 @@ vi_cursor() {
         [[ $1 = 'beam' ]]; then
           echo -ne $cursor_beam;
     fi
+    # redraw prompt when changing between keymaps
+    zle reset-prompt
   }
 
   zle-line-init() {
@@ -23,6 +25,6 @@ vi_cursor() {
   zle -N zle-line-init;
 }
 
-vi_cursor
+vi_style_suppport
 
 # vi:syntax=zsh
