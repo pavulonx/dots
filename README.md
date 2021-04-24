@@ -1,6 +1,6 @@
 # Screenshots:
 
-# ![Current setup](https://raw.githubusercontent.com/rozenj/dots/master/extras/scrot/2020-10-25-012729_2560x1440_scrot.png)
+# ![Current setup](https://raw.githubusercontent.com/rozenj/dots/master/extras/scrot/scrot.png)
 
 #### TODO:
 - auto configure crontab - backup
