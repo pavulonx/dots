@@ -1,18 +1,9 @@
-{{- if eq .chezmoi.hostname "LT33693" }} # work laptop
-# [url "https://github.com/"]
-#      insteadOf = git@github.com:
-# [url "https://"]
-#      insteadOf = git://
 [user]
-	email = j.rozenbajger@ocado.com
-	name = Jakub Rozenbajger
+	email = {{ .user_email }}
+	name = {{ .user_fullname }}
 
-{{- else }}
-[user]
-	email = jrozen@tuta.io
-	name = jrozen
-{{- end }}
 [pull]
 	rebase = true
+
 [init]
 	defaultBranch = master
