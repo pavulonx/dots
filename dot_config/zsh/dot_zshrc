@@ -132,12 +132,25 @@ source "$ZDOTDIR/.zinit/bin/zinit.zsh"
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
 
-# todo: see https://github.com/zdharma/zinit#calling-compinit-with-turbo-mode
-zinit light-mode for \
-  zsh-users/zsh-autosuggestions \
-  zsh-users/zsh-completions \
-  zdharma/fast-syntax-highlighting \
-  zdharma/history-search-multi-word
+# Fast-syntax-highlighting & autosuggestions
+ # atinit"ZINIT[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay;  _comp_options+=(globdots)" \
+zinit wait lucid for \
+    zdharma/fast-syntax-highlighting \
+ atload"!_zsh_autosuggest_start" \
+    zsh-users/zsh-autosuggestions \
+ blockf \
+    zsh-users/zsh-completions
+
+zinit wait"1" lucid for \
+    zdharma/history-search-multi-word \
+# atinit'zstyle ":history-search-multi-word" page-size "7"' \
+
+## todo: see https://github.com/zdharma/zinit#calling-compinit-with-turbo-mode
+#zinit light-mode for \
+#  zsh-users/zsh-autosuggestions \
+#  zsh-users/zsh-completions \
+#  zdharma/fast-syntax-highlighting \
+#  zdharma/history-search-multi-word
 
 # z support
 # tab completion works only if compinit is called after zshz init https://github.com/agkozak/zsh-z/issues/16
