@@ -124,10 +124,9 @@ autoload -Uz term_window_title;   term_window_title
 
 # ---[ zinit ]---
 if [ ! -f $ZDOTDIR/.zinit/bin/zinit.zsh ]; then
-  print -P "%F{33}Installing zdharma/zinit%f"
-  command mkdir -p "$ZDOTDIR/.zinit" && command chmod g-rwX "$ZDOTDIR/.zinit"
-  command git clone https://github.com/zdharma/zinit "$ZDOTDIR/.zinit/bin" && \
-    print -P "Installation successful" || print -P "%F{160}The clone has failed.%f"
+  print -P "%F{33}Installing zinit%f"
+  command mkdir -p "$ZDOTDIR/.zinit"
+  command git clone https://github.com/zdharma/zinit "$ZDOTDIR/.zinit/bin"
 fi
 source "$ZDOTDIR/.zinit/bin/zinit.zsh"
 autoload -Uz _zinit
