@@ -30,15 +30,19 @@ alias \
         sys='systemctl' \
         ssys='sudo systemctl';
 
-# pacman
-alias \
-        pac='sudo pacman' \
-        pacmanclean='sudo pacman -R `pacman -Qdtq`' \
-        update='paru -Syu --upgrademenu';
+# package manager
+{{- if eq .chezmoi.osRelease.id "debian" }}
+alias update='sudo apt-get update && sudo apt-get upgrade';
+fpkg() { apt-cache pkgnames | sort -u | fzf --multi --preview 'apt-cache show {1}'; }
+{{- else if eq .chezmoi.os "android" }}{{/* by default use pacman */}}
+alias update='pkg upgrade';
+fpkg() { pkg list-all | fzf --multi --preview-window down --preview 'pkg show {1}' | awk '{print $1}'; }
+{{- else }}{{/* by default use pacman */}}
+alias update='paru -Syu --upgrademenu';
+fpkg() { paru -Sl --color=always | fzf --ansi --multi --preview 'paru -Si {2}' | awk '{print $2}'; }
+alias pac='sudo pacman' pacmanclean='sudo pacman -R `pacman -Qdtq`';
+{{- end}}
 
-fpkg() {
-  paru -Sl --color=always | fzf --ansi --multi --preview 'paru -Si {2}' | awk '{print $2}'
-}
 
 # Use neovim for vim if present.
 [ -x "$(command -v nvim)" ] && alias vim='nvim' vimdiff='nvim -d';
@@ -120,14 +124,14 @@ alias \
         gfprune='git fetch --all --prune' \
         \
         gl='git pull'\
-        ggpull='git pull origin "$(git_current_branch)"' \
+        glo='git pull origin "$(git_current_branch)"' \
         \
         gm='git merge' \
         gmt='git mergetool' \
         \
         gp='git push' \
-        ggpush='git push origin "$(git_current_branch)"' \
-        ggpush!='git push --force-with-lease origin "$(git_current_branch)"' \
+        gpcb='git push origin "$(git_current_branch)"' \
+        gpcb!='git push --force-with-lease origin "$(git_current_branch)"' \
         \
         gr='git remote' \
         grv='git remote  -v' \
@@ -136,9 +140,6 @@ alias \
         grba='git rebase --abort' \
         grbc='git rebase --continue' \
         \
-        greset='git reset' \
-        greset!='git reset --hard' \
-        gresetremote='git reset --hard origin/"$(git_current_branch)"' \
         gpristine='git reset --hard && git clean -dffx' \
         \
         gst='git status' \
@@ -152,14 +153,12 @@ alias \
         gstad='git stash drop' \
         gstap='git stash pop' \
         \
-        glg='git log --stat' \
         glog='git log --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset"' \
         glogs='git log --graph --pretty="%Cred%h%Creset -%C(auto)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset" --stat' \
         glogf='git_log_tree_fzf' \
-        gwch='git whatchanged -p --abbrev-commit --pretty=medium' \
         \
         gsetup='git branch --set-upstream-to=origin/$(git_current_branch)' \
-        gcfg='git config --list' \
+        gcfg='git config' \
         gitroot='git rev-parse --show-toplevel' \
         cdgr='cd $(gitroot)';
 
