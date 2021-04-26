@@ -15,7 +15,6 @@ echo "
 
 }| rofi -dmenu -i -p "Screen layout")"
 
-
 to_exec="$(echo "$cmd" | awk '/^exec/ {print "'$LAYOUTS_DIR'/"$2}')"
 if [ -n "$to_exec" ]; then
   $to_exec
@@ -23,9 +22,9 @@ if [ -n "$to_exec" ]; then
 else
   autorandr_args=''
   case "$cmd" in
-    run\ change*)   autorandr_args="-c" ;;
-    run\ *)         autorandr_args="$(echo "$cmd" | cut -d " " -f2)" ;;
-    load\ *)        autorandr_args="--load $(echo "$cmd" | cut -d " " -f2)" ;;
+    autorandr\ run\ change*)   autorandr_args="-c" ;;
+    autorandr\ run\ *)         autorandr_args="$(echo "$cmd" | awk '{print $3}')" ;;
+    autorandr\ load\ *)        autorandr_args="--load $(echo "$cmd" | awk '{print $3}')" ;;
     *) exit 0;
   esac
   # shellcheck disable=SC2086
