@@ -29,34 +29,35 @@ setopt inc_append_history     # add commands to HISTFILE in order of execution
 setopt share_history          # share command history data
 
 # ---[ completion ]---
-autoload -U compinit && compinit && _comp_options+=(globdots)
-autoload -U +X bashcompinit && bashcompinit # automatically load bash completion functions
+__completions_init() {
+  autoload -U compinit && compinit && _comp_options+=(globdots)
+  autoload -U +X bashcompinit && bashcompinit # automatically load bash completion functions
 
-unsetopt menu_complete   # do not autoselect the first completion entry
-unsetopt flowcontrol
-setopt auto_menu
-setopt always_to_end
-setopt complete_in_word
+  unsetopt menu_complete   # do not autoselect the first completion entry
+  unsetopt flowcontrol
+  setopt auto_menu
+  setopt always_to_end
+  setopt complete_in_word
 
-zstyle ':completion::complete:*' use-cache on # Use caching so that commands like apt and dpkg complete are useable
-zstyle ':completion::complete:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
+  zstyle ':completion::complete:*' use-cache on # Use caching so that commands like apt and dpkg complete are useable
+  zstyle ':completion::complete:*' cache-path "${XDG_CACHE_HOME:-$HOME/.cache}/zsh"
 
-zstyle ':completion:*' menu select
-zstyle ':completion:*' verbose yes
-zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*' # Case-insensitive completion
-zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+  zstyle ':completion:*' menu select
+  zstyle ':completion:*' verbose yes
+  zstyle ':completion:*' matcher-list '' 'm:{a-zA-Z}={A-Za-z}' 'r:|[._-]=* r:|=*' 'l:|=* r:|=*' # Case-insensitive completion
+  zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
 
-# Fuzzy match mistyped completions.
-zstyle ':completion:*' completer _complete _match _approximate
-zstyle ':completion:*:match:*' original only
-zstyle ':completion:*:approximate:*' max-errors 1 numeric
-# Increase the number of errors based on the length of the typed word. But make sure to cap (at 7) the max-errors to avoid hanging
-zstyle -e ':completion:*:approximate:*' max-errors 'reply=($((($#PREFIX+$#SUFFIX)/3>7?7:($#PREFIX+$#SUFFIX)/3))numeric)'
+  # Fuzzy match mistyped completions.
+  zstyle ':completion:*' completer _complete _match _approximate
+  zstyle ':completion:*:match:*' original only
+  zstyle ':completion:*:approximate:*' max-errors 1 numeric
+  # Increase the number of errors based on the length of the typed word. But make sure to cap (at 7) the max-errors to avoid hanging
+  zstyle -e ':completion:*:approximate:*' max-errors 'reply=($((($#PREFIX+$#SUFFIX)/3>7?7:($#PREFIX+$#SUFFIX)/3))numeric)'
 
-zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
-zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
-zstyle ':completion:*:cd:*' tag-order local-directories directory-stack path-directories # disable named-directories autocompletion
-
+  zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#) ([0-9a-z-]#)*=01;34=0=01'
+  zstyle ':completion:*:*:*:*:processes' command "ps -u $USER -o pid,user,comm -w -w"
+  zstyle ':completion:*:cd:*' tag-order local-directories directory-stack path-directories # disable named-directories autocompletion
+}
 # ---[ Key bindings ]---
 bindkey -v
 export KEYTIMEOUT=1
@@ -133,29 +134,19 @@ autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
 
 # Fast-syntax-highlighting & autosuggestions
- # atinit"ZINIT[COMPINIT_OPTS]=-C; zpcompinit; zpcdreplay;  _comp_options+=(globdots)" \
 zinit wait lucid for \
+  atload"ZSHZ_CASE=smart;" \
+    agkozak/zsh-z \
+  atinit"ZINIT[COMPINIT_OPTS]=-C; __completions_init; zpcdreplay;" \
     zdharma/fast-syntax-highlighting \
- atload"!_zsh_autosuggest_start" \
+  atload"!_zsh_autosuggest_start" \
     zsh-users/zsh-autosuggestions \
- blockf \
+  blockf \
     zsh-users/zsh-completions
 
 zinit wait"1" lucid for \
-    zdharma/history-search-multi-word \
-# atinit'zstyle ":history-search-multi-word" page-size "7"' \
+    zdharma/history-search-multi-word
 
-## todo: see https://github.com/zdharma/zinit#calling-compinit-with-turbo-mode
-#zinit light-mode for \
-#  zsh-users/zsh-autosuggestions \
-#  zsh-users/zsh-completions \
-#  zdharma/fast-syntax-highlighting \
-#  zdharma/history-search-multi-word
-
-# z support
-# tab completion works only if compinit is called after zshz init https://github.com/agkozak/zsh-z/issues/16
-export ZSHZ_CASE=smart
-zinit light agkozak/zsh-z
 fzfz() {
   _preview_cmd='exa --level 2 --tree --color=always --group-directories-first {}'
   _target="$(z | tac | sed "s/^[[:digit:].]*[[:space:]]*//" | fzf --no-sort --tiebreak=end,index -m --preview="$_preview_cmd" | head -n1)"
