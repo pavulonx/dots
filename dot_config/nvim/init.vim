@@ -19,7 +19,10 @@ Plug 'tpope/vim-commentary'
 Plug 'ap/vim-css-color'
 Plug 'lifepillar/vim-solarized8'
 Plug 'airblade/vim-gitgutter'
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
 call plug#end()
+
+source ~/.config/nvim/coc.vim
 
 colorscheme solarized8
 let g:solarized_statusline=''

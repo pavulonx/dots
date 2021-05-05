@@ -1,19 +1,44 @@
 #!/bin/sh
 
-updates_repo="$(checkupdates 2> /dev/null)"
-if [ "$ret" = 0 ]; then
-    updates_repo_count="$(echo "${updates_repo}" | wc -l)"
+dir="${XDG_CACHE_DIR:-/tmp}/updatestatus"
+mainf="$dir/main"
+aurf="$dir/aur"
+lockf="$dir/lock"
+
+[ -d "$dir" ] || mkdir -p "$dir"
+
+
+__lastmod() {
+  echo "$(($(date +%s)-$(stat -c "%Y" "$mainf")))"
+}
+
+__gen_update_stats() {
+  echo "refreshing main"
+  checkupdates > "$mainf" 2> /dev/null
+  echo "refreshing aur"
+  paru -Qua > "$aurf" 2> /dev/null
+}
+
+if (set -o noclobber; echo "$$" > "$lockf") 2> /dev/null; then
+  trap 'rm -f "$lockf"; exit $?' INT TERM EXIT
+  echo "lock aquired"
+  sleep 2
+  __gen_update_stats
+  rm -f "$lockf"
+  trap - INT TERM EXIT
+  echo "lock released"
 else
-    updates_repo_count=0
+  wait
+  echo "Failed to acquire $lockf. Held by $(cat "$lockf")"
 fi
 
-#todo: updates for aur
-updates_aur_count=0
+main_count="$(wc -l < "$mainf")"
+aur_count="$(wc -l < "$aurf")"
 
-updates_count=$(("$updates_repo_count" + "$updates_aur_count"))
+updates_count=$(("$main_count" + "$aur_count"))
 
 if [ "$updates_count" -gt 0 ]; then
-    notify-send "$updates_count updates available! " "Main: $updates_repo_count \nAUR: $updates_aur_count"
+  notify-send "$updates_count updates available! " "Main: $main_count \nAUR: $aur_count"
 fi
 
 echo "$updates_count"
