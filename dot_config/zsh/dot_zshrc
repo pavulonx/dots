@@ -116,7 +116,7 @@ bindkey -M vicmd "^v" edit-command-line
 # terminal programs shortcuts
 bindkey -s "^F" "ctrlf\n"
 bindkey -s "^O" "openf\n"
-bindkey -s "^G" "fzfz\n"
+bindkey -s "^G" "z -I .\n"
 
 # ---[ Style plugins ]---
 autoload -Uz vi_style_suppport;   vi_style_suppport
@@ -133,10 +133,9 @@ source "$ZDOTDIR/.zinit/bin/zinit.zsh"
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
 
-# Fast-syntax-highlighting & autosuggestions
 zinit wait lucid for \
-  atload"ZSHZ_CASE=smart;" \
-    agkozak/zsh-z \
+  atload"export _ZL_DATA=$_Z_DATA; _ZL_FZF_HEIGHT='50%'; _ZL_FZF_FLAG='+s -e --preview=\"exa --level 2 --tree --color=always --group-directories-first {2}\"'" \
+    skywind3000/z.lua \
   atinit"ZINIT[COMPINIT_OPTS]=-C; __completions_init; zpcdreplay;" \
     zdharma/fast-syntax-highlighting \
   atload"!_zsh_autosuggest_start" \
@@ -146,9 +145,3 @@ zinit wait lucid for \
 
 zinit wait"1" lucid for \
     zdharma/history-search-multi-word
-
-fzfz() {
-  _preview_cmd='exa --level 2 --tree --color=always --group-directories-first {}'
-  _target="$(z | tac | sed "s/^[[:digit:].]*[[:space:]]*//" | fzf --no-sort --tiebreak=end,index -m --preview="$_preview_cmd" | head -n1)"
-  cd $_target
-}
