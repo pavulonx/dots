@@ -7,7 +7,7 @@ import qualified XMonad.StackSet as W
 
     -- Actions
 import XMonad.Actions.CopyWindow (kill1)
-import XMonad.Actions.CycleWS (moveTo, shiftTo, WSType(..), nextScreen, prevScreen, nextWS, prevWS, toggleWS)
+import XMonad.Actions.CycleWS (moveTo, shiftTo, WSType(..), nextScreen, prevScreen, shiftNextScreen, shiftPrevScreen, nextWS, prevWS, toggleWS)
 import XMonad.Actions.GridSelect
 import XMonad.Actions.MouseResize
 import XMonad.Actions.Promote
@@ -16,6 +16,7 @@ import qualified XMonad.Actions.TreeSelect as TS
 import XMonad.Actions.WindowGo (runOrRaise)
 import XMonad.Actions.WithAll (sinkAll, killAll)
 import qualified XMonad.Actions.Search as S
+import XMonad.Actions.UpdatePointer
 
     -- Data
 import Data.Char (isSpace, toUpper)
@@ -93,51 +94,51 @@ import XMonad.Util.SpawnOnce
 
 
 
-------------------------------------------------------------------------
--- Polybar settings (needs DBus client).
+-- ------------------------------------------------------------------------
+-- -- Polybar settings (needs DBus client).
+-- --
+-- mkDbusClient :: IO D.Client
+-- mkDbusClient = do
+--   dbus <- D.connectSession
+--   D.requestName dbus (D.busName_ "org.xmonad.log") opts
+--   return dbus
+--  where
+--   opts = [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
 --
-mkDbusClient :: IO D.Client
-mkDbusClient = do
-  dbus <- D.connectSession
-  D.requestName dbus (D.busName_ "org.xmonad.log") opts
-  return dbus
- where
-  opts = [D.nameAllowReplacement, D.nameReplaceExisting, D.nameDoNotQueue]
-
--- Emit a DBus signal on log updates
-dbusOutput :: D.Client -> String -> IO ()
-dbusOutput dbus str =
-  let opath  = D.objectPath_ "/org/xmonad/Log"
-      iname  = D.interfaceName_ "org.xmonad.Log"
-      mname  = D.memberName_ "Update"
-      signal = D.signal opath iname mname
-      body   = [D.toVariant $ UTF8.decodeString str]
-  in  D.emit dbus $ signal { D.signalBody = body }
-
-polybarHook :: D.Client -> PP
-polybarHook dbus =
-  let wrapper c s | s /= "NSP" = wrap ("%{F" <> c <> "} ") " %{F-}" s
-                  | otherwise  = mempty
-      blue   = "#2E9AFE"
-      gray   = "#7F7F7F"
-      orange = "#ea4300"
-      purple = "#9058c7"
-      red    = "#722222"
-  in  def { ppOutput          = dbusOutput dbus
-          , ppCurrent         = wrapper blue
-          , ppVisible         = wrapper gray
-          , ppUrgent          = wrapper orange
-          , ppHidden          = wrapper gray
-          , ppHiddenNoWindows = wrapper red
-          , ppTitle           = shorten 100 . wrapper purple
-          }
-
-myPolybarLogHook dbus = myLogHook <+> dynamicLogWithPP (polybarHook dbus)
+-- -- Emit a DBus signal on log updates
+-- dbusOutput :: D.Client -> String -> IO ()
+-- dbusOutput dbus str =
+--   let opath  = D.objectPath_ "/org/xmonad/Log"
+--       iname  = D.interfaceName_ "org.xmonad.Log"
+--       mname  = D.memberName_ "Update"
+--       signal = D.signal opath iname mname
+--       body   = [D.toVariant $ UTF8.decodeString str]
+--   in  D.emit dbus $ signal { D.signalBody = body }
+--
+-- polybarHook :: D.Client -> PP
+-- polybarHook dbus =
+--   let wrapper c s | s /= "NSP" = wrap ("%{F" <> c <> "} ") " %{F-}" s
+--                   | otherwise  = mempty
+--       blue   = "#2E9AFE"
+--       gray   = "#7F7F7F"
+--       orange = "#ea4300"
+--       purple = "#9058c7"
+--       red    = "#722222"
+--   in  def { ppOutput          = dbusOutput dbus
+--           , ppCurrent         = wrapper blue
+--           , ppVisible         = wrapper gray
+--           , ppUrgent          = wrapper red --orange
+--           , ppHidden          = wrapper gray
+--           , ppHiddenNoWindows = \_ -> "" --wrapper red
+--           , ppTitle           = wrapper purple . shorten 90
+--           }
+--
+-- myPolybarLogHook dbus =  dynamicLogWithPP (polybarHook dbus)
 
 
 
-
-
+myLogHook :: X ()
+myLogHook = fadeInactiveLogHook 1 -- 0.9
 
 
 
@@ -147,7 +148,7 @@ myPolybarLogHook dbus = myLogHook <+> dynamicLogWithPP (polybarHook dbus)
 
 
 myFont :: String
-myFont = "xft:Segoe UI:regular:size=9:antialias=true:hinting=true"
+myFont = "xft:Lato:bold:size=9:antialias=true:hinting=true"
 
 myModMask :: KeyMask
 myModMask = mod4Mask       -- Sets modkey to super/windows key
@@ -165,10 +166,8 @@ myEditor = myTerminal ++ " -e nvim "    -- Sets vim as editor for tree select
 
 myBorderWidth :: Dimension
 myBorderWidth = 1          -- Sets border width for windows
-
 myNormColor :: String
-myNormColor   = "#786954"  -- Border color of normal windows
-
+myNormColor   = "#080808"  -- Border color of normal windows
 myFocusColor :: String
 myFocusColor  = "#ebdbb2"  -- Border color of focused windows
 
@@ -180,45 +179,14 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 
 myStartupHook :: X ()
 myStartupHook = do
-       --   spawnOnce "~/.config/polybar/launch.sh &"
-          spawnOnce "nitrogen --restore &"
-          spawnOnce "picom --experimental-backends &"
-	  spawnOnce "redshiftw &"
-	  spawnOnce "autorandr -c &"
-       --   spawnOnce "nm-applet &"
-       --   spawnOnce "trayer --edge top --align right --widthtype request --padding 6 --SetDockType true --SetPartialStrut true --expand true --monitor 1 --transparent true --alpha 0 --tint 0x080808  --height 22 &"
-          -- setWMName "LG3D"
-
-myColorizer :: Window -> Bool -> X (String, String)
-myColorizer = colorRangeFromClassName
-                  (0x28,0x2c,0x34) -- lowest inactive bg
-                  (0x28,0x2c,0x34) -- highest inactive bg
-                  (0xc7,0x92,0xea) -- active bg
-                  (0xc0,0xa7,0x9a) -- inactive fg
-                  (0x28,0x2c,0x34) -- active fg
-
--- gridSelect menu layout
-mygridConfig :: p -> GSConfig Window
-mygridConfig colorizer = (buildDefaultGSConfig myColorizer)
-    { gs_cellheight   = 40
-    , gs_cellwidth    = 200
-    , gs_cellpadding  = 6
-    , gs_originFractX = 0.5
-    , gs_originFractY = 0.5
-    , gs_font         = myFont
-    }
-
-spawnSelected' :: [(String, String)] -> X ()
-spawnSelected' lst = gridselect conf lst >>= flip whenJust spawn
-    where conf = def
-                   { gs_cellheight   = 40
-                   , gs_cellwidth    = 200
-                   , gs_cellpadding  = 6
-                   , gs_originFractX = 0.5
-                   , gs_originFractY = 0.5
-                   , gs_font         = myFont
-                   }
-
+--  spawnOnce "~/.config/polybar/launch.sh &"
+--  spawnOnce "nitrogen --restore &"
+  spawnOnce "picom --experimental-backends &"
+  spawnOnce "redshiftw &"
+  spawnOnce "autorandr -c &"
+--   spawnOnce "nm-applet &"
+--   spawnOnce "trayer --edge top --align right --widthtype request --padding 6 --SetDockType true --SetPartialStrut true --expand true --monitor 1 --transparent true --alpha 0 --tint 0x080808  --height 22 &"
+  setWMName "LG3D"
 
 myScratchPads :: [NamedScratchpad]
 myScratchPads = [ NS "terminal" spawnTerm findTerm manageTerm
@@ -369,15 +337,12 @@ myManageHook = composeAll
      , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat  -- Float Firefox Dialog
      ] <+> namedScratchpadManageHook myScratchPads
 
-myLogHook :: X ()
-myLogHook = fadeInactiveLogHook fadeAmount
-    where fadeAmount = 0.8
+
 
 myKeys :: [(String, X ())]
 myKeys =
     -- Xmonad
-        [ ("M-C-r", spawn "xmonad --recompile") -- Recompiles xmonad
-        , ("M-S-r", spawn "xmonad --recompile && xmonad  --restart")   -- Restarts xmonad
+        [ ("M-S-r", spawn "xmonad --recompile && xmonad  --restart")   -- Restarts xmonad
         , ("M-S-e", io exitSuccess)             -- Quits xmonad
 
     -- Launcher
@@ -386,18 +351,24 @@ myKeys =
 
     -- Useful programs to have a keybinding for launch
         , ("M-<Return>", spawn myTerminal)
+        , ("M-c", spawn "clipmenu")
         , ("M-b", spawn (myBrowser ++ " www.youtube.com/c/DistroTube/"))
         , ("M-M1-h", spawn (myTerminal ++ " -e htop"))
 
     -- Kill windows
         , ("M-S-q", kill1)     -- Kill the currently focused client
         , ("M-S-C-q", killAll)   -- Kill all windows on current workspace
+        , ("M-S-C-x", spawn "xkill")     -- Kill the currently focused client
 
     -- Workspaces
-        , ("M-.", nextScreen)  -- Switch focus to next monitor
-        , ("M-,", prevScreen)  -- Switch focus to prev monitor
-        , ("M-S-<KP_Add>", shiftTo Next nonNSP >> moveTo Next nonNSP)       -- Shifts focused window to next ws
-        , ("M-S-<KP_Subtract>", shiftTo Prev nonNSP >> moveTo Prev nonNSP)  -- Shifts focused window to prev ws
+        , ("M-[", prevScreen)  -- Switch focus to next monitor
+        , ("M-S-[", shiftPrevScreen)  -- Switch focus to next monitor
+        , ("M-]", nextScreen)  -- Switch focus to prev monitor
+        , ("M-S-]", shiftNextScreen)  -- Switch focus to prev monitor
+        , ("M-S-h", shiftTo Prev nonNSP >> moveTo Prev nonNSP)  -- Shifts focused window to prev ws
+        , ("M-S-<Left>", shiftTo Prev nonNSP >> moveTo Prev nonNSP)  -- Shifts focused window to prev ws
+        , ("M-S-l", shiftTo Next nonNSP >> moveTo Next nonNSP)       -- Shifts focused window to next ws
+        , ("M-S-<Right>", shiftTo Next nonNSP >> moveTo Next nonNSP)       -- Shifts focused window to next ws
 
     -- Floating windows
         , ("M-f", sendMessage (T.Toggle "floats")) -- Toggles my 'floats' layout
@@ -409,11 +380,6 @@ myKeys =
         , ("M-=", incWindowSpacing 4)           -- Increase window spacing
         , ("M-S--", decScreenSpacing 4)         -- Decrease screen spacing
         , ("M-S-=", incScreenSpacing 4)         -- Increase screen spacing
-
-    -- Grid Select (CTR-g followed by a key)
-        , ("C-g t", goToSelected $ mygridConfig myColorizer)  -- goto selected window
-        , ("C-g b", bringSelected $ mygridConfig myColorizer) -- bring selected window
-
 
     -- Windows navigation
         , ("M-m", windows W.focusMaster)  -- Move focus to the master window
@@ -428,9 +394,9 @@ myKeys =
 
 
         --, ("M-C-h", prevWS)   -- Swap focused window with next window
-        , ("M-C-<Left>", prevWS)   -- Swap focused window with next window
+        , ("M-C-<Left>", moveTo Prev NonEmptyWS )   -- Swap focused window with next window
         --, ("M-C-l", nextWS)   -- Swap focused window with next window
-        , ("M-C-<Right>", nextWS)   -- Swap focused window with next window
+        , ("M-C-<Right>", moveTo Next NonEmptyWS)   -- Swap focused window with next window
 --        , ((modm,               xK_Down),  nextWS)
 --        , ((modm,               xK_Up),    prevWS)
 --  	, ((modm .|. shiftMask, xK_Down), shiftToNext >> nextWS)
@@ -484,14 +450,14 @@ myKeys =
         , ("M-<Print>", spawn "sshot -s")
 
     -- Multimedia Keys
-        , ("<XF86AudioPlay>",		spawn "current_player play-pause")
-        , ("<XF86AudioPause>", 		spawn "current_player play-pause")
-        , ("<XF86AudioStop>", 		spawn "current_player stop")
-        , ("<XF86AudioPrev>", 		spawn "current_player previous")
-        , ("<XF86AudioNext>", 		spawn "current_player next")
-        , ("<XF86AudioMute>", 		spawn "pamixer -t")
-        , ("<XF86AudioLowerVolume>", 	spawn "pamixer -d 5")
-        , ("<XF86AudioRaiseVolume>", 	spawn "pamixer -i 5")
+        , ("<XF86AudioPlay>",	spawn "current_player play-pause")
+        , ("<XF86AudioPause>", spawn "current_player play-pause")
+        , ("<XF86AudioStop>",	spawn "current_player stop")
+        , ("<XF86AudioPrev>",	spawn "current_player previous")
+        , ("<XF86AudioNext>",	spawn "current_player next")
+        , ("<XF86AudioMute>",	spawn "pamixer -t")
+        , ("<XF86AudioLowerVolume>", spawn "pamixer -d 5")
+        , ("<XF86AudioRaiseVolume>", spawn "pamixer -i 5")
         , ("<XF86HomePage>", spawn "$BROWSER")
         , ("<XF86Calculator>", runOrRaise "gnome-calculator" (resource =? "gnome-calculator"))
         ]
@@ -502,8 +468,9 @@ myKeys =
 main :: IO ()
 main = do
     -- Launching three instances of xmobar on their monitors.
-    dbus <- mkDbusClient
+--    dbus <- mkDbusClient
     _ <- spawnPipe "$XDG_CONFIG_HOME/polybar/launch.sh"
+    _ <- spawnPipe "nitrogen --restore &"
 --    xmproc0 <- spawnPipe "xmobar -x 0 $XMONAD_CONFIG_DIR/xmobar/bar0.hs"
 --    xmproc1 <- spawnPipe "xmobar -x 1 $XMONAD_CONFIG_DIR/xmobar/bar2.hs"
 --    xmproc2 <- spawnPipe "xmobar -x 2 $XMONAD_CONFIG_DIR/xmobar/bar1.hs"
@@ -527,7 +494,7 @@ main = do
         , borderWidth        = myBorderWidth
         , normalBorderColor  = myNormColor
         , focusedBorderColor = myFocusColor
-        , logHook = workspaceHistoryHook <+> myLogHook -- <+> myPolybarLogHook dbus -- <+> dynamicLogWithPP xmobarPP -- myPolybarLogHook logs into debus ad its handled by xmonad-log
+        , logHook = workspaceHistoryHook <+> myLogHook <+> updatePointer (0.5, 0.5) (0, 0) -- <+> myPolybarLogHook dbus -- <+> dynamicLogWithPP xmobarPP -- myPolybarLogHook logs into debus ad its handled by xmonad-log
                         {-- ppOutput = \x -> hPutStrLn xmproc0 x  -- >> hPutStrLn xmproc1 x  >> hPutStrLn xmproc2 x
                         , ppCurrent = xmobarColor "#98be65" "" . wrap "[" "]"           -- Current workspace in xmobar
                         , ppVisible = xmobarColor "#98be65" "" . clickable              -- Visible but not current workspace

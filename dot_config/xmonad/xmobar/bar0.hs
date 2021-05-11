@@ -2,7 +2,7 @@
 -- install xmobar with these flags: --flags="with_alsa" --flags="with_mpd" --flags="with_xft"  OR --flags="all_extensions"
 -- you can find weather location codes here: http://weather.noaa.gov/index.html
 
-Config { font    = "xft:Segoe UI:size=9:antialias=true:hinting=true:fontformat=truetype"
+Config { font    = "xft:Lato:size=9:antialias=true:hinting=true:fontformat=truetype"
        , additionalFonts = [ "xft:Noto Sans:size=9:fontformat=truetype"
 			   , "xft:NotoSans-Regular:size=8"
 			   , "xft:MaterialIcons:size=10"

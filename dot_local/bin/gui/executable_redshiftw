@@ -1,5 +1,6 @@
 #!/bin/sh
 
-LOCATION=${LOCATION:-'51.84:16.92'}
+LOCATION_GEO=${LOCATION_GEO:-'51.84:16.92'}
 
-redshift -l "$LOCATION"
+killall redshift && sleep 1
+redshift -l "$LOCATION_GEO"
