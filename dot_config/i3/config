@@ -51,9 +51,7 @@ bindsym XF86AudioLowerVolume  exec pamixer -d 5
 bindsym XF86AudioMute         exec pamixer -t
 
 # Start Applications
-bindsym $mod+Ctrl+b exec terminal -e 'bmenu'
-bindsym $mod+F2 exec $BROWSER
-bindsym $mod+F3 exec thunar
+bindsym $mod+o --release exec "terminal -e ranger"
 bindsym $mod+Shift+F12  --release exec --no-startup-id "autorandr common; exec notify-send 'autorandr common'; true"
 bindsym $mod+Shift+plus --release exec --no-startup-id "xrandr-menu"
 bindsym $mod+Shift+t --release exec --no-startup-id "toggleprogram picom -b --experimental-backends"
