@@ -138,7 +138,7 @@ import XMonad.Util.SpawnOnce
 
 
 myLogHook :: X ()
-myLogHook = fadeInactiveLogHook 1 -- 0.9
+myLogHook = fadeInactiveLogHook 0.95 -- 0.9
 
 
 
@@ -155,14 +155,6 @@ myModMask = mod4Mask       -- Sets modkey to super/windows key
 
 myTerminal :: String
 myTerminal = "alacritty"   -- Sets default terminal
-
-myBrowser :: String
-myBrowser = "brave "               -- Sets qutebrowser as browser for tree select
--- myBrowser = myTerminal ++ " -e lynx " -- Sets lynx as browser for tree select
-
-myEditor :: String
---myEditor = "emacsclient -c -a emacs "  -- Sets emacs as editor for tree select
-myEditor = myTerminal ++ " -e nvim "    -- Sets vim as editor for tree select
 
 myBorderWidth :: Dimension
 myBorderWidth = 1          -- Sets border width for windows
@@ -184,7 +176,7 @@ myStartupHook = do
   spawnOnce "picom --experimental-backends &"
   spawnOnce "redshiftw &"
   spawnOnce "autorandr -c &"
---   spawnOnce "nm-applet &"
+  spawnOnce "nm-applet &"
 --   spawnOnce "trayer --edge top --align right --widthtype request --padding 6 --SetDockType true --SetPartialStrut true --expand true --monitor 1 --transparent true --alpha 0 --tint 0x080808  --height 22 &"
   setWMName "LG3D"
 
@@ -227,16 +219,8 @@ tall     = renamed [Replace "tall"]
            $ addTabs shrinkText myTabTheme
            $ subLayout [] (smartBorders Simplest)
            $ limitWindows 12
-           $ mySpacing 4
+           $ mySpacing 2
            $ ResizableTall 1 (2/100) (1/2) []
-magnify  = renamed [Replace "magnify"]
-           $ windowNavigation
-           $ addTabs shrinkText myTabTheme
-           $ subLayout [] (smartBorders Simplest)
-           $ magnifier
-           $ limitWindows 12
-           $ mySpacing 8
-           $ ResizableTall 1 (3/100) (1/2) []
 monocle  = renamed [Replace "monocle"]
            $ windowNavigation
            $ addTabs shrinkText myTabTheme
@@ -252,26 +236,20 @@ grid     = renamed [Replace "grid"]
            $ addTabs shrinkText myTabTheme
            $ subLayout [] (smartBorders Simplest)
            $ limitWindows 12
-           $ mySpacing 0
+           $ mySpacing 2
            $ mkToggle (single MIRROR)
            $ Grid (16/10)
-spirals  = renamed [Replace "spirals"]
-           $ windowNavigation
-           $ addTabs shrinkText myTabTheme
-           $ subLayout [] (smartBorders Simplest)
-           $ mySpacing' 8
-           $ spiral (6/7)
 threeCol = renamed [Replace "threeCol"]
            $ windowNavigation
            $ addTabs shrinkText myTabTheme
            $ subLayout [] (smartBorders Simplest)
-           $ limitWindows 7
+           $ limitWindows 11
            $ ThreeCol 1 (3/100) (1/2)
 threeRow = renamed [Replace "threeRow"]
            $ windowNavigation
            $ addTabs shrinkText myTabTheme
            $ subLayout [] (smartBorders Simplest)
-           $ limitWindows 7
+           $ limitWindows 11
            -- Mirror takes a layout and rotates it by 90 degrees.
            -- So we are applying Mirror to the ThreeCol layout.
            $ Mirror
@@ -304,13 +282,11 @@ myShowWNameTheme = def
 myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ T.toggleLayouts floats
                $ mkToggle (NBFULL ?? NOBORDERS ?? EOT) myDefaultLayout
              where
-               myDefaultLayout =     tall
-                                 ||| magnify
+               myDefaultLayout =     noBorders tabs
+                                 ||| tall
                                  ||| noBorders monocle
-                                 ||| floats
-                                 ||| noBorders tabs
                                  ||| grid
-                                 ||| spirals
+                                 ||| floats
                                  ||| threeCol
                                  ||| threeRow
 
@@ -342,8 +318,9 @@ myManageHook = composeAll
 myKeys :: [(String, X ())]
 myKeys =
     -- Xmonad
+
         [ ("M-S-r", spawn "xmonad --recompile && xmonad  --restart")   -- Restarts xmonad
-        , ("M-S-e", io exitSuccess)             -- Quits xmonad
+        , ("M-S-e", spawn "powermenu")             -- Quits xmonad
 
     -- Launcher
         , ("M-d", spawn "rofi -show") -- Rofi
@@ -352,8 +329,6 @@ myKeys =
     -- Useful programs to have a keybinding for launch
         , ("M-<Return>", spawn myTerminal)
         , ("M-c", spawn "clipmenu")
-        , ("M-b", spawn (myBrowser ++ " www.youtube.com/c/DistroTube/"))
-        , ("M-M1-h", spawn (myTerminal ++ " -e htop"))
 
     -- Kill windows
         , ("M-S-q", kill1)     -- Kill the currently focused client
@@ -444,7 +419,7 @@ myKeys =
         , ("M-C-,", onGroup W.focusDown')  -- Switch focus to prev tab
 
     -- Scratchpads
-        , ("M-C-<Return>", namedScratchpadAction myScratchPads "terminal")
+        , ("M-C-<Minus>", namedScratchpadAction myScratchPads "terminal")
         , ("M-C-c", namedScratchpadAction myScratchPads "mocp")
 
         , ("M-<Print>", spawn "sshot -s")

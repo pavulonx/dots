@@ -29,7 +29,7 @@ picom -b --experimental-backends &
 /usr/lib/mate-polkit/polkit-mate-authentication-agent-1 & # todo: replace with simplier auth agent
 clipmenud &
 
-session='i3'
+session='i3' # default session
 
 [ "$1" = "xterm" ] && shift
 command -v "$1" > /dev/null 2>&1 && session="$*"

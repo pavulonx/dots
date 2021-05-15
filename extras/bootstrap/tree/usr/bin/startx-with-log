@@ -11,4 +11,4 @@ _log_file="$_log_dir/$(date +'%F_%H-%M-%S').log"
 ln -sf "$_log_file" "$_log_dir/current.log"
 
 # startx
-startx "$@" | ts '[%Y-%m-%d %H:%M:%S]' > "$_log_file" 2>&1
+startx "$@" 2>&1 | ts '[%Y-%m-%d %H:%M:%S]' > "$_log_file" 2>&1

@@ -12,9 +12,10 @@ cmd="$(echo "
 )"
 
 case $DESKTOP_SESSION in
-	bspwm) _exit_cmd="bspc quit" ;;
-	i3)    _exit_cmd="i3-msg exit" ;;
-	*)     _exit_cmd="notify-send 'Exiting for session $DESKTOP_SESSION not supporrted'"
+	i3)     _exit_cmd="i3-msg exit" ;;
+	xmonad) _exit_cmd="$XMONAD_CONFIG_DIR/xmonadctl quit-wm" ;;
+	bspwm)  _exit_cmd="bspc quit" ;;
+	*)      _exit_cmd="notify-send 'Exiting for session $DESKTOP_SESSION not supporrted'"
 esac
 
 case "$cmd" in
