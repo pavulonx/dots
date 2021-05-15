@@ -7,35 +7,34 @@ cmd="$(echo "
  reboot
  shutdown
 " | xargs -n2 \
-  | rofi -dmenu -width 15 -hide-scrollbar -lines 5 -i -no-custom -p "Exit?" \
-  | awk '{print $2}'
-)"
+  | rofi -dmenu -width 15 -hide-scrollbar -lines 5 -i -no-custom -p "?" \
+  | awk '{print $2}')";
 
 case $DESKTOP_SESSION in
-	i3)     _exit_cmd="i3-msg exit" ;;
-	xmonad) _exit_cmd="$XMONAD_CONFIG_DIR/xmonadctl quit-wm" ;;
-	bspwm)  _exit_cmd="bspc quit" ;;
-	*)      _exit_cmd="notify-send 'Exiting for session $DESKTOP_SESSION not supporrted'"
+  i3)     _exit_cmd="i3-msg exit" ;;
+  xmonad) _exit_cmd="$XMONAD_CONFIG_DIR/xmonadctl quit-wm" ;;
+  bspwm)  _exit_cmd="bspc quit" ;;
+  *)      _exit_cmd="notify-send 'Exiting for session $DESKTOP_SESSION not supporrted'";;
 esac
 
 case "$cmd" in
-    lock)
-        lockscreen
-        ;;
-    exit)
-	      eval "$_exit_cmd"
-        ;;
-    suspend)
-        lockscreen &
-        sleep 1; systemctl suspend
-        ;;
-    reboot)
-        systemctl reboot
-        ;;
-    shutdown)
-        systemctl poweroff
-        ;;
-    *)
-        echo "missing or invalid argument"
-        exit 2
+  lock)
+    lockscreen
+    ;;
+  exit)
+    eval "$_exit_cmd"
+    ;;
+  suspend)
+    lockscreen &
+    sleep 1; systemctl suspend
+    ;;
+  reboot)
+    systemctl reboot
+    ;;
+  shutdown)
+    systemctl poweroff
+    ;;
+  *)
+    echo "missing or invalid argument"
+    exit 2
 esac
