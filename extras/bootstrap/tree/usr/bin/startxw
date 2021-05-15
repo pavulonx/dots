@@ -7,7 +7,7 @@
 # ARGS...         startx arguments
 
 _args="$*"
-_startx_args="${_args##*--}"
+_startx_args="${_args#*--}"
 
 ENABLED_SESSIONS="${ENABLED_SESSIONS:-"i3 xmonad bspwm dwm awesome xfce qtile"}"
 #shellcheck disable=SC2086
@@ -27,9 +27,13 @@ if [ -n "$1" ]; then
     _exit_err "Bad session '$1'. Exiting!"
   fi
 else
-  echo "Select session to start or provide custom:"
+  echo "Select session to start:"
+  trap 'exit 1' INT
   select opt in $_sessions; do
     if [ -z "$opt" ]; then
+      if [ "$REPLY" = 0 ]; then
+        exit 0;
+      fi
       _session_reply="$(echo "$_sessions" | grep "$REPLY" || echo "")"
       if [ "$(echo "$_session_reply" | wc -l)" -gt 1 ]; then
         _exit_err "Ambigous selection matched: $(echo "$_session_reply" | xargs)";
@@ -43,6 +47,7 @@ else
     fi
     break;
   done
+  trap - INT
 fi
 
 _log_dir="${XDG_CACHE_HOME:-$HOME/.cache}/xsessionlogs"
@@ -55,4 +60,4 @@ find "$_log_dir" -type f -printf "%T@:%p\n" | sort -nr | tail -n "+$_hist" | cut
 _log_file="$_log_dir/$(date +'%F_%H-%M-%S').log"
 ln -sf "$_log_file" "$_log_dir/current.log"
 
-DESKTOP_SESSION="$_xsession" startx "$_startx_args" 2>&1 | ts '[%Y-%m-%d %H:%M:%S]' > "$_log_file" 2>&1
+DESKTOP_SESSION="$_xsession" exec startx "$_startx_args" 2>&1 | ts '[%Y-%m-%d %H:%M:%S]' > "$_log_file" 2>&1

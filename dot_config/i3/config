@@ -278,8 +278,6 @@ mode "resize" {
 bindsym $mod+Mod1+l exec --no-startup-id lockscreen
 
 # Autostart applications
-exec --no-startup-id nm-applet
-exec --no-startup-id redshiftw
 exec --no-startup-id autorandr -c
 
 exec_always --no-startup-id nitrogen --restore

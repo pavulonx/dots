@@ -173,10 +173,7 @@ myStartupHook :: X ()
 myStartupHook = do
 --  spawnOnce "~/.config/polybar/launch.sh &"
 --  spawnOnce "nitrogen --restore &"
-  spawnOnce "picom --experimental-backends &"
-  spawnOnce "redshiftw &"
   spawnOnce "autorandr -c &"
-  spawnOnce "nm-applet &"
 --   spawnOnce "trayer --edge top --align right --widthtype request --padding 6 --SetDockType true --SetPartialStrut true --expand true --monitor 1 --transparent true --alpha 0 --tint 0x080808  --height 22 &"
   setWMName "LG3D"
 
