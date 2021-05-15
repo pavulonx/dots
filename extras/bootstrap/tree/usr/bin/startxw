@@ -1,0 +1,58 @@
+#!/bin/bash
+# FIXME: remove select loop for posix compat
+# #!/bin/sh
+
+# usage: startxw SESSION [-- ARGS...]
+# SESSION         seesion to start if not specified run interactive mode
+# ARGS...         startx arguments
+
+_args="$*"
+_startx_args="${_args##*--}"
+
+ENABLED_SESSIONS="${ENABLED_SESSIONS:-"i3 xmonad bspwm dwm awesome xfce qtile"}"
+#shellcheck disable=SC2086
+_sessions="$(command -V $ENABLED_SESSIONS 2> /dev/null | grep -v "not found" | cut -d' ' -f1 )"
+
+_exit_err() {
+  echo "$1"
+  printf "Available sessions:\n"
+  #shellcheck disable=SC2086
+  printf "  - %s\n" $_sessions
+  exit 1;
+}
+
+if [ -n "$1" ]; then
+  _xsession="$(echo "$_sessions" | grep "^$1$" || echo "")"
+  if [ -z "$_xsession" ]; then
+    _exit_err "Bad session '$1'. Exiting!"
+  fi
+else
+  echo "Select session to start or provide custom:"
+  select opt in $_sessions; do
+    if [ -z "$opt" ]; then
+      _session_reply="$(echo "$_sessions" | grep "$REPLY" || echo "")"
+      if [ "$(echo "$_session_reply" | wc -l)" -gt 1 ]; then
+        _exit_err "Ambigous selection matched: $(echo "$_session_reply" | xargs)";
+      fi
+      if [ -z "$_session_reply" ]; then
+        _exit_err "Bad session '$REPLY'. Exiting!";
+      fi
+      _xsession="$_session_reply";
+    else
+      _xsession="$opt";
+    fi
+    break;
+  done
+fi
+
+_log_dir="${XDG_CACHE_HOME:-$HOME/.cache}/xsessionlogs"
+mkdir -p "$_log_dir"
+
+# remove old logs
+_hist=5
+find "$_log_dir" -type f -printf "%T@:%p\n" | sort -nr | tail -n "+$_hist" | cut -d: -f2- | xargs rm || true
+
+_log_file="$_log_dir/$(date +'%F_%H-%M-%S').log"
+ln -sf "$_log_file" "$_log_dir/current.log"
+
+DESKTOP_SESSION="$_xsession" startx "$_startx_args" 2>&1 | ts '[%Y-%m-%d %H:%M:%S]' > "$_log_file" 2>&1

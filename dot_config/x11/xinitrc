@@ -29,13 +29,8 @@ picom -b --experimental-backends &
 /usr/lib/mate-polkit/polkit-mate-authentication-agent-1 & # todo: replace with simplier auth agent
 clipmenud &
 
-session='i3' # default session
+DESKTOP_SESSION="${DESKTOP_SESSION:-i3}" # default session
+export DESKTOP_SESSION
 
-[ "$1" = "xterm" ] && shift
-command -v "$1" > /dev/null 2>&1 && session="$*"
-
-echo "Stating session: $session"
-export DESKTOP_SESSION="$(echo "$session" | cut -d' ' -f1)"
-
-# shellcheck disable=SC2086
-exec $session
+echo "Stating session: '$DESKTOP_SESSION'"
+exec "$DESKTOP_SESSION"

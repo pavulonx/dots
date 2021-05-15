@@ -47,10 +47,10 @@ export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 # start graphical interface on login on tty1
 _autostartx=true
 if $_autostartx && [ "$(tty)" = "/dev/tty1" ] && ! pgrep startx; then
-  if command -v startx-with-log > /dev/null 2>&1; then
-    startx-with-log
+  if command -v startxw > /dev/null 2>&1; then
+    startxw
   else
-    startx
+    DESKTOP_SESSION=i3 startx
   fi
 fi
 {{- end }}
