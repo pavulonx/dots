@@ -45,8 +45,7 @@ export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 
 {{ if eq .machine_type "pc" -}}
 # start graphical interface on login on tty1
-_autostartx=true
-if $_autostartx && [ "$(tty)" = "/dev/tty1" ] && ! pgrep startx; then
+if [ "$(tty)" = "/dev/tty1" ] && ! pgrep startx; then
   if command -v startxw > /dev/null 2>&1; then
     startxw
   else

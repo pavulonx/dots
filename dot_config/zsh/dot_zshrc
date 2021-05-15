@@ -134,7 +134,7 @@ autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
 
 zinit wait lucid for \
-  atload"export _ZL_DATA=$_Z_DATA; _ZL_FZF_HEIGHT='50%'; _ZL_FZF_FLAG='+s -e --preview=\"exa --level 2 --tree --color=always --group-directories-first {2}\"'" \
+  atload"_ZL_FZF_HEIGHT='50%'; _ZL_FZF_FLAG='+s -e --preview=\"exa --level 2 --tree --color=always --group-directories-first {2}\"'" \
     skywind3000/z.lua \
   atinit"ZINIT[COMPINIT_OPTS]=-C; __completions_init; zpcdreplay;" \
     zdharma/fast-syntax-highlighting \
