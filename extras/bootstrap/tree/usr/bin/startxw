@@ -12,21 +12,19 @@ ENABLED_SESSIONS="${ENABLED_SESSIONS:-"i3 xmonad bspwm dwm awesome xfce qtile"}"
 _sessions="$(command -V $ENABLED_SESSIONS 2> /dev/null | grep -v "not found" | cut -d' ' -f1 )"
 
 _print_sessions() {
+  echo "Available sessions:"
   echo "$_sessions" | awk '{print "  " NR ") " $0}'
 }
 
 _exit_err() {
-  [ -n "$1" ] && echo "$1"
-  echo "Available sessions:"
-  echo "$_sessions" | awk '{print "  " NR ") " $0}'
+  [ -n "$1" ] && echo "$1" || _print_sessions
   exit 1;
 }
 
 if [ -z "$1" ]; then
   trap 'exit 1' INT
-  echo "Select session to start: (Type 0 or press CTRL+C to abort)"
-  echo "$_sessions" | awk '{print "  " NR ") " $0}'
-  printf "Select name or no (defaut 1): "
+  _print_sessions
+  printf "Select name or number (defaut 1): "
   read -r _choice </dev/tty
   _choice="${_choice:-1}"
   trap - INT
@@ -40,10 +38,10 @@ case "$_choice" in
   *)      _xsession="$(echo "$_sessions" | grep "$_choice" || echo "")"
 esac
 if [ "$(echo "$_xsession" | wc -l)" -ne 1 ]; then
-  _exit_err "Ambigous selection matched: $(echo "$_xsession" | xargs)";
+  _exit_err "Ambigous selection matched: $(echo "$_xsession" | xargs)!";
 fi
 if [ -z "$_xsession" ]; then
-  _exit_err "Bad session '$_choice'. Exiting!";
+  _exit_err "Bad session '$_choice'!";
 fi
 
 

@@ -1,42 +1,22 @@
 #!/bin/sh
 
-locktext="%A %d.%m.%Y"
+datestr="%A %d.%m.%Y"
 
-transparent=00000000
-white=ffffffff
-red=c0392b
-blue=2980b9
+c_bg="#000000"
+c_fg="#ebdbb2"
+c_err="#dc322f"
+c_ver="#268bd2"
+c_trans="#00000000"
 
-insidecolor=$transparent
-ringcolor=$white
-verifcolor=$white
-separatorcolor=$transparent
+locker="$(command -v i3lock-color i3lock 2>&1 | head -n1)"
 
-keyhlcolor=$blue
-bshlcolor=$blue
-
-insidevercolor=$white
-ringvercolor=$white
-
-insidewrongcolor=$red
-ringwrongcolor=$red
-
-timecolor=$white
-datecolor=$white
-
-i3lock \
-	-t -c "000000" \
-	--timepos='x+110:h-70' \
-	--datepos='x+43:h-45' \
-	--clock --date-align 1 --datestr "$locktext" \
-	--insidecolor=$insidecolor --ringcolor=$ringcolor --line-uses-inside \
-	--keyhlcolor=$keyhlcolor --bshlcolor=$bshlcolor --separatorcolor=$separatorcolor \
-	--insidevercolor=$insidevercolor --insidewrongcolor=$insidewrongcolor \
-	--ringvercolor=$ringvercolor --ringwrongcolor=$ringwrongcolor --indpos='x+280:h-70' \
-	--radius=20 --ring-width=4 --veriftext='' --wrongtext='' \
-	--verifcolor="$verifcolor" --timecolor="$timecolor" --datecolor="$datecolor" \
-	--noinputtext='' --force-clock -n "$@"
-
-sleep 1
-
-exit 0
+"$locker" \
+	-t -c "$c_bg" \
+	--clock --force-clock --datestr "$datestr" \
+  --timecolor="$c_fg" --datecolor="$c_fg" \
+	--keyhlcolor="$c_bg" --bshlcolor="$c_bg" \
+	--insidecolor="$c_trans" --ringcolor="$c_fg" \
+  --insidevercolor="$c_trans" --ringvercolor="$c_ver" \
+  --insidewrongcolor="$c_trans" --ringwrongcolor="$c_err" \
+	--radius=120 --ring-width=3 \
+  --veriftext='' --wrongtext='' --noinputtext=''
