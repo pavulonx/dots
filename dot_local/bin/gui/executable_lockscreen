@@ -11,7 +11,7 @@ c_trans="#00000000"
 locker="$(command -v i3lock-color i3lock 2>&1 | head -n1)"
 
 "$locker" \
-	-t -c "$c_bg" \
+	-n -t -c "$c_bg" \
 	--clock --force-clock --datestr "$datestr" \
   --timecolor="$c_fg" --datecolor="$c_fg" \
 	--keyhlcolor="$c_bg" --bshlcolor="$c_bg" \

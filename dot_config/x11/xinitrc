@@ -15,12 +15,9 @@ fi
 
 # X server settings
 xsetroot -cursor_name left_ptr &
-# env > .xenv # debug
-xset r rate 660 50 # fix key chattering
-xset dpms 1200 3600 7200
-xset +dpms
-xset s off # disable screensaver todo: enable if using xscreensaver
-xautolock -time 10 -notify 20 -notifier 'notify-send -u critical -t 20 "Screen lock in 20s"' -corners '000-' -locker 'lockscreen' &
+xset r rate 500 50
+xdpmsctl enable &
+xss-lock -n "notify-send -u critical -t 30000 'Screen will lock in 30s'" -- lockscreen && &
 
 # startup programs
 dunst &

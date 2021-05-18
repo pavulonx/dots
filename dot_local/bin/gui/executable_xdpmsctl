@@ -1,0 +1,62 @@
+#!/bin/sh
+
+timeout="${XDLOCK_TIMEOUT:-1200}"
+cycle="${XDLOCK_CYCLE:-30}"
+inc="${XDLOCK_INC:-1200}"
+
+_set() {
+  timeout="${1:-$timeout}"
+  xset s "$((timeout - cycle))" "$cycle"
+  dpms_t="$((timeout + 5))"
+  xset dpms "$dpms_t" "$dpms_t" "$dpms_t"
+}
+
+_enable() {
+  _set "$timeout"
+}
+
+_disable() {
+  xset s 0 0
+  xset dpms 0 0 0
+}
+
+_status() {
+  xset -q | grep 'timeout:' | awk '{print $2+$4}'
+}
+
+_toggle() {
+  curr_t=$(_status)
+  if [ "$curr_t" -eq 0 ]; then
+    _enable;
+  else
+    _disable;
+  fi
+}
+
+_inc() {
+  curr_t=$(_status)
+  next_t=$((curr_t + inc))
+  if [ "$next_t" -gt 5400 ]; then
+    _enable
+  else
+    _set "$next_t"
+  fi
+}
+
+if [ -n "$1" ] ; then
+  case "$1" in
+    on|enable|reset)  _enable   ;;
+    off|disable)      _disable  ;;
+    toggle)           _toggle   ;;
+    status)           _status   ;;
+    inc)              _inc      ;;
+    *)                exit 1    ;;
+  esac
+else
+  curr_t=$(_status)
+  if [ "$curr_t" -eq 0 ]; then
+    echo "  OFF"
+  else
+    echo "  $((curr_t / 60))m"
+  fi
+fi
