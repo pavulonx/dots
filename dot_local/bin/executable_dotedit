@@ -1,6 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-FILE="$(chezmoi managed --include=files | fzf -m --ansi --color=border:0 --layout=reverse --preview="bat --color=always ~/{}")"
+file="$(chezmoi managed --include=files | fzf --query="${1:-}" --select-1 -m --ansi --color=border:0 --layout=reverse --preview="bat --color=always ~/{}")"
 
-eval exec "chezmoi edit" "~/${FILE}"
+eval exec "chezmoi edit" "~/$file"

@@ -16,8 +16,7 @@ fi
 # X server settings
 xsetroot -cursor_name left_ptr &
 xset r rate 500 50
-xdpmsctl enable &
-xss-lock -n "notify-send -u critical -t 30000 'Screen will lock in 30s'" -- lockscreen &
+xdsc run &
 
 # startup programs
 dunst &

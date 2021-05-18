@@ -1,8 +1,9 @@
 #!/bin/sh
+# X Display Screensaver Control
 
-timeout="${XDLOCK_TIMEOUT:-1200}"
-cycle="${XDLOCK_CYCLE:-30}"
-inc="${XDLOCK_INC:-1200}"
+timeout="${XDSC_TIMEOUT:-1200}"
+cycle="${XDSC_CYCLE:-30}"
+inc="${XDSC_INC:-1200}"
 
 _set() {
   timeout="${1:-$timeout}"
@@ -43,14 +44,22 @@ _inc() {
   fi
 }
 
+_run() {
+  _enable
+  echo "XDSC: Starting xss-lock with params timeout=$timeout cycle=$cycle"
+  exec xss-lock -n "notify-send -u critical -t $((cycle * 1000)) 'Screen will lock in ${cycle}s'" -- lockscreen
+}
+
+
 if [ -n "$1" ] ; then
   case "$1" in
+    start|run)        _run      ;;
     on|enable|reset)  _enable   ;;
     off|disable)      _disable  ;;
     toggle)           _toggle   ;;
     status)           _status   ;;
     inc)              _inc      ;;
-    *)                exit 1    ;;
+    *)                echo "no such command $1" && exit 1;;
   esac
 else
   curr_t=$(_status)
