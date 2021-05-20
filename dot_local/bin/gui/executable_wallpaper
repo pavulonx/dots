@@ -1,0 +1,94 @@
+#!/bin/bash
+_0="$(realpath "$0")"
+
+BG_CURRENT="$XDG_DATA_HOME/current_wallpaper"
+WALLPAPERS_DIR="${WALLPAPERS_DIR:-"$HOME/Pictures/Wallpapers"}"
+FEH_OTPS="--bg-fill --no-fehbg --no-xinerama"
+set_as_default=false
+
+ID="wallpaper-setter-fzf"
+FIFO="/tmp/$ID.fifo"
+
+[ -d "$WALLPAPERS_DIR" ] || mkdir -p "$WALLPAPERS_DIR"
+
+_set_wallpaper() {
+  # shellcheck disable=SC2086
+  feh $FEH_OTPS "$1"
+}
+
+_restore() {
+  if [ -f "$BG_CURRENT" ]; then
+    echo "Rrestoring wallpaper $BG_CURRENT"
+    _set_wallpaper "$BG_CURRENT"
+  else
+    echo "No wallpaper to restore!"
+    exit 1
+  fi
+}
+
+_start_ueberzug() {
+  mkfifo "${FIFO}" || exit 1
+  ueberzug layer --parser json --silent <"${FIFO}" &
+  # prevent EOF
+  exec 3>"${FIFO}"
+}
+
+_stop_ueberzug() {
+  3>&- exec
+  rm "${FIFO}" &>/dev/null
+  kill "$(jobs -p)" &>/dev/null
+}
+
+_preview() {
+  image="$1"
+  < <(</dev/tty stty size) read -r HEIGHT WIDTH
+  { printf '{ "action": "add", "identifier": "%s", "path": "%s",' "$ID" "$image"
+    printf '"x": %d, "y": %d, "scaler": "fit_contain",' "$((WIDTH / 2 ))" 1
+    printf '"width": %d, "height": %d }\n' "$((WIDTH / 2))" "$((HEIGHT - 2))"
+  } > "$FIFO" || printf '{ "action": "remove", "identifier": "%s" }\n' "$ID" > "$FIFO"
+}
+
+_select_wallpaper() {
+  # shellcheck disable=SC2015
+  { [ -f "$BG_CURRENT" ] && echo "$BG_CURRENT" || true
+    fd --exact-depth=1 '.*\.(jpg|png)$' "$WALLPAPERS_DIR"
+  } | fzf --with-nth 1 --delimiter "\t" --layout=reverse --preview "sh $_0 __preview__ {}" --preview-window "right:50%:noborder:wrap"
+}
+
+_main() {
+  trap _stop_ueberzug EXIT QUIT INT TERM
+  _start_ueberzug
+
+  selected="$(_select_wallpaper)";
+
+  if [ -z "$selected" ]; then
+    echo "No wallpaper choosen!"
+    exit 1
+  fi
+
+  echo "Setting $selected as wallpaper"
+  if $set_as_default; then
+    cp -f "$selected" "$BG_CURRENT"
+    new_wallpaper="$BG_CURRENT"
+  else
+    new_wallpaper="$selected"
+  fi
+
+  _set_wallpaper "$new_wallpaper"
+}
+
+
+# parse args
+cmd=()
+for arg; do
+  case "$arg" in
+    -d|--default) set_as_default=true; shift ;;
+    *) cmd+=("$arg");;
+  esac
+done
+
+case "${cmd[0]}" in
+  __preview__)  _preview "${cmd[1]}" ;;
+  r|restore)    _restore             ;;
+  *)            _main                ;;
+esac
