@@ -291,7 +291,7 @@ myLayoutHook = avoidStruts $ mouseResize $ windowArrange $ T.toggleLayouts float
 --myWorkspaces = ["", "", "", "", "", ",", ",", "", "", ""]
 --myWorkspaces = zipWith (\x y -> show x ++ y) [1..] ["\61612", "\61728", "\61729", "\61897", "\61717", "\61723", "\61574", "\61477", "\61451", "\61459"]
 myWorkspaces = ["\61612", "\61728", "\61729", "\61897", "\61717", "\61723", "\61574", "\61477", "\61451", "\61459"]
-myWorkspaceIndices = M.fromList $ zipWith (,) myWorkspaces [1..] -- (,) == \x y -> (x,y)
+myWorkspaceIndices = M.fromList $ zip myWorkspaces [1..] -- (,) == \x y -> (x,y)
 
 clickable ws = "<action=xdotool key super+"++show i++">"++ws++"</action>"
     where i = fromJust $ M.lookup ws myWorkspaceIndices
@@ -422,12 +422,12 @@ myKeys =
         , ("M-<Print>", spawn "sshot -s")
 
     -- Multimedia Keys
-        , ("<XF86AudioPlay>",	spawn "current_player play-pause")
+        , ("<XF86AudioPlay>", spawn "current_player play-pause")
         , ("<XF86AudioPause>", spawn "current_player play-pause")
-        , ("<XF86AudioStop>",	spawn "current_player stop")
-        , ("<XF86AudioPrev>",	spawn "current_player previous")
-        , ("<XF86AudioNext>",	spawn "current_player next")
-        , ("<XF86AudioMute>",	spawn "pamixer -t")
+        , ("<XF86AudioStop>", spawn "current_player stop")
+        , ("<XF86AudioPrev>", spawn "current_player previous")
+        , ("<XF86AudioNext>", spawn "current_player next")
+        , ("<XF86AudioMute>", spawn "pamixer -t")
         , ("<XF86AudioLowerVolume>", spawn "pamixer -d 5")
         , ("<XF86AudioRaiseVolume>", spawn "pamixer -i 5")
         , ("<XF86HomePage>", spawn "$BROWSER")
@@ -442,7 +442,7 @@ main = do
     -- Launching three instances of xmobar on their monitors.
 --    dbus <- mkDbusClient
     _ <- spawnPipe "$XDG_CONFIG_HOME/polybar/launch.sh"
-    _ <- spawnPipe "nitrogen --restore &"
+    _ <- spawnPipe "wallpaper restore &"
 --    xmproc0 <- spawnPipe "xmobar -x 0 $XMONAD_CONFIG_DIR/xmobar/bar0.hs"
 --    xmproc1 <- spawnPipe "xmobar -x 1 $XMONAD_CONFIG_DIR/xmobar/bar2.hs"
 --    xmproc2 <- spawnPipe "xmobar -x 2 $XMONAD_CONFIG_DIR/xmobar/bar1.hs"
