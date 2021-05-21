@@ -280,7 +280,7 @@ bindsym $mod+Mod1+l exec --no-startup-id lockscreen
 # Autostart applications
 exec --no-startup-id autorandr -c
 
-exec_always --no-startup-id nitrogen --restore
+exec_always --no-startup-id wallpaper restore
 exec_always --no-startup-id ~/.config/polybar/launch.sh
 
 ##

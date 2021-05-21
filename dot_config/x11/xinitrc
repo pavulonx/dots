@@ -26,6 +26,7 @@ picom -b --experimental-backends &
 clipmenud &
 redshiftw &
 nm-applet &
+wallpaper restore &
 
 DESKTOP_SESSION="${DESKTOP_SESSION:-i3}" # default session
 export DESKTOP_SESSION
