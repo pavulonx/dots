@@ -1,0 +1,61 @@
+#!/bin/sh
+REDSHIFTWD_PIPE=${REDSHIFTWD_PIPE:-/tmp/redshiftd.pipe}
+
+_log() {
+  echo "redshiftwd: $1"
+}
+
+_redshift_killall() {
+  killall redshift >/dev/null 2>&1 && sleep 1
+}
+
+_redshift_off() {
+  _log "Stopping redshift"
+  _redshift_killall
+}
+
+_redshift_on() {
+  _redshift_killall
+  _log "Starting redshift"
+  _location_geo="$(location geo | tr ',' ':')"
+  redshift -r -l manual -l "$_location_geo" 2>&1 | sed 's/^/redshiftwd-redshift: /' &
+}
+
+_redshift_toggle() {
+  if pgrep -x redshift --parent="$$" >/dev/null; then
+    _redshift_off
+  else
+    _redshift_on
+  fi
+}
+
+_pipe="$REDSHIFTWD_PIPE"
+if [ -p "$_pipe" ]; then
+  _log "Pipe '$_pipe' exists! Deamon alredy running?";
+  exit 2;
+fi
+
+trap '_shutdown' QUIT INT TERM
+mkfifo "$_pipe"
+
+_shutdown() {
+  _log "Exiting redshift deamon!"
+  _redshift_off;
+  rm -f $_pipe;
+  exit 0
+}
+
+_redshift_on
+while true; do
+  if read -r line; then
+    case "$line" in
+      on)       _redshift_on      ;;
+      off)      _redshift_off     ;;
+      toggle)   _redshift_toggle  ;;
+      exit) break           ;;
+      *) _log "Unrecognized command: '$line'" ;;
+    esac
+  fi
+done <"$_pipe"
+
+_shutdown
