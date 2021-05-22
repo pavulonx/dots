@@ -1,7 +1,7 @@
 #!/bin/sh
 
-LOCATION_GEO=${LOCATION_GEO:-'51.84:16.92'}
+location_geo="$(location geo | tr ',' ':')"
 
 killall redshift >/dev/null 2>&1 && sleep 1
 
-redshift -l manual -l "$LOCATION_GEO"
+redshift -l manual -l "$location_geo"

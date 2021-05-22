@@ -1,0 +1,49 @@
+#!/bin/sh
+LOCATION_CONF="${LOCATION_CONF:-"$XDG_CONFIG_HOME/location.conf"}"
+
+_assert() {
+  if [ -z "$2" ]; then
+    echo "$1 is not set" 1>&2;
+    exit 1;
+  else
+    echo "$2";
+  fi
+}
+
+_get_name() {
+  name="$(grep '^name=' -m 1 "$LOCATION_CONF" | cut -d= -f2-)"
+  _assert "name" "$name"
+}
+
+_get_geo() {
+  geo="$(grep '^geo=' -m 1 "$LOCATION_CONF" | cut -d= -f2-)"
+  _assert "geo" "$geo"
+}
+
+_set_location() {
+  name="$1"
+  [ -z "$name" ] && echo "Name is not set!" && exit 1;
+  geo="$2"
+  [ -z "$geo" ] && echo "Geo is not set!" && exit 1;
+  [ -f "$LOCATION_CONF" ] && echo "Overwriting old $LOCATION_CONF:" && cat "$LOCATION_CONF" && echo ""
+  printf "name=%s\ngeo=%s\n" "$name" "$geo" > "$LOCATION_CONF"
+  echo "Location config saved to: $LOCATION_CONF "
+}
+
+_search() {
+  search="$(curl -s "https://nominatim.openstreetmap.org/search?q=$1&format=json")"
+  echo "$search" | jq -r 'sort_by(.importance) | reverse | .[] | .display_name + "\n    " + .type + "\n    " + .lat + "," + .lon'
+}
+
+case "$1" in
+  name)   _get_name
+    ;;
+  geo)    _get_geo
+    ;;
+  set)    _set_location "$2" "$3"
+    ;;
+  search) _search "$2"
+    ;;
+  *)      _get_name; _get_geo
+    ;;
+esac

@@ -6,12 +6,13 @@ _wait_for_user_input=false
 
 for arg; do
     case "$arg" in
-        -s) _show_details=true ;;
+        -v) _show_details=true ;;
         -n) _send_notification=true ;;
         -w) _wait_for_user_input=true ;;
          *) [ -z "$location" ] && location="$arg";
     esac
 done
+[ -z "$location" ] && location="$(location name)"
 
 weather="$(curl -s "wttr.in/$location?format=1")"
 
@@ -23,7 +24,7 @@ fi
 echo "$weather"
 
 $_send_notification && notify-send "$weather"
-$_show_details && curl -s "wttr.in/$location"
+$_show_details && curl -s "wttr.in/$location?format=v2"
 
 $_wait_for_user_input && read -r
 
