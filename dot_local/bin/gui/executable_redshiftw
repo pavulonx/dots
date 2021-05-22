@@ -4,4 +4,4 @@ _location_geo="$(location geo | tr ',' ':')"
 
 killall redshift >/dev/null 2>&1 && sleep 1
 
-redshift -r -l manual -l "$_location_geo" 2>&1 | sed 's/^/redshiftw: /' &
+redshift -r -l manual -l "$_location_geo" 2>&1 | sed 's/^/redshiftw: /'
