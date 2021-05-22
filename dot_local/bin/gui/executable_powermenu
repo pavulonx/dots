@@ -2,12 +2,13 @@
 
 cmd="$(echo "
  lock
+ dim
  exit
  suspend
  reboot
  shutdown
 " | xargs -n2 \
-  | rofi -dmenu -width 15 -hide-scrollbar -lines 5 -i -no-custom -p "?" \
+  | rofi -dmenu -width 15 -hide-scrollbar -lines 6 -i -no-custom -p "?" \
   | awk '{print $2}')";
 
 case $DESKTOP_SESSION in
@@ -21,6 +22,9 @@ esac
 case "$cmd" in
   lock)
     loginctl lock-session
+    ;;
+  dim)
+    xset dpms force off
     ;;
   exit)
     eval "$_exit_cmd"
