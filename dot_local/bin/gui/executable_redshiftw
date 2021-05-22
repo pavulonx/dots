@@ -1,21 +1,7 @@
 #!/bin/sh
-REDSHIFTWD_PIPE=${REDSHIFTWD_PIPE:-/tmp/redshiftd.pipe}
 
-_cmd() {
-  _pipe="$REDSHIFTWD_PIPE"
-  if [ -p "$_pipe" ]; then
-    echo "$1" >> "$_pipe";
-  else
-    echo "Bad pipe $_pipe! Is deamon running?"
-  fi
-}
+_location_geo="$(location geo | tr ',' ':')"
 
-case "$1" in
-  on)     _cmd "on"     ;;
-  off)    _cmd "off"    ;;
-  toggle) _cmd "toggle" ;;
-  exit)   _cmd "exit"   ;;
-  *)
-    echo "No such command $1"
-    exit 1            ;;
-esac
+killall redshift >/dev/null 2>&1 && sleep 1
+
+redshift -r -l manual -l "$_location_geo" 2>&1 | sed 's/^/redshiftw: /' &

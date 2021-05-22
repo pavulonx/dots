@@ -24,7 +24,7 @@ udiskie -s &
 picom -b --experimental-backends &
 /usr/lib/mate-polkit/polkit-mate-authentication-agent-1 & # todo: replace with simplier auth agent
 clipmenud &
-redshiftwd &
+redshiftw &
 nm-applet &
 wallpaper restore &
 
