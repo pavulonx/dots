@@ -51,32 +51,48 @@ prompt_virtualenv() {
 }
 
 PLUSMINUS="\u00b1"
-BRANCH="\uf126"
+ICOBRANCH="\uf126"
+ICODETACHED="➦"
+ICOREMOTETRACK="☊"
+ICOREMOTE="\uf0c1"
 prompt_git() {
   "$_show_git" || return;
   # if not inside git repo do nothing
   [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" != "true" ] && return;
 
-  local ref dirty mode repo_path clean has_upstream
+  local ref mode git_dir has_upstream
   local modified untracked added deleted tagged stashed
-  local ready_commit git_status
-  local commits_diff commits_ahead commits_behind has_diverged to_push to_pull
-  local g_prompt_color
+  local git_status
+  local commits_diff commits_ahead commits_behind to_push to_pull
+  local g_base_color
 
-  repo_path=$(git rev-parse --git-dir 2>/dev/null)
+  git_dir=$(git rev-parse --git-dir 2>/dev/null)
+  gst_porcelain=$(git status --porcelain=v2 --branch --ignore-submodules="${GIT_STATUS_IGNORE_SUBMODULES:-dirty}" 2> /dev/null)
+  g_changes=$(\grep -v "^# " <<< "${gst_porcelain}")
 
-  dirty=$(git status --porcelain --ignore-submodules="${GIT_STATUS_IGNORE_SUBMODULES:-dirty}" 2> /dev/null | tail -n1)
-  git_status=$(git status --porcelain 2> /dev/null)
-  ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git rev-parse --short HEAD 2> /dev/null)"
-  if [[ -n $dirty ]]; then
-    clean=''
-    g_prompt_color='yellow'
+  read -r oid head upstream ab <<< $(echo $gst_porcelain | grep "^# branch." | cut -d' ' -f3- | xargs)
+  if [ "$head" = "(detached)" ]; then
+    ref_txt="$ICODETACHED ${oid:0:7}";
   else
-    clean=' ✔'
-    g_prompt_color='green'
+    ref_txt="$ICOBRANCH $head";
+    upstream_txt=""
+    if [ -n "$upstream" ]; then
+      upstream_txt="$upstream"
+      [ "${upstream##*/}" = "$head" ] && upstream_txt="${upstream%%/*}"
+      upstream_txt="$ICOREMOTE $upstream_txt "
+    fi
   fi
 
-  local upstream; upstream=$(git rev-parse --symbolic-full-name --abbrev-ref "@{upstream}" 2> /dev/null)
+  #dirty=$(git status --porcelain --ignore-submodules="${GIT_STATUS_IGNORE_SUBMODULES:-dirty}" 2> /dev/null | tail -n1)
+  git_status=$(git status --porcelain 2> /dev/null)
+  # ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git rev-parse --short HEAD 2> /dev/null)"
+  if [[ -n "$g_changes" ]]; then
+    g_base_color='yellow'
+  else
+    g_base_color='green'
+  fi
+
+  #local upstream; upstream=$(git rev-parse --symbolic-full-name --abbrev-ref "@{upstream}" 2> /dev/null)
   if [[ -n "${upstream}" && "${upstream}" != "@{upstream}" ]]; then has_upstream=true; fi
 
   local current_commit_hash; current_commit_hash=$(git rev-parse HEAD 2> /dev/null)
@@ -91,7 +107,7 @@ prompt_git() {
   local number_modified; number_modified=$(\grep -c "^.M" <<< "${git_status}")
   if [[ $number_modified -gt 0 ]]; then
     modified=" $number_modified●"
-    g_prompt_color='red'
+    g_base_color='red'
   fi
 
   local number_added_modified; number_added_modified=$(\grep -c "^M" <<< "${git_status}")
@@ -105,7 +121,7 @@ prompt_git() {
   local number_deleted; number_deleted=$(\grep -c "^.D" <<< "${git_status}")
   if [[ $number_deleted -gt 0 ]]; then
     deleted=" $number_deleted‒"
-    g_prompt_color='red'
+    g_base_color='red'
   fi
 
   local number_added_deleted; number_added_deleted=$(\grep -c "^D" <<< "${git_status}")
@@ -123,32 +139,28 @@ prompt_git() {
     stashed=" ${number_of_stashes##*(  )}⚙"
   fi
 
-  if [[ $number_added -gt 0 || $number_added_modified -gt 0 || $number_added_deleted -gt 0 ]]; then ready_commit=' ⚑'; fi
-
   local upstream_prompt=''
   if [[ $has_upstream == true ]]; then
     commits_diff="$(git log --pretty=oneline --topo-order --left-right "${current_commit_hash}...${upstream}" 2> /dev/null)"
     commits_ahead=$(\grep -c "^<" <<< "$commits_diff")
     commits_behind=$(\grep -c "^>" <<< "$commits_diff")
     upstream_prompt="$(git rev-parse --symbolic-full-name --abbrev-ref "@{upstream}" 2> /dev/null)"
-    upstream_prompt=$(sed -e 's/\/.*$/ ☊ /g' <<< "$upstream_prompt")
+    #upstream_prompt=$(sed -e 's/\/.*$/ ☊ /g' <<< "$upstream_prompt")
   fi
 
-  has_diverged=false
-  if [[ $commits_ahead -gt 0 && $commits_behind -gt 0 ]]; then has_diverged=true; fi
-  if [[ $has_diverged == false && $commits_ahead -gt 0 ]]; then to_push=" ↑$commits_ahead"; fi
-  if [[ $has_diverged == false && $commits_behind -gt 0 ]]; then to_pull=" %f%F{yellow} ↓$commits_behind %f%F{$g_prompt_color}"; fi
+  if [[ $commits_ahead -gt 0 ]]; then to_push="%f%F{cyan} ↑$commits_ahead %f%F{$g_base_color}"; fi
+  if [[ $commits_behind -gt 0 ]]; then to_pull="%f%F{red} ↓$commits_behind %f%F{$g_base_color}"; fi
 
-  if [[ -e "${repo_path}/BISECT_LOG" ]]; then
-    mode=" <B>"
-  elif [[ -e "${repo_path}/MERGE_HEAD" ]]; then
-    mode=" >M<"
-  elif [[ -e "${repo_path}/rebase" || -e "${repo_path}/rebase-apply" || -e "${repo_path}/rebase-merge" || -e "${repo_path}/../.dotest" ]]; then
-    mode=" >R>"
+  if [[ -e "${git_dir}/BISECT_LOG" ]]; then
+    mode="<B>"
+  elif [[ -e "${git_dir}/MERGE_HEAD" ]]; then
+    mode=">M<"
+  elif [[ -e "${git_dir}/rebase" || -e "${git_dir}/rebase-apply" || -e "${git_dir}/rebase-merge" || -e "${git_dir}/../.dotest" ]]; then
+    mode=">R>"
   fi
 
-  g_prompt_txt="${ref/refs\/heads\//$BRANCH $upstream_prompt}${mode}$to_push$to_pull$clean$tagged$stashed$untracked$modified$deleted$added$ready_commit"
-  print -n "%F{$g_prompt_color} $g_prompt_txt %f"
+  g_prompt_txt="${upstream_txt}${ref_txt} ${mode}$to_push$to_pull$tagged$stashed$untracked$modified$deleted$added"
+  print -n "%F{$g_base_color} $g_prompt_txt %f"
 }
 
 prompt_dir() {
@@ -199,5 +211,5 @@ build_rprompt() {
 
 # shellcheck disable=SC2016,SC2034
 PROMPT='%B$(build_prompt)%b'
-RPROMPT='%B$(build_rprompt)%b'
 # shellcheck disable=SC2016,SC2034
+RPROMPT='%B$(build_rprompt)%b'
