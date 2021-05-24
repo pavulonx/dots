@@ -53,34 +53,36 @@ prompt_virtualenv() {
 PLUSMINUS="\u00b1"
 ICOBRANCH="\uf126"
 ICODETACHED="➦"
-ICOREMOTETRACK="☊"
+#ICOREMOTETRACK="☊"
 ICOREMOTE="\uf0c1"
 #ICOTAG="\uf02b"
 #ICOTAG="\uf024"
 ICOTAG="\u2691"
 ICOSTASH="\u2699"
+ICOWORKTREE="*"
+ICOUNTRACK="?"
 prompt_git() {
   "$_show_git" || return;
   # if not inside git repo do nothing
   [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" != "true" ] && return;
 
-  local ref mode git_dir
+  local git_dir
   local modified untracked added deleted
-  local git_status
   local commits_ahead commits_behind to_push to_pull
-  local g_base_color
 
   git_dir=$(git rev-parse --git-dir 2>/dev/null)
   gst_porcelain=$(git status --porcelain=v2 --branch --ignore-submodules="${GIT_STATUS_IGNORE_SUBMODULES:-dirty}" 2> /dev/null)
   g_changes=$(\grep -v "^# " <<< "${gst_porcelain}")
 
-  read -r oid head upstream ab <<< $(echo $gst_porcelain | grep "^# branch." | cut -d' ' -f3- | xargs)
+  #REF
+  read -r oid head upstream ab <<< "$(echo "$gst_porcelain" | grep "^# branch." | cut -d' ' -f3- | xargs)"
   if [ "$head" = "(detached)" ]; then
     ref_txt="$ICODETACHED ${oid:0:7} ";
   else
     ref_txt="$ICOBRANCH $head ";
   fi
 
+  #UPSTREAM
   upstream_txt=""
   if [ -n "$upstream" ]; then
     upstream_txt="$upstream"
@@ -91,60 +93,70 @@ prompt_git() {
     commits_behind="${ab##* -}"
   fi
 
-  #dirty=$(git status --porcelain --ignore-submodules="${GIT_STATUS_IGNORE_SUBMODULES:-dirty}" 2> /dev/null | tail -n1)
-  git_status=$(git status --porcelain 2> /dev/null)
-  # ref=$(git symbolic-ref HEAD 2> /dev/null) || ref="➦ $(git rev-parse --short HEAD 2> /dev/null)"
-  if [[ -n "$g_changes" ]]; then
-    g_base_color='yellow'
-  else
-    g_base_color='green'
-  fi
+#  if [[ -n "$g_changes" ]]; then
+#    g_base_color='yellow'
+#  else
+#    g_base_color='green'
+#  fi
 
-  local current_commit_hash; current_commit_hash=$(git rev-parse HEAD 2> /dev/null)
+  # green - clean, yellow - all staged, red - unstaged changes or untracked files
+  local g_base_color; g_base_color="green"
+  local c_staged;       c_staged=$(grep -c "^[12]\ [^.]." <<< "${g_changes}");
+  local c_worktree;   c_worktree=$(grep -c "^[12]\ .[^.]" <<< "${g_changes}");
+  local c_untracked; c_untracked=$(grep -c "^?\ " <<< "${g_changes}");
+  local c_unmerged;   c_unmerged=$(grep -c "^u\ " <<< "${g_changes}");
+  stat_txt=""
+  if [ "$c_staged" -gt 0 ];     then stat_txt="$stat_txt [$c_staged]";              g_base_color='yellow';  fi
+  if [ "$c_worktree" -gt 0 ];   then stat_txt="$stat_txt $c_worktree$ICOWORKTREE";  g_base_color='red';     fi
+  if [ "$c_untracked" -gt 0 ];  then stat_txt="$stat_txt $c_untracked$ICOUNTRACK";  g_base_color='red';     fi
+  if [ "$c_unmerged" -gt 0 ];   then stat_txt="$stat_txt >$c_unmerged<";                                    fi
+  [ -n "$stat_txt" ] && stat_txt=" |$stat_txt"
 
-  local number_of_untracked_files; number_of_untracked_files=$(\grep -c "^??" <<< "${git_status}")
-  # if [[ $number_of_untracked_files -gt 0 ]]; then untracked=" $number_of_untracked_files◆"; fi
-  if [[ $number_of_untracked_files -gt 0 ]]; then untracked=" $number_of_untracked_files☀"; fi
-
-  local number_added; number_added=$(\grep -c "^A" <<< "${git_status}")
-  if [[ $number_added -gt 0 ]]; then added=" $number_added✚"; fi
-
-  local number_modified; number_modified=$(\grep -c "^.M" <<< "${git_status}")
-  if [[ $number_modified -gt 0 ]]; then
-    modified=" $number_modified●"
-    g_base_color='red'
-  fi
-
-  local number_added_modified; number_added_modified=$(\grep -c "^M" <<< "${git_status}")
-  local number_added_renamed; number_added_renamed=$(\grep -c "^R" <<< "${git_status}")
-  if [[ $number_modified -gt 0 && $number_added_modified -gt 0 ]]; then
-    modified="$modified$((number_added_modified+number_added_renamed))$PLUSMINUS"
-  elif [[ $number_added_modified -gt 0 ]]; then
-    modified=" ●$((number_added_modified+number_added_renamed))$PLUSMINUS"
-  fi
-
-  local number_deleted; number_deleted=$(\grep -c "^.D" <<< "${git_status}")
-  if [[ $number_deleted -gt 0 ]]; then
-    deleted=" $number_deleted‒"
-    g_base_color='red'
-  fi
-
-  local number_added_deleted; number_added_deleted=$(\grep -c "^D" <<< "${git_status}")
-  if [[ $number_deleted -gt 0 && $number_added_deleted -gt 0 ]]; then
-    deleted="$deleted$number_added_deleted$PLUSMINUS"
-  elif [[ $number_added_deleted -gt 0 ]]; then
-    deleted=" ‒$number_added_deleted$PLUSMINUS"
-  fi
+#  local git_status; git_status=$(git status --porcelain 2> /dev/null)
+#
+#  local number_of_untracked_files; number_of_untracked_files=$(\grep -c "^??" <<< "${git_status}")
+#  # if [[ $number_of_untracked_files -gt 0 ]]; then untracked=" $number_of_untracked_files◆"; fi
+#  if [[ $number_of_untracked_files -gt 0 ]]; then untracked=" $number_of_untracked_files☀"; fi
+#
+#  local number_added; number_added=$(\grep -c "^A" <<< "${git_status}")
+#  if [[ $number_added -gt 0 ]]; then added=" $number_added✚"; fi
+#
+#  local number_modified; number_modified=$(\grep -c "^.M" <<< "${git_status}")
+#  if [[ $number_modified -gt 0 ]]; then
+#    modified=" $number_modified●"
+#    g_base_color='red'
+#  fi
+#
+#  local number_added_modified; number_added_modified=$(\grep -c "^M" <<< "${git_status}")
+#  local number_added_renamed; number_added_renamed=$(\grep -c "^R" <<< "${git_status}")
+#  if [[ $number_modified -gt 0 && $number_added_modified -gt 0 ]]; then
+#    modified="$modified$((number_added_modified+number_added_renamed))$PLUSMINUS"
+#  elif [[ $number_added_modified -gt 0 ]]; then
+#    modified=" ●$((number_added_modified+number_added_renamed))$PLUSMINUS"
+#  fi
+#
+#  local number_deleted; number_deleted=$(\grep -c "^.D" <<< "${git_status}")
+#  if [[ $number_deleted -gt 0 ]]; then
+#    deleted=" $number_deleted‒"
+#    g_base_color='red'
+#  fi
+#
+#  local number_added_deleted; number_added_deleted=$(\grep -c "^D" <<< "${git_status}")
+#  if [[ $number_deleted -gt 0 && $number_added_deleted -gt 0 ]]; then
+#    deleted="$deleted$number_added_deleted$PLUSMINUS"
+#  elif [[ $number_added_deleted -gt 0 ]]; then
+#    deleted=" ‒$number_added_deleted$PLUSMINUS"
+#  fi
 
   # TODO: use `git tag --points-at=HEAD` ?
   tag_txt=""
-  tag_at_current_commit=$(git describe --exact-match --tags "$current_commit_hash" 2> /dev/null)
+  tag_at_current_commit=$(git describe --exact-match --tags "$oid" 2> /dev/null)
   if [ -n "$tag_at_current_commit" ]; then
     tag_txt="$ICOTAG $tag_at_current_commit ";
   fi
 
   stash_txt=""
-  number_of_stashes="$(wc -l "$git_dir/logs/refs/stash")" #probably faster
+  number_of_stashes="$(wc -l "$git_dir/logs/refs/stash" 2> /dev/null)" #probably faster
   number_of_stashes="${number_of_stashes%% *}"
   #number_of_stashes="$(git stash list 2> /dev/null | wc -l)"
   if [ "$number_of_stashes" -gt 0 ]; then
@@ -155,16 +167,13 @@ prompt_git() {
   [ "$commits_ahead" -gt 0 ]  && to_push="%f%F{cyan}↑$commits_ahead%f%F{$g_base_color} "
   [ "$commits_behind" -gt 0 ] && to_pull="%f%F{red}↓$commits_behind%f%F{$g_base_color} "
 
-  if [[ -e "${git_dir}/BISECT_LOG" ]]; then
-    mode="<B> "
-  elif [[ -e "${git_dir}/MERGE_HEAD" ]]; then
-    mode=">M< "
-  elif [[ -e "${git_dir}/rebase" || -e "${git_dir}/rebase-apply" || -e "${git_dir}/rebase-merge" || -e "${git_dir}/../.dotest" ]]; then
-    mode=">R> "
-  fi
+  mode="" # multiple motes are possible (you can rebase while bisecting)
+  [ -e "${git_dir}/BISECT_LOG" ] && mode="$mode<B> ";
+  [ -e "${git_dir}/MERGE_HEAD" ] && mode="$mode>M< ";
+  [[ -e "${git_dir}/rebase" || -e "${git_dir}/rebase-apply" || -e "${git_dir}/rebase-merge" || -e "${git_dir}/../.dotest" ]] && mode="$mode>R> ";
 
   # TODO: handle spaces after segments here
-  g_prompt_txt="${upstream_txt}${to_push}${to_pull}${ref_txt}${mode}${tag_txt}${stash_txt}$untracked$modified$deleted$added"
+  g_prompt_txt="${upstream_txt}${to_push}${to_pull}${ref_txt}${mode}${tag_txt}${stash_txt}${stat_txt}$untracked$modified$deleted$added"
   print -n "%F{$g_base_color} $g_prompt_txt %f"
 }
 
