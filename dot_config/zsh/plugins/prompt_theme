@@ -55,15 +55,19 @@ ICOBRANCH="\uf126"
 ICODETACHED="➦"
 ICOREMOTETRACK="☊"
 ICOREMOTE="\uf0c1"
+#ICOTAG="\uf02b"
+#ICOTAG="\uf024"
+ICOTAG="\u2691"
+ICOSTASH="\u2699"
 prompt_git() {
   "$_show_git" || return;
   # if not inside git repo do nothing
   [ "$(git rev-parse --is-inside-work-tree 2>/dev/null)" != "true" ] && return;
 
-  local ref mode git_dir has_upstream
-  local modified untracked added deleted tagged stashed
+  local ref mode git_dir
+  local modified untracked added deleted
   local git_status
-  local commits_diff commits_ahead commits_behind to_push to_pull
+  local commits_ahead commits_behind to_push to_pull
   local g_base_color
 
   git_dir=$(git rev-parse --git-dir 2>/dev/null)
@@ -72,15 +76,19 @@ prompt_git() {
 
   read -r oid head upstream ab <<< $(echo $gst_porcelain | grep "^# branch." | cut -d' ' -f3- | xargs)
   if [ "$head" = "(detached)" ]; then
-    ref_txt="$ICODETACHED ${oid:0:7}";
+    ref_txt="$ICODETACHED ${oid:0:7} ";
   else
-    ref_txt="$ICOBRANCH $head";
-    upstream_txt=""
-    if [ -n "$upstream" ]; then
-      upstream_txt="$upstream"
-      [ "${upstream##*/}" = "$head" ] && upstream_txt="${upstream%%/*}"
-      upstream_txt="$ICOREMOTE $upstream_txt "
-    fi
+    ref_txt="$ICOBRANCH $head ";
+  fi
+
+  upstream_txt=""
+  if [ -n "$upstream" ]; then
+    upstream_txt="$upstream"
+    [ "${upstream##*/}" = "$head" ] && upstream_txt="${upstream%%/*}"
+    upstream_txt="$ICOREMOTE $upstream_txt "
+
+    commits_ahead=0; _tmp_commits_ahead="${ab%% *}"; commits_ahead="${_tmp_commits_ahead##+}"
+    commits_behind="${ab##* -}"
   fi
 
   #dirty=$(git status --porcelain --ignore-submodules="${GIT_STATUS_IGNORE_SUBMODULES:-dirty}" 2> /dev/null | tail -n1)
@@ -91,9 +99,6 @@ prompt_git() {
   else
     g_base_color='green'
   fi
-
-  #local upstream; upstream=$(git rev-parse --symbolic-full-name --abbrev-ref "@{upstream}" 2> /dev/null)
-  if [[ -n "${upstream}" && "${upstream}" != "@{upstream}" ]]; then has_upstream=true; fi
 
   local current_commit_hash; current_commit_hash=$(git rev-parse HEAD 2> /dev/null)
 
@@ -131,35 +136,35 @@ prompt_git() {
     deleted=" ‒$number_added_deleted$PLUSMINUS"
   fi
 
-  local tag_at_current_commit; tag_at_current_commit=$(git describe --exact-match --tags "$current_commit_hash" 2> /dev/null)
-  if [[ -n $tag_at_current_commit ]]; then tagged=" ☗$tag_at_current_commit "; fi
-
-  local number_of_stashes; number_of_stashes="$(git stash list 2> /dev/null | wc -l)"
-  if [[ $number_of_stashes -gt 0 ]]; then
-    stashed=" ${number_of_stashes##*(  )}⚙"
+  # TODO: use `git tag --points-at=HEAD` ?
+  tag_txt=""
+  tag_at_current_commit=$(git describe --exact-match --tags "$current_commit_hash" 2> /dev/null)
+  if [ -n "$tag_at_current_commit" ]; then
+    tag_txt="$ICOTAG $tag_at_current_commit ";
   fi
 
-  local upstream_prompt=''
-  if [[ $has_upstream == true ]]; then
-    commits_diff="$(git log --pretty=oneline --topo-order --left-right "${current_commit_hash}...${upstream}" 2> /dev/null)"
-    commits_ahead=$(\grep -c "^<" <<< "$commits_diff")
-    commits_behind=$(\grep -c "^>" <<< "$commits_diff")
-    upstream_prompt="$(git rev-parse --symbolic-full-name --abbrev-ref "@{upstream}" 2> /dev/null)"
-    #upstream_prompt=$(sed -e 's/\/.*$/ ☊ /g' <<< "$upstream_prompt")
+  stash_txt=""
+  number_of_stashes="$(wc -l "$git_dir/logs/refs/stash")" #probably faster
+  number_of_stashes="${number_of_stashes%% *}"
+  #number_of_stashes="$(git stash list 2> /dev/null | wc -l)"
+  if [ "$number_of_stashes" -gt 0 ]; then
+    stash_txt="$ICOSTASH ${number_of_stashes}"
   fi
 
-  if [[ $commits_ahead -gt 0 ]]; then to_push="%f%F{cyan} ↑$commits_ahead %f%F{$g_base_color}"; fi
-  if [[ $commits_behind -gt 0 ]]; then to_pull="%f%F{red} ↓$commits_behind %f%F{$g_base_color}"; fi
+  # FIXME: move to proper position
+  [ "$commits_ahead" -gt 0 ]  && to_push="%f%F{cyan}↑$commits_ahead%f%F{$g_base_color} "
+  [ "$commits_behind" -gt 0 ] && to_pull="%f%F{red}↓$commits_behind%f%F{$g_base_color} "
 
   if [[ -e "${git_dir}/BISECT_LOG" ]]; then
-    mode="<B>"
+    mode="<B> "
   elif [[ -e "${git_dir}/MERGE_HEAD" ]]; then
-    mode=">M<"
+    mode=">M< "
   elif [[ -e "${git_dir}/rebase" || -e "${git_dir}/rebase-apply" || -e "${git_dir}/rebase-merge" || -e "${git_dir}/../.dotest" ]]; then
-    mode=">R>"
+    mode=">R> "
   fi
 
-  g_prompt_txt="${upstream_txt}${ref_txt} ${mode}$to_push$to_pull$tagged$stashed$untracked$modified$deleted$added"
+  # TODO: handle spaces after segments here
+  g_prompt_txt="${upstream_txt}${to_push}${to_pull}${ref_txt}${mode}${tag_txt}${stash_txt}$untracked$modified$deleted$added"
   print -n "%F{$g_base_color} $g_prompt_txt %f"
 }
 
