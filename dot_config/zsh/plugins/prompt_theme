@@ -50,7 +50,6 @@ prompt_virtualenv() {
   fi
 }
 
-PLUSMINUS="\u00b1"
 ICOBRANCH="\uf126"
 ICODETACHED="➦"
 #ICOREMOTETRACK="☊"
@@ -69,6 +68,7 @@ prompt_git() {
 
   # status
   gst_porcelain=$(git status --porcelain=v2 --branch --ignore-submodules="${GIT_STATUS_IGNORE_SUBMODULES:-dirty}" 2> /dev/null)
+  read -r oid head upstream ab <<< "$(echo "$gst_porcelain" | grep "^# branch." | cut -d' ' -f3- | xargs)"
   gst_files=$(\grep -v "^# " <<< "${gst_porcelain}")
 
   ### FILES STATUS - green - clean, yellow - all staged, red - unstaged changes or untracked files
@@ -85,7 +85,7 @@ prompt_git() {
   [ -n "$stat_txt" ] && stat_txt="|$stat_txt"
 
   ### REF
-  read -r oid head upstream ab <<< "$(echo "$gst_porcelain" | grep "^# branch." | cut -d' ' -f3- | xargs)"
+  local ref_txt; ref_txt="";
   if [ "$head" = "(detached)" ]; then
     ref_txt="$ICODETACHED ${oid:0:7} ";
   else
@@ -93,7 +93,7 @@ prompt_git() {
   fi
 
   ### UPSTREAM
-  upstream_txt=""
+  local upstream_txt; upstream_txt=""
   if [ -n "$upstream" ]; then
     upstream_txt="$upstream"
     [ "${upstream##*/}" = "$head" ] && upstream_txt="${upstream%%/*}"
@@ -107,21 +107,21 @@ prompt_git() {
   fi
 
   ### TAGS TODO: use `git tag --points-at=HEAD` ?
-  tag_txt=""
+  local tag_txt; tag_txt=""
   tag_at_current_commit=$(git describe --exact-match --tags "$oid" 2> /dev/null)
   if [ -n "$tag_at_current_commit" ]; then
     tag_txt="$ICOTAG $tag_at_current_commit ";
   fi
 
   ### STASH
-  stash_txt=""
+  local stash_txt; stash_txt=""
   number_of_stashes="$(wc -l "$git_dir/logs/refs/stash" 2> /dev/null)" #probably faster
   number_of_stashes="${number_of_stashes%% *}"
   #number_of_stashes="$(git stash list 2> /dev/null | wc -l)"
   [ "$number_of_stashes" -gt 0 ] && stash_txt="$ICOSTASH ${number_of_stashes}";
 
-  ### MODE
-  mode_txt="" # multiple motes are possible (you can rebase while bisecting)
+  ### MODE - multiple motes are possible (you can rebase while bisecting)
+  local mode_txt; mode_txt=""
   [ -e "${git_dir}/BISECT_LOG" ] && mode_txt="$mode<B> ";
   [ -e "${git_dir}/MERGE_HEAD" ] && mode_txt="$mode>M< ";
   [[ -e "${git_dir}/rebase" || -e "${git_dir}/rebase-apply" || -e "${git_dir}/rebase-merge" || -e "${git_dir}/../.dotest" ]] && mode_txt="$mode>R> ";
