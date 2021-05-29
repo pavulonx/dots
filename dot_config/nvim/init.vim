@@ -20,7 +20,9 @@ Plug 'tpope/vim-commentary'
 Plug 'ap/vim-css-color'
 Plug 'lifepillar/vim-solarized8'
 Plug 'airblade/vim-gitgutter'
+Plug 'tpope/vim-fugitive'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'autozimu/LanguageClient-neovim', {'branch': 'next', 'do': 'bash install.sh'}
 call plug#end()
 
 source ~/.config/nvim/coc.vim
@@ -73,8 +75,10 @@ set wildmode=longest,list,full
 autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
 " Perform dot commands over visual blocks:
 vnoremap . :normal .<CR>
+" FZF bindings
+map <leader>f :Files<CR>
 " Goyo plugin makes text more readable when writing prose:
-map <leader>f :Goyo \| set bg=dark \| set linebreak<CR>
+map <leader>g :Goyo \| set bg=dark \| set linebreak<CR>
 " Spell-check set to <leader>o, 'o' for 'orthography':
 map <leader>o :setlocal spell! spelllang=en_us<CR>
 " Splits open at the bottom and right, which is non-retarded, unlike vim defaults.
