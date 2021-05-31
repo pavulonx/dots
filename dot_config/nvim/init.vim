@@ -24,81 +24,48 @@ Plug 'tpope/vim-fugitive'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'autozimu/LanguageClient-neovim', {'branch': 'next', 'do': 'bash install.sh'}
 call plug#end()
-
 source ~/.config/nvim/coc.vim
 
+"""""" theme
 colorscheme solarized8
 let g:solarized_statusline=''
 let g:airline_theme='solarized_flood'
-
 set termguicolors
 set title
-"set bg=light
 set bg=dark
+
+set lazyredraw
 set mouse=a
 set clipboard+=unnamedplus
+set wildmenu " Turn on the Wild menu
+set wildmode=longest,list,full "Enable autocompletion:
+
+set encoding=utf-8
+set number relativenumber
 set noshowmode " If in Insert, Replace or Visual mode put a message on the last line.
 set history=1000
 set so=7
 set ruler
-set wildmenu
+" set foldcolumn=1 " Add a bit extra margin to the left
 set cursorline " highlight line
 "set cursorcolum " highlight column
-" Ignore case when searching
-set ignorecase
 
-" When searching try to be smart about cases
-set smartcase
+set hlsearch " Highlight search results
+set ignorecase " Ignore case when searching
+set smartcase " When searching try to be smart about cases
+set incsearch " Makes search act like search in modern browsers
 
-" Highlight search results
-set hlsearch
-" set foldcolumn=1 " Add a bit extra margin to the left
-
-" Turn backup off, since most stuff is in SVN, git et.c anyway...
+""""" Turn backup off, since most stuff is in SVN, git et.c anyway...
 set nobackup
 set nowb
 set noswapfile
 
-" Makes search act like search in modern browsers
-set incsearch
-
-" Some basics:
-nnoremap c "_c
-set nocompatible
-filetype plugin on
-syntax on
-set encoding=utf-8
-set number relativenumber
-" Enable autocompletion:
-set wildmode=longest,list,full
-" Disables automatic commenting on newline:
-autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
-" Perform dot commands over visual blocks:
-vnoremap . :normal .<CR>
-" FZF bindings
-map <leader>f :Files<CR>
-" Goyo plugin makes text more readable when writing prose:
-map <leader>g :Goyo \| set bg=dark \| set linebreak<CR>
-" Spell-check set to <leader>o, 'o' for 'orthography':
-map <leader>o :setlocal spell! spelllang=en_us<CR>
-" Splits open at the bottom and right, which is non-retarded, unlike vim defaults.
-set splitbelow splitright
-" Case insensitive search
-set ignorecase
-" When searching try to be smart about cases
-set smartcase
-
-""" " TAB & text settings
-" Use spaces instead of tabs
-set expandtab
-
-" Be smart when using tabs ;)
-set smarttab
-
-" 1 tab == 4 spaces
+""""" TAB & text settings
+set expandtab " Use spaces instead of tabs
+set smarttab " Be smart when using tabs ;)
+" 1 tab == 2 spaces
 set shiftwidth=2
 set tabstop=2
-
 " Linebreak on 500 characters
 set lbr
 set tw=500
@@ -107,6 +74,27 @@ set ai "Auto indent
 set si "Smart indent
 set wrap "Wrap lines
 
+
+" Some basics:
+nnoremap c "_c
+set nocompatible
+filetype plugin on
+filetype indent on
+syntax on
+
+" Disables automatic commenting on newline:
+autocmd FileType * setlocal formatoptions-=c formatoptions-=r formatoptions-=o
+" Perform dot commands over visual blocks:
+vnoremap . :normal .<CR>
+
+map <leader>f :Files<CR>
+" Goyo plugin makes text more readable when writing prose:
+
+map <leader>g :Goyo \| set bg=dark \| set linebreak<CR>
+" Spell-check set to <leader>o, 'o' for 'orthography':
+map <leader>o :setlocal spell! spelllang=en_us<CR>
+" Splits open at the bottom and right, which is non-retarded, unlike vim defaults.
+set splitbelow splitright
 
 " Nerd tree
 map <leader>n :NERDTreeToggle<CR>
