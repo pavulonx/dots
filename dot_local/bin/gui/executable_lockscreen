@@ -12,11 +12,12 @@ locker="$(command -v i3lock-color i3lock 2>&1 | head -n1)"
 
 "$locker" \
   -n -t -c "$c_bg" \
-  --clock --force-clock --datestr "$datestr" \
-  --timecolor="$c_fg" --datecolor="$c_fg" \
-  --keyhlcolor="$c_bg" --bshlcolor="$c_bg" \
-  --insidecolor="$c_trans" --ringcolor="$c_fg" \
-  --insidevercolor="$c_trans" --ringvercolor="$c_ver" \
-  --insidewrongcolor="$c_trans" --ringwrongcolor="$c_err" \
+  --clock --force-clock --date-str "$datestr" \
+  --time-color="$c_fg" --date-color="$c_fg" \
+  --keyhl-color="$c_bg" --bshl-color="$c_bg" \
+  --inside-color="$c_trans" --ring-color="$c_fg" \
+  --insidever-color="$c_trans" --ringver-color="$c_ver" \
+  --insidewrong-color="$c_trans" --ringwrong-color="$c_err" \
   --radius=120 --ring-width=3 \
-  --veriftext='' --wrongtext='' --noinputtext=''
+  --verif-text='' --wrong-text='' --noinput-text='' \
+  || "$locker" # in case input parameters are wrong
