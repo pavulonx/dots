@@ -57,7 +57,7 @@ ICOREMOTE="\uf0c1"
 #ICOTAG="\uf02b"
 #ICOTAG="\uf024"
 ICOTAG="\u2691"
-ICOSTASH="\u2699"
+ICOSTASH="\u2699 "
 ICOWORKTREE="*"
 ICOUNTRACK="?"
 prompt_git() {
@@ -118,12 +118,13 @@ prompt_git() {
   number_of_stashes="$(wc -l "$git_dir/logs/refs/stash" 2> /dev/null)" #probably faster
   number_of_stashes="${number_of_stashes%% *}"
   #number_of_stashes="$(git stash list 2> /dev/null | wc -l)"
-  [ "$number_of_stashes" -gt 0 ] && stash_txt="$ICOSTASH ${number_of_stashes}";
+  [ "$number_of_stashes" -gt 0 ] && stash_txt="$ICOSTASH${number_of_stashes} ";
 
   ### MODE - multiple motes are possible (you can rebase while bisecting)
   local mode_txt; mode_txt=""
   [ -e "${git_dir}/BISECT_LOG" ] && mode_txt="$mode<B> ";
   [ -e "${git_dir}/MERGE_HEAD" ] && mode_txt="$mode>M< ";
+  [ -e "${git_dir}/CHERRY_PICK_HEAD" ] && mode_txt="$mode<CP< ";
   [[ -e "${git_dir}/rebase" || -e "${git_dir}/rebase-apply" || -e "${git_dir}/rebase-merge" || -e "${git_dir}/../.dotest" ]] && mode_txt="$mode>R> ";
 
   ### GIT PROMPT # TODO: handle spaces after segments here
