@@ -8,7 +8,7 @@ REAL_RUN="no"
 
 # 2. config overrides
 _backup_conf_file="$XDG_CONFIG_HOME/backup/backuprc"
-[ ! -f "$_backup_conf_file" ] && "No config file found!" && exit 1 
+[ ! -f "$_backup_conf_file" ] && "No config file found!" && exit 1
 source "$_backup_conf_file"
 
 [ "$DESTINATION" == "/" ] && echo "Destination needs to be provided in $_backup_conf_file" && exit 1
@@ -19,13 +19,13 @@ FILTER_FILE="$XDG_CONFIG_HOME/backup/backup.filter"
 SOURCE="$HOME/"
 
 # Append current PC (hostname) and username to destination
-DESTINATION="${DESTINATION%/}/$(hostname)_$USER-$(id -u "$USER")"
+DESTINATION="${DESTINATION%/}/$(cat /etc/hostname)_${USER}-$(id -u "$USER")"
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
 
 # backup dotfiles
 _filterfile="/tmp/filterfile_$TIMESTAMP"
 touch "$_filterfile"
-command -v chezmoi && chezmoi managed -i d | cut -d '/' -f4- | grep -Ev '^.(config|local(/share)?)$' | awk 'BEGIN{print "+ /.config/\n+ /.local/"} {print "+ " $0 "/***"} END{print "- /.config/**\n- /.local/**"}' >> "$_filterfile"
+command -v chezmoi && chezmoi managed | grep -Ev '^.(config|local(/share)?)$' | awk 'BEGIN{print "+ /.config/\n+ /.local/"} {print "+ " $0 "/***"} END{print "- /.config/**\n- /.local/**"}' >> "$_filterfile"
 cat "$FILTER_FILE" >> "$_filterfile"
 
 rsync_commands=(
