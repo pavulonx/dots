@@ -1,27 +1,31 @@
 #!/bin/bash
-DIR="$(cd -P -- "$(dirname -- "$(command -v -- "$0")")" && pwd -P)"
+DIR="$(dirname "$(realpath "$0")")"
+SRC_TREE="$DIR/tree"
+
+_diff() {
+  diff -N --color "$1" "$2"
+}
 
 changed=false
-install_systemwise() {
-  src="$DIR/$1$2"
-  if ! diff -N --color "$2" "$src"; then
+_prompt_install() {
+  src="$1"
+  dst="$2"
+  if ! _diff "$dst" "$src"; then
     printf "\n"
-    echo "Found changes while installing $2"
-    read -r -p "Is this change ok? [y/N] " response </dev/tty
+    echo "Changes between system: '$dst' and source: '$src'"
+    read -r -p "Do you want to apply this change? [y/N] " response </dev/tty
     if [[ "$response" =~ ^([yY][eE][sS]|[yY])$ ]]; then
-      sudo cp -v "$src" "$2"
+      sudo cp -v "$src" "$dst"
       changed=true
       printf "\n\n"
     fi
   fi
 }
 
-tree_dir=tree
+find "$SRC_TREE" -type f | awk -F"$SRC_TREE" '{ print $2}' \
+| while read -r system_location; do
+  _prompt_install "$SRC_TREE$system_location" "$system_location";
+done;
 
-find "$DIR/$tree_dir" -type f | awk -F"$tree_dir" '{ print $2}' |
-  while read -r location; do
-    install_systemwise "$tree_dir" "$location";
-  done;
-
-  $changed && echo "Changes applied!"
-  exit 0
+$changed && echo "Changes applied!"
+exit 0
