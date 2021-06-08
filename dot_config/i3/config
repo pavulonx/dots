@@ -66,6 +66,10 @@ bindsym $mod+Print --release exec --no-startup-id sshot -s
 # xkill
 bindsym $mod+Shift+Ctrl+x --release exec --no-startup-id xkill
 
+# passwdmenu
+bindsym $mod+Shift+p --release exec --no-startup-id passwdmenu
+bindsym $mod+Shift+Ctrl+p --release exec --no-startup-id passwdmenu --type
+
 # focus on mouse move
 focus_follows_mouse no
 
