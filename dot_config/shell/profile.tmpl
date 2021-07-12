@@ -1,6 +1,6 @@
 # setup path
 _user_path="$(find ~/.local/bin -type d | tac | tr '\n' ':')"
-export PATH="${_user_path}${PATH}"
+export PATH="${_user_path}${PATH}:$HOME/.local/share/coursier/bin"
 
 # default programs
 export TERMINAL="alacritty"
