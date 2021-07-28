@@ -1,4 +1,0 @@
-#!/bin/sh
-echo "Enabling and starting ssh-agent"
-systemctl --user enable ssh-agent
-systemctl --user start ssh-agent
