@@ -49,7 +49,7 @@ _log_dir="${XDG_CACHE_HOME:-$HOME/.cache}/xsessionlogs"
 mkdir -p "$_log_dir"
 # remove old logs
 _hist=5
-find "$_log_dir" -type f -printf "%T@:%p\n" | sort -nr | tail -n "+$_hist" | cut -d: -f2- | xargs rm || true
+find "$_log_dir" -type f -printf "%T@:%p\n" | sort -nr | tail -n "+$_hist" | cut -d: -f2- | xargs -r rm || true
 # select log file
 _log_file="$_log_dir/$(date +'%F_%H-%M-%S').log"
 ln -sf "$_log_file" "$_log_dir/current.log"
