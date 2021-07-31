@@ -66,7 +66,6 @@ alias \
         v='$EDITOR' \
         chm='chezmoi' \
         shck='shellcheck' \
-        ssha='eval $(ssh-agent)' \
         yt='youtube-dl --add-metadata -i' \
         yta='yt -x -f bestaudio/best';
 
@@ -204,6 +203,12 @@ clip() { xclip -in -selection clipboard < "${1:-/dev/stdin}"; }
 clipp() { xclip -out -selection clipboard; }
 {{- end }}
 
+
+ssha() {
+  test -z "$SSH_AUTH_SOCK" && echo "SSH_AUTH_SOCK is not set" && return 1;
+  test -e "$SSH_AUTH_SOCK" && echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK already exists. Is agent running?" && return 2;
+  eval "$(ssh-agent -a "$SSH_AUTH_SOCK")";
+}
 
 # archives
 ex() {

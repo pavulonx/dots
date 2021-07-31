@@ -14,6 +14,7 @@ export PAGER="less"
 export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_STATE_HOME="$HOME/.local/state"
 
 # cleanup home dir
 export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
@@ -37,11 +38,12 @@ export XMONAD_CACHE_DIR="$XDG_CACHE_HOME/xmonad"
 export PARALLEL_HOME="$XDG_CONFIG_HOME/parallel"
 export PASSWORD_STORE_DIR="$XDG_DATA_HOME/password-store"
 
-# system settings
+# signle, global ssh agent
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+
+# applications settings
 export CM_LAUNCHER=rofi
 export QT_QPA_PLATFORMTHEME="qt5ct"
-
-export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
 
 {{ if eq .machine_type "pc" -}}
 # start graphical interface on login on tty1

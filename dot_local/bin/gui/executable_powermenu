@@ -19,6 +19,16 @@ _log() {
 
 [ -z "$cmd" ] && exit 0;
 
+# with openrc use loginctl
+if grep -qE "^systemd$" /proc/1/comm; then
+  loginmgr=systemctl
+elif command -v loginctl 2>&1; then
+  loginmgr=loginctl
+else
+  _log 'No systemctl or loginctl installed!'
+  exit 1
+fi
+
 _log "$cmd"
 case "$cmd" in
   lock)
@@ -40,13 +50,13 @@ case "$cmd" in
     esac
     ;;
   suspend)
-    systemctl suspend
+    "$loginmgr" suspend
     ;;
   reboot)
-    systemctl reboot
+    "$loginmgr" reboot
     ;;
   shutdown)
-    systemctl poweroff
+    "$loginmgr" poweroff
     ;;
   *)
     _log "missing or invalid argument: '$cmd'"

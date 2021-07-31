@@ -12,6 +12,11 @@ core=(
 exa
 plata-theme
 nitrogen
+jq
+moreutils
+ttf-jetbrains-mono
+ueberzug
+xss-lock
 adwaita-icon-theme
 arandr
 autorandr
@@ -20,17 +25,15 @@ feh
 flat-remix
 flat-remix-gtk
 i3-gaps
-i3lock-color
-maim
-imagemagick
+i3lock-color-git
 lxappearance
 picom
 playerctl
 polybar
 redshift
-geoclue
 rofi
 scrot
+maim
 thunar
 tumbler
 thunar-archive-plugin
@@ -38,9 +41,6 @@ thunar-volman
 xautomation
 xclip
 xdotool
-xf86-input-evdev
-xf86-input-libinput
-xf86-input-void
 zsh
 chezmoi
 polkit
@@ -70,17 +70,12 @@ pulseaudio
 pulseaudio-alsa
 pavucontrol
 pamixer
-alsa-firmware
-alsa-lib
-alsa-plugins
-alsa-utils
 gstreamer
 gst-plugins-good
 gst-plugins-bad
 gst-plugins-base
 gst-plugins-ugly
 playerctl
-volumeicon
 )
 
 echo "Installing sound packages"
@@ -156,11 +151,12 @@ cantarell-fonts
 noto-fonts
 noto-fonts-emoji
 noto-fonts-extra
-consolas-font
 ttf-windows
 nerd-fonts-dejavu-complete
 nerd-fonts-terminus
+nerd-fonts-complete
 terminus-font
+ttf-lato
 ttf-bitstream-vera
 ttf-dejavu
 ttf-droid
