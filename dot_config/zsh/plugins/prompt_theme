@@ -81,7 +81,7 @@ prompt_git() {
   if [ "$c_staged" -gt 0 ];     then stat_txt="$stat_txt [$c_staged]";              g_base_color='yellow';  fi
   if [ "$c_worktree" -gt 0 ];   then stat_txt="$stat_txt $c_worktree$ICOWORKTREE";  g_base_color='red';     fi
   if [ "$c_untracked" -gt 0 ];  then stat_txt="$stat_txt $c_untracked$ICOUNTRACK";  g_base_color='red';     fi
-  if [ "$c_unmerged" -gt 0 ];   then stat_txt="$stat_txt >$c_unmerged<";                                    fi
+  if [ "$c_unmerged" -gt 0 ];   then stat_txt="$stat_txt >$c_unmerged<";            g_base_color='red';     fi
   [ -n "$stat_txt" ] && stat_txt="|$stat_txt"
 
   ### REF

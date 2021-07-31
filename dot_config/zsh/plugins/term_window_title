@@ -1,9 +1,9 @@
 __title_precmd () {
-  print -Pn "\e]0;%n@%m: %50<..<%~%<<\a"
+  print -Pn '\e]0;%n@%m: %50<..<%~%<<\a'
 }
 
 __title_preexec () {
-  print -Pn "\e]0;%n@%m: %50<..<%~%<<  [ ${1} ]\a"
+  print -Pn '\e]0;%n@%m: %50<..<%~%<<  [ ${1} ]\a'
 }
 
 term_window_title() {
