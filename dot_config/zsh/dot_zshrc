@@ -33,6 +33,10 @@ __completions_init() {
   autoload -U compinit && compinit && _comp_options+=(globdots)
   autoload -U +X bashcompinit && bashcompinit # automatically load bash completion functions
 
+  # custtom commands completions
+  compdef _command -e vcmd
+
+  #settings
   unsetopt menu_complete   # do not autoselect the first completion entry
   unsetopt flowcontrol
   setopt auto_menu
