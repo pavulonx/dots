@@ -150,6 +150,7 @@ alias \
         gstf='git_status_fzf' \
         \
         gsta='git stash' \
+        gsta='git-stash-fzf' \
         gstaa='git stash apply' \
         gstas='git stash show --text' \
         gstal='git stash list' \
@@ -203,6 +204,24 @@ clip() { xclip -in -selection clipboard < "${1:-/dev/stdin}"; }
 clipp() { xclip -out -selection clipboard; }
 {{- end }}
 
+# view or edit command
+vcmd() {
+  [ -z "$1" ] && echo "Usage: vcmd <command>" && return 1;
+  command -V "$1" || return 1;
+  _vx_cmd="$(command -v "$1")";
+  if [ "$_vx_cmd" = "$1" ]; then # builtin function
+    which "$_vx_cmd" | cat | bat --language=sh --style=grid,numbers --color=always
+  elif [ -x "$_vx_cmd" ]; then
+    file "$_vx_cmd"
+    if file "$_vx_cmd" | grep -Eq ".*shell\ script.*executable.*"; then
+      bat --color=always "$_vx_cmd"
+      echo "Press Enter to edit, CTRL+C to abort"
+      read </dev/stdin
+      "$EDITOR" "$_vx_cmd"
+    fi
+  fi
+  unset _vx_cmd
+}
 
 ssha() {
   test -z "$SSH_AUTH_SOCK" && echo "SSH_AUTH_SOCK is not set" && return 1;
@@ -226,7 +245,7 @@ ex() {
     *.rar)       unrar x "$1"     ;;
     *.zip)       unzip "$1"       ;;
     *.7z)        7z x "$1"        ;;
-    *.deb)       ar x $1          ;;
+    *.deb)       ar x "$1"         ;;
     *)           [ -z "$1" ] && printf "Usage:\n\t%s [path-to-archive]\n" "$0" ||
                                 echo "$1 cannot be extracted via ex" ;;
     esac
