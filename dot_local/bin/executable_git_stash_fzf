@@ -1,0 +1,21 @@
+#!/bin/sh
+
+echo "^A apply | ^P - pop | ^D - drop"
+
+# --preview-window=down,70%
+
+while out=$(git -c color.ui=always stash list --pretty="%C(yellow)%gd %C(red)%h %>(14)%Cgreen%cr %C(reset)%gs" \
+  | fzf --ansi --no-sort --reverse --print-query --query="$query" \
+  --header="^A apply | ^P - pop | ^D - drop" \
+  --expect=ctrl-a,ctrl-p,ctrl-d                                 \
+  --preview="git -c color.ui=always stash show -p {1}");
+do
+  query=$(echo "$out" | sed -n '1p')
+  action=$(echo "$out" | sed -n '2p')
+  stash_id=$(echo "$out" | sed -n '3p' | cut -d: -f1)
+  case "$action" in
+    ctrl-a)   git stash apply "$stash_id";  break ;;
+    ctrl-p)   git stash pop "$stash_id";    break ;;
+    ctrl-d)   git stash drop "$stash_id";         ;;
+  esac
+done
