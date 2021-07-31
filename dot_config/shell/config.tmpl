@@ -1,4 +1,5 @@
 # shellcheck shell=sh
+# shellcheck disable=SC2155
 
 # terminal programs settings
 export FZF_DEFAULT_OPTS="--layout=reverse --height 60%"
@@ -8,13 +9,13 @@ export LS_COLORS='rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;
 export TIME_STYLE='long-iso' # date format in ls
 ## less cfg (is also applicable to bat)
 export LESS='-riF'
-export LESS_TERMCAP_mb=$'\e[4;32m'
-export LESS_TERMCAP_md=$'\e[1;31m'
-export LESS_TERMCAP_me=$'\e[0m'
-export LESS_TERMCAP_so=$'\e[1;30;47m'
-export LESS_TERMCAP_se=$'\e[0m'
-export LESS_TERMCAP_us=$'\e[1;36m'
-export LESS_TERMCAP_ue=$'\e[0m'
+export LESS_TERMCAP_mb=$(printf '\e[4;32m')
+export LESS_TERMCAP_md=$(printf '\e[1;31m')
+export LESS_TERMCAP_me=$(printf '\e[0m')
+export LESS_TERMCAP_so=$(printf '\e[1;30;47m')
+export LESS_TERMCAP_se=$(printf '\e[0m')
+export LESS_TERMCAP_us=$(printf '\e[1;36m')
+export LESS_TERMCAP_ue=$(printf '\e[0m')
 export LESSOPEN='| /usr/bin/highlight -O ansi %s 2>/dev/null'
 
 # files
@@ -216,7 +217,7 @@ vcmd() {
     if file "$_vx_cmd" | grep -Eq ".*shell\ script.*executable.*"; then
       bat --color=always "$_vx_cmd"
       echo "Press Enter to edit, CTRL+C to abort"
-      read </dev/stdin
+      read -r </dev/stdin
       "$EDITOR" "$_vx_cmd"
     fi
   fi
