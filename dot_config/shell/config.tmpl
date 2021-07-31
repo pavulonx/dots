@@ -205,12 +205,9 @@ clipp() { xclip -out -selection clipboard; }
 
 
 ssha() {
-  if [ -n "$SSH_AUTH_SOCK" ]; then
-    eval "$(ssh-agent -a "$SSH_AUTH_SOCK")";
-  else
-    echo "SSH_AUTH_SOCK not set";
-    exit 1;
-  fi
+  test -z "$SSH_AUTH_SOCK" && echo "SSH_AUTH_SOCK is not set" && return 1;
+  test -e "$SSH_AUTH_SOCK" && echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK already exists. Is agent running?" && return 2;
+  eval "$(ssh-agent -a "$SSH_AUTH_SOCK")";
 }
 
 # archives
