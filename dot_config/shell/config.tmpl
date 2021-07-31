@@ -167,11 +167,9 @@ alias \
         gitroot='git rev-parse --show-toplevel' \
         cdgr='cd $(gitroot)';
 
-# Outputs the name of the current branch
-# Usage example: git pull origin $(git_current_branch)
-# Using '--quiet' with 'symbolic-ref' will not cause a fatal error (128) if
-# it's not a symbolic ref, but in a Git repo.
 git_current_branch() {
+  # Outputs the name of the current branch Usage example: git pull origin $(git_current_branch)
+  # Using '--quiet' with 'symbolic-ref' will not cause a fatal error (128) if it's not a symbolic ref, but in a Git repo.
   ref="$(git symbolic-ref --quiet HEAD 2> /dev/null)";
   ret="$?";
   if [ "$ret" -ne 0 ]; then
@@ -181,14 +179,17 @@ git_current_branch() {
   echo "${ref#refs/heads/}";
 }
 
-DEFAULT_GIT_TICKER="${DEFAULT_GIT_TICKER:-}"
-gcmsgj() {
+gcmsgt() {
+  ticket_default="${GIT_MSG_TICKET_DEFAULT:-}"
+  ticket_sep="${GIT_MSG_TICKET_SEP:-" "}"
   if echo "$1" | grep -q '[A-Z]+-[0-9]+'; then
     message="$1";
   else
-    message="$(git_current_branch | grep -Eo '[A-Z]+-[0-9]+' || echo "$DEFAULT_GIT_TICKER") $1";
+    ticket="$(git_current_branch | grep -Eo '[A-Z]+-[0-9]+' || echo "$ticket_default")";
+    [ -n "$ticket" ] && ticket="${ticket}${ticket_sep}"
+    message="${ticket}${1}"
   fi
-    git commit -m "$message"
+  git commit -m "$message"
 }
 
 
