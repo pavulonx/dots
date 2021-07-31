@@ -3,10 +3,10 @@
 # add plugins directory to fpath
 fpath=($ZDOTDIR/plugins $fpath)
 
-alias reload='. $ZDOTDIR/.zshrc'
+alias reload='source $ZDOTDIR/.zshrc'
 
-source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/config"         # common config
-source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/config.local"   # local config
+source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/shrc"       # common config
+source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/shrc.local" # local config
 
 # ---[ options ]---
 setopt long_list_jobs         # job notifications in the long format
