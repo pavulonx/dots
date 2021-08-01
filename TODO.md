@@ -8,3 +8,4 @@ dots:
 other:
  - polkit agent
  - pipewire startup
+ - change link to image - do not point to GH
