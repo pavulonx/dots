@@ -8,4 +8,3 @@ dots:
 other:
  - polkit agent
  - pipewire startup
- - plata pkgbuild
