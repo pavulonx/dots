@@ -1,2 +1,5 @@
-.idea
 dot_config/shell/config.local
+dot_config/shell/profile.local
+
+extras/plata
+!extras/plata/PKGBUILD
