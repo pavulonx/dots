@@ -1,11 +1,12 @@
 .git
+docs
+backups
+extras
 TODO.md
 README.md
 LICENSE
-extras
-backups
-docs
-**/.idea/
+
+
 
 {{- if ne .chezmoi.hostname "jrarch" }}
 .config/backup/**
