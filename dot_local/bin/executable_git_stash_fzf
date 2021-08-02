@@ -1,7 +1,5 @@
 #!/bin/sh
 
-echo "^A apply | ^P - pop | ^D - drop"
-
 # --preview-window=down,70%
 
 while out=$(git -c color.ui=always stash list --pretty="%C(yellow)%gd %C(red)%h %>(14)%Cgreen%cr %C(reset)%gs" \
@@ -12,7 +10,7 @@ while out=$(git -c color.ui=always stash list --pretty="%C(yellow)%gd %C(red)%h 
 do
   query=$(echo "$out" | sed -n '1p')
   action=$(echo "$out" | sed -n '2p')
-  stash_id=$(echo "$out" | sed -n '3p' | cut -d: -f1)
+  stash_id=$(echo "$out" | sed -n '3p' | cut -d' ' -f1)
   case "$action" in
     ctrl-a)   git stash apply "$stash_id";  break ;;
     ctrl-p)   git stash pop "$stash_id";    break ;;
