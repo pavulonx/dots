@@ -2,11 +2,13 @@
 {{ $browser := promptString "browser (path) " -}}
 {{ $user_email := promptString "user_email " -}}
 {{ $user_fullname := promptString "user_fullname (fullname or nickname) " -}}
+{{ $init_system := promptString "init system [systemd/other] " -}}
 data:
   machine_type: "{{ $machine_type }}"
   browser: "{{ $browser }}"
   user_email: "{{ $user_email }}"
   user_fullname: "{{ $user_fullname }}"
+  init_system: "{{ $init_system }}"
 
 merge:
   command: "nvim"

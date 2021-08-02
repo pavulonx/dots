@@ -1,6 +1,6 @@
 #!/bin/bash
 DIR="$(dirname "$(realpath "$0")")"
-SRC_TREE="$DIR/tree"
+SRC_TREE="$DIR/root"
 
 _diff() {
   diff -N --color "$1" "$2"

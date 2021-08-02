@@ -1,3 +1,3 @@
 #!/bin/sh
 # pkg install git chezmoi # should be installed anyway
-pkg install ripgrep exa bat fd nvim perl fzf termux-api
+pkg install ripgrep exa bat fd nvim perl fzf termux-api lua

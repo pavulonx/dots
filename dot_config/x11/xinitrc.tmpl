@@ -28,8 +28,14 @@ redshiftw &
 nm-applet &
 wallpaper restore &
 
+{{ if not (eq .init_system "systemd") -}}
+pipewire-launch &
+{{- end }}
+
 DESKTOP_SESSION="${DESKTOP_SESSION:-i3}" # default session
 export DESKTOP_SESSION
 
 echo "Stating session: '$DESKTOP_SESSION'"
 exec "$DESKTOP_SESSION"
+
+# vi: syntax=sh

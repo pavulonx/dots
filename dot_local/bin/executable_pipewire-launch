@@ -1,0 +1,18 @@
+#!/bin/sh
+
+_log() {
+  echo "pipewire-launch: $@"
+}
+
+if ! pidof -s pipewire >/dev/null; then
+  _log "starting pipewire"
+  /usr/bin/pipewire &
+  _log "starting pipewire-pulse"
+  /usr/bin/pipewire-pulse &
+  _log "starting pipewire-media-session"
+  /usr/bin/pipewire-media-session &
+  wait
+  _log "exiting"
+else
+  _log "pipewire already running: $(pidof -s pipewire)"
+fi
