@@ -4,6 +4,8 @@ dots:
  - vconsole font
  - different chezmoi settings for systemd/non systemd
  - reboot/shutdown on openrc
+ - cleanup install-dependencies
+ - vimrc cleanup
 
 other:
  - polkit agent
