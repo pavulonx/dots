@@ -51,13 +51,13 @@ cmd="$1"
 
 _log "command: '$cmd'"
 case "$cmd" in
-  help)     _help                       ;;
-  status)   _status                     ;;
+  help)               _help                       ;;
+  status)             _status                     ;;
 
-  lock)     loginctl lock-session       ;;
-  suspend)  "$system_control" suspend   ;;
-  reboot)   "$system_control" reboot    ;;
-  shutdown) "$system_control" poweroff  ;;
+  lock)               loginctl lock-session       ;;
+  suspend)            "$system_control" suspend   ;;
+  reboot)             "$system_control" reboot    ;;
+  shutdown|poweroff)  "$system_control" poweroff  ;;
 
   dim)
     xset dpms force off
