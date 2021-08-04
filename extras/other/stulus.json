@@ -1,0 +1,151 @@
+[
+  {
+    "settings": {
+      "openEditInWindow": false,
+      "openEditInWindow.popup": false,
+      "windowPosition": {},
+      "show-badge": true,
+      "disableAll": false,
+      "exposeIframes": false,
+      "newStyleAsUsercss": false,
+      "styleViaXhr": false,
+      "patchCsp": false,
+      "config.autosave": true,
+      "popup.breadcrumbs": true,
+      "popup.breadcrumbs.usePath": false,
+      "popup.enabledFirst": true,
+      "popup.stylesFirst": true,
+      "popup.autoResort": false,
+      "popup.borders": false,
+      "popup.findStylesInline": true,
+      "popup.findSort": "u",
+      "manage.onlyEnabled": false,
+      "manage.onlyLocal": false,
+      "manage.onlyUsercss": false,
+      "manage.onlyEnabled.invert": false,
+      "manage.onlyLocal.invert": false,
+      "manage.onlyUsercss.invert": false,
+      "manage.actions.expanded": true,
+      "manage.backup.expanded": true,
+      "manage.filters.expanded": true,
+      "manage.newUI": true,
+      "manage.newUI.favicons": false,
+      "manage.newUI.faviconsGray": true,
+      "manage.newUI.targets": 3,
+      "manage.newUI.sort": "title,asc",
+      "editor.options": {},
+      "editor.toc.expanded": true,
+      "editor.options.expanded": true,
+      "editor.lint.expanded": true,
+      "editor.lineWrapping": true,
+      "editor.smartIndent": true,
+      "editor.indentWithTabs": false,
+      "editor.tabSize": 4,
+      "editor.keyMap": "default",
+      "editor.theme": "default",
+      "editor.beautify": {
+        "selector_separator_newline": true,
+        "newline_before_open_brace": false,
+        "newline_after_open_brace": true,
+        "newline_between_properties": true,
+        "newline_before_close_brace": true,
+        "newline_between_rules": false,
+        "preserve_newlines": true,
+        "end_with_newline": false,
+        "indent_conditional": true
+      },
+      "editor.beautify.hotkey": "",
+      "editor.lintDelay": 300,
+      "editor.linter": "csslint",
+      "editor.lintReportDelay": 500,
+      "editor.matchHighlight": "token",
+      "editor.autoCloseBrackets": true,
+      "editor.autocompleteOnTyping": false,
+      "editor.contextDelete": null,
+      "editor.selectByTokens": true,
+      "editor.appliesToLineWidget": true,
+      "editor.livePreview": true,
+      "editor.colorpicker": true,
+      "editor.colorpicker.hexUppercase": false,
+      "editor.colorpicker.hotkey": "",
+      "editor.colorpicker.color": "",
+      "editor.colorpicker.maxHeight": 300,
+      "hotkey._execute_browser_action": "",
+      "hotkey.openManage": "",
+      "hotkey.styleDisableAll": "",
+      "sync.enabled": "none",
+      "iconset": 0,
+      "badgeDisabled": "#8B0000",
+      "badgeNormal": "#006666",
+      "popupWidth": 246,
+      "updateInterval": 24
+    }
+  },
+  {
+    "enabled": true,
+    "updateUrl": null,
+    "md5Url": null,
+    "url": null,
+    "originalMd5": null,
+    "installDate": 1602378567831,
+    "name": "startpage.com",
+    "sections": [
+      {
+        "code": ".layout-web__mainline .mainline-results {\n    max-width: 100%;\n}\n\n.layout-web__mainline {\n    max-width: 100%;\n}\n\n.layout-web__body {\n    max-width: 1205px;\n}\n\n.w-gl__result-url-container {\n    max-width: 100%;\n}\n\n.w-gl__result {\n    line-height: 20px;\n}\n\n#gcsa-top {\n    display: none\n}\n",
+        "domains": [
+          "startpage.com"
+        ]
+      }
+    ],
+    "updateDate": 1608400137609,
+    "_id": "7c41238c-7693-4f60-b395-73c342c32436",
+    "_rev": 1608400137610,
+    "id": 2,
+    "_usw": {}
+  },
+  {
+    "enabled": true,
+    "updateUrl": null,
+    "md5Url": null,
+    "url": null,
+    "originalMd5": null,
+    "installDate": 1602943983650,
+    "name": "github.com",
+    "sections": [
+      {
+        "code": ".container-xl {\n    max-width: 1480px;\n}\n",
+        "domains": [
+          "github.com"
+        ]
+      }
+    ],
+    "updateDate": 1608400146134,
+    "_id": "da46d3b8-ea7f-4c1b-8b1c-ff5b3fcd022c",
+    "_rev": 1608400146134,
+    "id": 3,
+    "_usw": {}
+  },
+  {
+    "enabled": true,
+    "updateUrl": null,
+    "url": null,
+    "installDate": 1608400076750,
+    "name": "scrollbar",
+    "sections": [
+      {
+        "code": "/* width */\n::-webkit-scrollbar {\n    background-color: #202324;\n    color: #aba499;\n    width: 14px;\n}\n\n/* Track */\n::-webkit-scrollbar-track {\n    background: #1D1D1D;\n}\n\n/* Handle */\n::-webkit-scrollbar-thumb {\n    background-color: #454a4d;\n}\n\n/* Handle on hover */\n::-webkit-scrollbar-thumb:hover {\n    background: #555;\n}",
+        "domains": [
+          "github.com",
+          "startpage.com",
+          "youtube.com",
+          "freeanon.xyz"
+        ]
+      }
+    ],
+    "updateDate": 1615854797486,
+    "_id": "db7c9dd3-a506-4468-a9ab-331382e5bd36",
+    "_rev": 1615854797486,
+    "id": 4,
+    "_usw": {}
+  }
+]
