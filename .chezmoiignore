@@ -2,10 +2,8 @@
 docs
 backups
 extras
-TODO.md
 README.md
 LICENSE
-
 
 
 {{- if ne .chezmoi.hostname "jrarch" }}
