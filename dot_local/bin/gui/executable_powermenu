@@ -12,53 +12,6 @@ cmd="$(echo "$power_options" \
   | rofi -dmenu -width 12 -hide-scrollbar -lines 6 -i -no-custom -p "?" \
   | awk '{print $2}')";
 
-
-_log() {
-  echo "powermenu: $1"
-}
-
 [ -z "$cmd" ] && exit 0;
 
-# with openrc use loginctl
-if grep -qE "^systemd$" /proc/1/comm; then
-  loginmgr=systemctl
-elif command -v loginctl 2>&1; then
-  loginmgr=loginctl
-else
-  _log 'No systemctl or loginctl installed!'
-  exit 1
-fi
-
-_log "$cmd"
-case "$cmd" in
-  lock)
-    loginctl lock-session
-    ;;
-  dim)
-    xset dpms force off
-    ;;
-  exit)
-    case "$DESKTOP_SESSION" in
-      i3)     i3-msg exit ;;
-      xmonad) "$XMONAD_CONFIG_DIR/xmonadctl" quit-wm ;;
-      bspwm)  bspc quit ;;
-      dwm)    pkill dwm ;;
-      *)
-        msg="Exiting for session '$DESKTOP_SESSION' not supported"
-        _log "$msg"
-        rofi -e "$msg";;
-    esac
-    ;;
-  suspend)
-    "$loginmgr" suspend
-    ;;
-  reboot)
-    "$loginmgr" reboot
-    ;;
-  shutdown)
-    "$loginmgr" poweroff
-    ;;
-  *)
-    _log "missing or invalid argument: '$cmd'"
-    exit 2
-esac
+sys "$cmd"

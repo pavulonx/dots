@@ -1,11 +1,9 @@
 dots:
- - support for patch files in system custom
  - add /etc/conf.d/keymaps to dotfiles
  - vconsole font
- - different chezmoi settings for systemd/non systemd
- - reboot/shutdown on openrc
  - cleanup install-dependencies
  - vimrc cleanup
+ - support for patch files in system custom
 
 other:
  - polkit agent
