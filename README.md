@@ -1,3 +1,5 @@
 # Screenshots:
 
 # ![Current setup](https://raw.githubusercontent.com/rozenj/dots/master/docs/scrot.png)
+
+[Firefox color](https://color.firefox.com/?theme=XQAAAAIvAgAAAAAAAABBKYhm849SCicxcUEYWXcGHf3p79EhVPSejL7xcfZ9PTtZXOCodCzcptUkG_Qq1gcisAhFTtzdFr63EzkgliO-MRy-QJvcy6tSs7ptx-7Li4YwnLs11Vh5Jy8HtgulKzS6OszH06KE8He69Am7KHPTR_HTawe0_hWndvFAL6-DDMHbkv10Z3JBtrKjWcaznTKn4aGPnjUIOKWPo7kEPOyvDNI-nxWwnbDMug81xZwPEesndj1NIZIPhMoLiAGJU2WtNWQd_bPjzTzJAPFJmr1qcIMA_t58H4ukh7zJm2tOUa3HlIT_5RpW5eBabTvpeoawpvEXIP9vrcAA)
