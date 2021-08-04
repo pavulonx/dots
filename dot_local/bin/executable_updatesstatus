@@ -22,7 +22,6 @@ __gen_update_stats() {
 if (set -o noclobber; echo "$$" > "$lockf") 2> /dev/null; then
   trap 'rm -f "$lockf"; exit $?' INT TERM EXIT
   echo "lock aquired"
-  sleep 2
   __gen_update_stats
   rm -f "$lockf"
   trap - INT TERM EXIT

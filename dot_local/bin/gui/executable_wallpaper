@@ -5,7 +5,7 @@ CURRENT_WALLPAPER_PATH="${CURRENT_WALLPAPER_PATH:-"$XDG_DATA_HOME/current_wallpa
 WALLPAPERS_DIR="${WALLPAPERS_DIR:-"$HOME/Pictures/Wallpapers"}"
 FEH_OTPS="${FEH_OTPS:-"--bg-fill --no-fehbg --no-xinerama"}"
 
-set_as_default=false
+set_as_default=true
 
 [ -d "$WALLPAPERS_DIR" ] || mkdir -p "$WALLPAPERS_DIR"
 
@@ -80,8 +80,8 @@ _pick() {
 cmd=()
 for arg; do
   case "$arg" in
-    -d|--default) set_as_default=true;;
-    *)            cmd+=("$arg");;
+    -n|--no-default)  set_as_default=false;;
+    *)                cmd+=("$arg");;
   esac
 done
 
@@ -90,5 +90,12 @@ case "${cmd[0]}" in
   restore)      _restore              ;;
   pick)         _pick                 ;;
   set)          _set "${cmd[1]}"      ;;
-  *)            echo "Unrecognized command ${cmd[0]}"; exit 1;;
+  *)
+    echo "Unrecognized command: '${cmd[0]}'";
+    echo "usage: $(basename "$0") <command>
+    pick - select wallpaper
+    set <path> - select <path> as wallpaper
+    restore - set default wallpaper ($CURRENT_WALLPAPER_PATH)
+    "
+    exit 1;;
 esac
