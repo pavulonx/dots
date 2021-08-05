@@ -1,0 +1,11 @@
+[Desktop Entry]
+Type=Application
+TryExec=/usr/bin/terminal
+Exec=/usr/bin/terminal
+Icon=Terminal
+Terminal=false
+Categories=System;TerminalEmulator;
+
+Name=Terminal
+GenericName=Terminal
+Comment=Default terminal emulator
