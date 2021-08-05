@@ -11,8 +11,10 @@ makedepends=('git' 'inkscape' 'libxml2' 'parallel' 'sassc' 'zip')
 optdepends=('gtk-engine-murrine: for gtk2 themes'
             'ttf-roboto: Recommended font'
             'marco: Mate support, a package rebuilt is required - community/mate-common')
-source=("git+https://gitlab.com/tista500/plata-theme.git#tag=${pkgver}")
-sha256sums=('SKIP')
+source=("git+https://gitlab.com/tista500/plata-theme.git#tag=${pkgver}"
+        "chromium_style.patch")
+sha256sums=('SKIP'
+            '32132c025e9654c257c84e3e2a9aa907604d03a97f5317a0c3c47ca39fbb755a')
 
 build() {
   # Dirty hack for aur:
@@ -27,7 +29,7 @@ build() {
   cd "$pkgname"
 
   c_select='#1565c0'
-  c_accent='#2196f3'
+  c_accent='#ebdbb2'
   c_suggest='#01579b'
   c_destruct='#f44336'
 
@@ -40,6 +42,10 @@ build() {
     --with-suggestion_color="$c_suggest" \
     --with-destruction_color="$c_destruct" \
     "$MARCO_FLAGS"
+
+  # patches
+  echo "Applying patchs"
+  git apply --verbose "$srcdir/chromium_style.patch"
 
   # replace_colors
   echo "Replacing outstatning colors"
