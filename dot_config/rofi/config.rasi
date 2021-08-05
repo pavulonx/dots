@@ -6,7 +6,7 @@ configuration {
     bw: 1;
     /*	location: 0;*/
     padding: 10;
-    terminal: "alacritty";
+    terminal: "/usr/bin/terminal";
     show-icons: true;
     sidebar-mode: true;
     combi-modi: "window,drun";
