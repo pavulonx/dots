@@ -26,24 +26,29 @@ build() {
 
   cd "$pkgname"
 
+  c_select='#1565c0'
+  c_accent='#2196f3'
+  c_suggest='#01579b'
+  c_destruct='#f44336'
+
   ./autogen.sh \
     --prefix='/usr' \
     --enable-parallel \
     --enable-gtk_next \
-    --with-selection_color='#1565c0' \
-    --with-accent_color='#2196f3' \
-    --with-suggestion_color='#01579b' \
-    --with-destruction_color='#f44336' \
+    --with-selection_color="$c_select" \
+    --with-accent_color="$c_accent" \
+    --with-suggestion_color="$c_suggest" \
+    --with-destruction_color="$c_destruct" \
     "$MARCO_FLAGS"
 
   # replace_colors
   echo "Replacing outstatning colors"
-  find . -type f -exec sed -i -- '
-    s/#3f51b5/#1565c0/g
-    s/#7986cb/#2196f3/g
-    s/#673ab7/#01579b/g
-    s/#f44336/#f44336/g
-  ' {} +
+  find . -type f -exec sed -i -- "
+    s/#3f51b5/$c_select/g
+    s/#7986cb/$c_accent/g
+    s/#673ab7/$c_suggest/g
+    s/#f44336/$c_destruct/g
+  " {} +
 
   make -j1 # it uses GNU Parallel instead
 }
