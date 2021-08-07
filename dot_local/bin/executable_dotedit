@@ -1,6 +1,17 @@
 #!/bin/bash
 set -euo pipefail
 
-file="$(chezmoi managed --include=files | fzf --query="${1:-}" --select-1 -m --ansi --color=border:0 --layout=reverse --preview="bat --color=always ~/{}")"
+response="$({
+    chezmoi managed --include=files | awk '{ print "c " $0}';
+    fd '.*' "$(chezmoi source-path)" -tf --exclude '*dot_*' --exclude '*run_*' | awk -F"$HOME/" '{ print "g " $2 }';
+  } | fzf --query="${1:-}" --select-1 -m --ansi --color=border:0 \
+      --header='c - chezmoi managed, g - only git managed' --preview='bat --color=always ~/{2..}')"
 
-eval exec "chezmoi edit" "~/$file"
+d_type="$(echo "$response" | cut -d' ' -f1)"
+d_file="$HOME/$(echo "$response" | cut -d' ' -f2-)"
+
+if [ "$d_type" = "c" ]; then
+  eval exec "chezmoi edit" "$d_file"
+else
+  eval exec "$EDITOR" "$d_file"
+fi

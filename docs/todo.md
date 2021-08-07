@@ -10,4 +10,3 @@ other:
  - change link to image - do not point to GH
  - limine config
  - startxw - change dir to $HOME
- - dotedit - edit files in repo
