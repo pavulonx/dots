@@ -9,6 +9,8 @@ dots:
  - add cron for updatestatus
  - cronjobs in dots
  - use diff-so-fancy
+ - cleanup chezmoi params
+ - shellscript for generating chezmoi data
 
 other:
  - right click to run system update script
@@ -16,3 +18,5 @@ other:
  - change link to image - do not point to GH
  - change location of screen layouts
  - ranger/lf config
+ - fix 'The XKEYBOARD keymap compiler (xkbcomp) reports:' from xinit
+ - dircolors
