@@ -2,198 +2,153 @@
 #set -e
 
 install_all() {
-	paru -S --needed $@
+	echo "$*" | xargs paru -S --needed
 }
 
-###############################################################################
-echo "CORE"
 core=(
-#adapta-gtk-theme
+bat
+chezmoi
+dust
 exa
-plata-theme
-nitrogen
+fd
+fzf
+git
+htop
 jq
+lf
+lua
 moreutils
-ttf-jetbrains-mono
-ueberzug
-xss-lock
+neofetch
+neovim
+openssh
+pacman-contrib
+polkit
+psmisc
+ranger
+ripgrep
+shellcheck
+tealdeer
+tree
+tumbler
+unzip
+zip
+zsh
+)
+echo "Installing core"
+install_all "${core[@]}"
+
+
+gui=(
 adwaita-icon-theme
 arandr
 autorandr
 clipmenu
+dunst
 feh
-flat-remix
-flat-remix-gtk
+flatery-icon-theme-git
+gsimplecal
 i3-gaps
 i3lock-color-git
 lxappearance
+maim
+mate-polkit
+networkmanager_dmenu
 picom
-playerctl
 polybar
 redshift
 rofi
 scrot
-maim
 thunar
-tumbler
 thunar-archive-plugin
-thunar-volman
+thunar-volmanudiskie
+ueberzug
 xautomation
+xbindkeys
 xclip
+xdg-user-dirs
+xdg-utils
 xdotool
-zsh
-chezmoi
-polkit
-mate-polkit
-dunst
-moreutils
-gnome-calculator
+xmonad
+xmonad-contrib
+xmonad-utils
 xorg-xkill
 xsel
-python-pygments
-udiskie
-bashtop
-networkmanager_dmenu
-ripgrep
-tldr
-bat
-fd
+xss-lock
 )
+echo "Installing minimal gui"
+install_all "${gui[@]}"
 
-echo "Installing core packages"
-install_all "${core[@]}"
 
-###############################################################################
-echo "SOUND"
 sound=(
-pulseaudio
-pulseaudio-alsa
-pavucontrol
 pamixer
-gstreamer
-gst-plugins-good
-gst-plugins-bad
-gst-plugins-base
-gst-plugins-ugly
+pavucontrol
+pipewire
+pipewire-media-session
+pipewire-pulse
 playerctl
 )
-
 echo "Installing sound packages"
 install_all "${sound[@]}"
 
-###############################################################################
-echo "NETWORK"
-network=(
-avahi
-)
 
-echo "Installing network packages"
-install_all "${network[@]}"
-
-echo "Post install scripts"
-
-echo "Enabling avahi-daemon"
-sudo systemctl enable avahi-daemon.service
-
-###############################################################################
-echo "PRINTERS"
 printer=(
 cups
 cups-pdf
 ghostscript
 gsfonts
-gutenprint
 libcups
 system-config-printer
 )
-
 echo "Installing printer packages"
 install_all "${printer[@]}"
 
-echo "Post install scripts"
 
-echo "Enabling org.cups.cupsd.service"
-sudo systemctl enable org.cups.cupsd.service
-
-###############################################################################
-echo "TOOLS"
-tools=(
-xdg-utils
-xdg-user-dirs
-ripgrep
-fzf
-fd
-inxi
-#hblock
-# bmenu # not available in arch
-### archives
-unace
-unrar
-zip
-unzip
-sharutils
-uudeview
-arj
-cabextract
-file-roller
-xarchiver
-)
-
-echo "Installing tools packages"
-install_all "${tools[@]}"
-
-###############################################################################
-echo "FONTS"
 fonts=(
-awesome-terminal-fonts
 adobe-source-sans-pro-fonts
+awesome-terminal-fonts
 cantarell-fonts
+nerd-fonts-complete
 noto-fonts
 noto-fonts-emoji
 noto-fonts-extra
-ttf-windows
-nerd-fonts-dejavu-complete
-nerd-fonts-terminus
-nerd-fonts-complete
-terminus-font
-ttf-lato
-ttf-bitstream-vera
-ttf-dejavu
 ttf-droid
+ttf-font-awesome
 ttf-hack
 ttf-inconsolata
+ttf-jetbrains-mono
+ttf-lato
 ttf-liberation
 ttf-roboto
 )
-
 echo "Installing fonts packages"
 install_all "${fonts[@]}"
 
-###############################################################################
-echo "PROGRAMS"
-programs=(
-gimp
-inkscape
-chromium
-firefox
-deluge
-vlc
-spotify
-evince
-gedit
-peek
-)
 
+programs=(
+brave-beta-bin
+evince
+file-roller
+firefox-developer-edition
+gimp
+gnome-calculator
+gparted
+gpick
+gucharmap
+mpv
+peek
+solaar-git
+spotify
+sxiv
+system-config-printer
+transmission-cli
+zathura
+)
 echo "Installing programs packages"
 install_all "${programs[@]}"
 
 
-###############################################################################
-echo "LAPTOP"
-
 read -p "Install laptop dependencies? [y/N] " -n 1 -r
 if [[ $REPLY =~ ^[Yy]$ ]]; then
-
   laptop=(
   tlp
   )
@@ -208,7 +163,6 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 
 fi
 
-###############################################################################
 echo "LAPTOP"
 
 read -p "Install bluetooth dependencies? [y/N] " -n 1 -r
@@ -233,10 +187,4 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 
 fi
 
-###############################################################################
-
 printf "\n\nCOMPLETED!\n\n"
-
-
-## REMOVE:
-# xfce4-power-manager
