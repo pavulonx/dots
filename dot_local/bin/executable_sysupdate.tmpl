@@ -3,17 +3,16 @@
 {{- if eq .chezmoi.os "linux" }}
   {{- if eq .chezmoi.osRelease.id "debian" }}
 
-sudo apt-get update
-sudo apt-get upgrade
+exec "sudo apt-get update && sudo apt-get upgrade"
 
   {{- else }}{{/* by default use pacman */}}
 
-paru -Syu --upgrademenu
+exec paru -Syu --upgrademenu
 
   {{- end }}
 {{- else if eq .chezmoi.os "android" }}{{/* by default use pacman */}}
 
-pkg upgrade
+exec "pkg upgrade"
 
 {{- end}}
 
