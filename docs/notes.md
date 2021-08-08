@@ -27,3 +27,11 @@ Bash execution:
 | ~/.bash_logout  |    C      |           |      |
 
 Bash is not supported
+
+# Cron
+
+To send notifications `DBUS_SESSION_BUS_ADDRESS` must be set globally and `DISPLAY` must be defined
+
+```sh
+export DBUS_SESSION_BUS_ADDRESS="unix:path=/run/user/$(id -u $USER)/bus"; export DISPLAY=:0; "$HOME"/.local/bin/<CMD>
+```

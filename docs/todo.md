@@ -6,8 +6,6 @@ dots:
  - support for patch files in system custom
  - ^ system - use install instad of cp
  - move updatestatus to system level prog?
- - add cron for updatestatus
- - cronjobs in dots
  - use diff-so-fancy
  - cleanup chezmoi params
  - cleanup dots - bookmars, user dirs etc
