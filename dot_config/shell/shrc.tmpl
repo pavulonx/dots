@@ -29,23 +29,9 @@ alias \
 # system
 alias \
         ka='killall' \
+        pac='sudo pacman' \
+        pacmanclean='sudo pacman -R `pacman -Qdtq`' \
         xlogs='cat $XDG_CACHE_HOME/xsessionlogs/current.log';
-
-# package manager
-{{- if eq .chezmoi.os "linux" }}
-  {{- if eq .chezmoi.osRelease.id "debian" }}
-alias update='sudo apt-get update && sudo apt-get upgrade';
-fpkg() { apt-cache pkgnames | sort -u | fzf --multi --preview 'apt-cache show {1}'; }
-  {{- else }}{{/* by default use pacman */}}
-alias update='paru -Syu --upgrademenu';
-fpkg() { paru -Sl --color=always | fzf --ansi --multi --preview 'paru -Si {2}' | awk '{print $2}'; }
-alias pac='sudo pacman' pacmanclean='sudo pacman -R `pacman -Qdtq`';
-  {{- end }}
-{{- else if eq .chezmoi.os "android" }}{{/* by default use pacman */}}
-alias update='pkg upgrade';
-fpkg() { pkg list-all | fzf --multi --preview-window down --preview 'pkg show {1}' | awk '{print $1}'; }
-{{- end}}
-
 
 # Use neovim for vim if present.
 [ -x "$(command -v nvim)" ] && alias vim='nvim' vimdiff='nvim -d';
