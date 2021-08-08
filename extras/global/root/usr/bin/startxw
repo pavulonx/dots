@@ -4,55 +4,46 @@
 # SESSION         seesion to start if not specified run interactive mode
 # ARGS...         startx arguments
 
-_args="$*"
-_startx_args="${_args#*--}"
-
-ENABLED_SESSIONS="${ENABLED_SESSIONS:-"i3 xmonad bspwm dwm awesome xfce qtile"}"
+XSESSION_LOGS_DIR="${XSESSION_LOGS_DIR:-"$XDG_CACHE_HOME/xsessionlogs"}"
+XSESSION_LOGS_HISTORY="${XSESSION_LOGS_HISTORY:-5}"
+STARTXW_EXEC_DIR="${STARTXW_EXEC_DIR:-$HOME}"
+ENABLED_SESSIONS="${ENABLED_SESSIONS:-"i3 xmonad bspwm dwm awesome xfce"}"
 #shellcheck disable=SC2086
-_sessions="$(command -V $ENABLED_SESSIONS 2> /dev/null | grep -v "not found" | cut -d' ' -f1 )"
+_available_sessions="$(command -V $ENABLED_SESSIONS 2> /dev/null | grep -v "not found" | cut -d' ' -f1)"
 
-_print_sessions() {
-  echo "Available sessions:"
-  echo "$_sessions" | awk '{print "  " NR ") " $0}'
-}
+_args="$*"
+_wrapper_args="${_args%% -- *}"
+_startx_args="${_args#* -- }"
 
-_exit_err() {
-  [ -n "$1" ] && echo "$1" || _print_sessions
-  exit 1;
-}
+_choice="${_wrapper_args:-}"
 
-if [ -z "$1" ]; then
+if [ -z "$_choice" ]; then
   trap 'exit 1' INT
-  _print_sessions
+  echo "Available sessions:"
+  echo "$_available_sessions" | awk '{print "  " NR ") " $0}'
   printf "Select name or number (defaut 1): "
   read -r _choice </dev/tty
   _choice="${_choice:-1}"
   trap - INT
+fi
+if test "$_choice" -gt 0 2>/dev/null; then
+  _xsession="$(echo "$_available_sessions" | awk "NR == $_choice")"
 else
-  _choice="$1"
+  _xsession="$(echo "$_available_sessions" | grep -Eo "^$_choice$")"
 fi
 
-case "$_choice" in
-  0)      _exit_err;;
-  [0-9]*) _xsession="$(echo "$_sessions" | awk "NR == $_choice" || echo "")";;
-  *)      _xsession="$(echo "$_sessions" | grep "$_choice" || echo "")"
-esac
-if [ "$(echo "$_xsession" | wc -l)" -ne 1 ]; then
-  _exit_err "Ambigous selection matched: $(echo "$_xsession" | xargs)!";
-fi
-if [ -z "$_xsession" ]; then
-  _exit_err "Bad session '$_choice'!";
-fi
+[ "$(echo "$_xsession" | wc -l)" -ne 1 ] && echo "Ambigous selection matched:" && echo "$_xsession" && exit 1
+[ -z "$_xsession" ] && echo "Bad session: '$_choice'!" && exit 1;
 
+# logging
+_log_file="$XSESSION_LOGS_DIR/$(date +'%F_%H-%M-%S').log"
+mkdir -p "$XSESSION_LOGS_DIR"
+find "$XSESSION_LOGS_DIR" -type f -printf "%T@:%p\n" | sort -nr | tail -n "+$XSESSION_LOGS_HISTORY" | cut -d: -f2- |
+  xargs -r rm || true # remove old logs
+ln -sf "$_log_file" "$XSESSION_LOGS_DIR/current.log" # select log file
 
-_log_dir="${XDG_CACHE_HOME:-$HOME/.cache}/xsessionlogs"
-mkdir -p "$_log_dir"
-# remove old logs
-_hist=5
-find "$_log_dir" -type f -printf "%T@:%p\n" | sort -nr | tail -n "+$_hist" | cut -d: -f2- | xargs -r rm || true
-# select log file
-_log_file="$_log_dir/$(date +'%F_%H-%M-%S').log"
-ln -sf "$_log_file" "$_log_dir/current.log"
-
-
+echo "Starting_session: $_xsession"
+_cwd="$PWD"
+cd "$STARTXW_EXEC_DIR" || exit 5
 DESKTOP_SESSION="$_xsession" exec startx "$_startx_args" 2>&1 | ts '[%Y-%m-%d %H:%M:%S]' > "$_log_file" 2>&1
+cd "$_cwd" || exit 5
