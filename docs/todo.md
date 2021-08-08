@@ -9,3 +9,5 @@ other:
  - polkit agent
  - change link to image - do not point to GH
  - updatesstatus script fix
+ - change location of screen layouts
+ - ranger/lf config

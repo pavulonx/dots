@@ -1,43 +1,77 @@
 #!/bin/sh
+# todo add option for use cache and add to polybar
+# check pacman -ignore
+dir="${XDG_CACHE_HOME:-/tmp}/updatestatus"
+[ -d "$dir" ] || mkdir -p "$dir"
 
-dir="${XDG_CACHE_DIR:-/tmp}/updatestatus"
 mainf="$dir/main"
 aurf="$dir/aur"
 lockf="$dir/lock"
 
-[ -d "$dir" ] || mkdir -p "$dir"
+_debug() {
+  $_show_debug && echo "updatestatus:debug:$*"
+}
 
-
-__lastmod() {
+# last update time
+_lastmod() {
   echo "$(($(date +%s)-$(stat -c "%Y" "$mainf")))"
 }
 
-__gen_update_stats() {
-  echo "refreshing main"
-  checkupdates > "$mainf" 2> /dev/null
-  echo "refreshing aur"
-  paru -Qua > "$aurf" 2> /dev/null
+_gen_update_stats() {
+  if (set -o noclobber; echo "$$" > "$lockf") 2> /dev/null; then
+    trap 'rm -f "$lockf"; exit $?' INT TERM EXIT
+    _debug "lock aquired"
+
+    _debug "refreshing main: $mainf"
+    checkupdates > "$mainf" 2> /dev/null
+    _debug "refreshing aur:  $aurf"
+    paru -Qua > "$aurf" 2> /dev/null
+
+    rm -f "$lockf"
+    trap - INT TERM EXIT
+    _debug "lock released"
+  else
+    echo "Failed to acquire $lockf. Held by $(cat "$lockf")" 1>&2
+    exit 1
+  fi
 }
 
-if (set -o noclobber; echo "$$" > "$lockf") 2> /dev/null; then
-  trap 'rm -f "$lockf"; exit $?' INT TERM EXIT
-  echo "lock aquired"
-  __gen_update_stats
-  rm -f "$lockf"
-  trap - INT TERM EXIT
-  echo "lock released"
-else
-  wait
-  echo "Failed to acquire $lockf. Held by $(cat "$lockf")"
+_show_details=false
+_send_notification=false
+_show_debug=false
+_refresh=false
+for arg; do
+    case "$arg" in
+        -r) _refresh=true ;;
+        -d) _show_details=true ;;
+        -v) _show_debug=true ;;
+        -n) _send_notification=true ;;
+         *) ;;
+    esac
+done
+
+$_refresh && _gen_update_stats
+
+if test ! -f "$mainf" || test ! -f "$aurf"; then
+  echo "Could not find update stats."
+  echo "Run '$0 -r' tp refresh stats";
+  exit 1;
 fi
 
 main_count="$(wc -l < "$mainf")"
 aur_count="$(wc -l < "$aurf")"
-
 updates_count=$(("$main_count" + "$aur_count"))
 
-if [ "$updates_count" -gt 0 ]; then
-  notify-send "$updates_count updates available! " "Main: $main_count \nAUR: $aur_count"
+if $_show_details; then
+  echo "Updates: $updates_count"
+  echo "  Main: $main_count"
+  awk '{printf "    - " $0 "\n"}' "$mainf"
+  echo "  AUR:  $aur_count"
+  awk '{printf "    - " $0 "\n"}' "$aurf"
+else
+  echo "$updates_count"
 fi
 
-echo "$updates_count"
+if $_send_notification && [ "$updates_count" -gt 0 ]; then
+  notify-send "$updates_count updates available! " "Main: $main_count \nAUR: $aur_count"
+fi
