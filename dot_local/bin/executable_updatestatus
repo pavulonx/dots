@@ -3,6 +3,7 @@
 # check pacman -ignore
 dir="${XDG_CACHE_HOME:-/tmp}/updatestatus"
 [ -d "$dir" ] || mkdir -p "$dir"
+update_notification_icon='/usr/share/icons/Flatery-Dark/apps/48/system-software-update.svg'
 
 mainf="$dir/main"
 aurf="$dir/aur"
@@ -84,5 +85,5 @@ else
 fi
 
 if $_send_notification && [ "$updates_count" -gt 0 ]; then
-  notify-send "$updates_count updates available! " "Main: $main_count \nAUR: $aur_count"
+  notify-send "System updates available: $updates_count" "Main: \t$main_count \nAUR: \t$aur_count" --icon="$update_notification_icon"
 fi
