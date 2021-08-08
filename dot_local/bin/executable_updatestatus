@@ -80,5 +80,5 @@ else
 fi
 
 if $_send_notification && [ "$updates_count" -gt 0 ]; then
-  notify-send "System updates available: $updates_count" "Main: \t$main_count \nAUR: \t$aur_count" --icon="$update_notification_icon"
+  notify-send -t 30000 "System updates available: $updates_count" "Main: \t$main_count \nAUR: \t$aur_count" --icon="$update_notification_icon"
 fi
