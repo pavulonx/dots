@@ -10,6 +10,7 @@ dots:
  - cronjobs in dots
  - use diff-so-fancy
  - cleanup chezmoi params
+ - cleanup dots - bookmars, user dirs etc
  - shellscript for generating chezmoi data
 
 other:

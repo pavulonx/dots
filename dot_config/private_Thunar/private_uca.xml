@@ -1,25 +1,13 @@
 <?xml encoding="UTF-8" version="1.0"?>
 <actions>
-<action>
-	<icon>utilities-terminal</icon>
-	<name>Open Terminal Here</name>
-	<unique-id>1543664976868652-1</unique-id>
-  <command>/usr/bin/terminal</command>
-	<description>Example for a custom action</description>
-	<patterns>*</patterns>
-	<startup-notify/>
-	<directories/>
-</action>
-<action>
-	<icon>add</icon>
-	<name>Add To Chezmoi Dotfiles</name>
-	<unique-id>1601062754964654-1</unique-id>
-	<command>chezmoi add -r %F</command>
-	<description>Add to chezmoi</description>
-	<patterns>*</patterns>
-	<startup-notify/>
-	<directories/>
-	<other-files/>
-	<text-files/>
-</action>
+  <action>
+    <icon>utilities-terminal</icon>
+    <name>Open Terminal Here</name>
+    <unique-id>1543664976868652-1</unique-id>
+    <command>/usr/bin/terminal</command>
+    <description>Example for a custom action</description>
+    <patterns>*</patterns>
+    <startup-notify/>
+    <directories/>
+  </action>
 </actions>
