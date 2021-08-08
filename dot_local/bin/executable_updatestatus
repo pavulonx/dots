@@ -68,6 +68,17 @@ if $_show_details; then
   awk '{printf "    - " $0 "\n"}' "$mainf"
   echo "  AUR:  $aur_count"
   awk '{printf "    - " $0 "\n"}' "$aurf"
+
+  ignored_pkg="$(grep '^\s*IgnorePkg'   /etc/pacman.conf | cut -d'=' -f2-)"
+  if [ -n "$ignored_pkg" ]; then
+    echo "  Ignored packages:"
+    echo "$ignored_pkg" | tr ' ' '\n' | xargs -r -I {} echo "    - {}"
+  fi
+  ignored_grp="$(grep '^\s*IgnoreGroup' /etc/pacman.conf | cut -d'=' -f2-)"
+  if [ -n "$ignored_grp" ]; then
+    echo "  Ignored groups:"
+    echo "$ignored_grp" | tr ' ' '\n' | xargs -r -I {} echo "    - {}"
+  fi
 else
   echo "$updates_count"
 fi
