@@ -7,28 +7,44 @@ limine_cmdline="${limine_cmdline:-}"
 os_name="$(grep -E '^NAME=' /etc/os-release | cut -d'"' -f2)"
 hostname="$(cat /etc/hostname)"
 
-output='# limine.cfg configuration file
-'
-output="$output
+header="# /boot/limine.cfg - limine configuration file
+# OS: $os_name
+# hostname: $hostname
+
 DEFAULT_ENTRY=1
 TIMEOUT=5
-VERBOSE=yes
-"
+VERBOSE=yes"
+normal_entries=""
+fallback_entries=""
 
-for _kernel in $(find /boot -name 'vmlinuz-*'); do
-  _kernel_name="$(echo $_kernel | awk -F'vmlinuz-' '{ print $2 }')"
-  output="$output
-:$os_name - $_kernel_name
+for _kernel in $(find /boot -name 'vmlinuz-*' | sort -u); do
+  _kn="${_kernel#*vmlinuz-}"
+  _kv="${_kn#linux}"; _kv="${_kv#-}"; _kv="${_kv:+ - $_kv}"
+  entry="\
 PROTOCOL=linux
-KERNEL_PATH=boot:///vmlinuz-$_kernel_name"
-  [ -n "$limine_cmdline" ] && output="$output
+KERNEL_PATH=boot:///vmlinuz-$_kn"
+  [ -n "$limine_cmdline" ] && entry="$entry
 CMDLINE=$limine_cmdline"
-  [ -e "/boot/intel-ucode.img" ] && output="$output
+  [ -e "/boot/intel-ucode.img" ] && entry="$entry
 MODULE_PATH=boot:///intel-ucode.img"
-  [ -e "/boot/initramfs-$_kernel_name.img" ] && output="$output
-MODULE_PATH=boot:///initramfs-$_kernel_name.img"
-  output="$output
+
+  [ -e "/boot/initramfs-$_kn.img" ] && normal_entries="$normal_entries
+:${os_name}${_kv}
+$entry
+MODULE_PATH=boot:///initramfs-$_kn.img
 "
+  [ -e "/boot/initramfs-$_kn-fallback.img" ] && fallback_entries="$fallback_entries
+:${os_name}${_kv} - [fallback]
+$entry
+MODULE_PATH=boot:///initramfs-$_kn-fallback.img
+"
+  unset entry
+  unset _kn
+  unset _kv
 done
 
-echo "$output"
+echo "$header
+
+$normal_entries
+
+$fallback_entries"
