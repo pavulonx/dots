@@ -12,6 +12,7 @@ dots:
  - cleanup chezmoi params
  - cleanup dots - bookmars, user dirs etc
  - shellscript for generating chezmoi data
+ - create .zshenv?
 
 other:
  - right click to run system update script
