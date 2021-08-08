@@ -4,6 +4,11 @@ dots:
  - cleanup install-dependencies
  - vimrc cleanup
  - support for patch files in system custom
+ - ^ system - use install instad of cp
+ - move updatestatus to system level prog?
+ - add cron for updatestatus
+ - cronjobs in dots
+ - use diff-so-fancy
 
 other:
  - right click to run system update script
