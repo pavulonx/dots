@@ -33,6 +33,7 @@ tumbler
 unzip
 zip
 zsh
+zsh-completions
 )
 echo "Installing core"
 install_all "${core[@]}"
@@ -188,3 +189,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
 fi
 
 printf "\n\nCOMPLETED!\n\n"
+
+exit 0
+#installation for openrc
+#openrc-zsh-completions
