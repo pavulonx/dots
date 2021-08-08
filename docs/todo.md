@@ -8,3 +8,4 @@ dots:
 other:
  - polkit agent
  - change link to image - do not point to GH
+ - updatesstatus script fix
