@@ -1,5 +1,5 @@
 diff --git a/src/gtk/sass/common/_3rd-party.scss b/src/gtk/sass/common/_3rd-party.scss
-index a4349b4..e744ae4 100644
+index a4349b4..5e83da9 100644
 --- a/src/gtk/sass/common/_3rd-party.scss
 +++ b/src/gtk/sass/common/_3rd-party.scss
 @@ -1248,7 +1248,7 @@ window.budgie-popover.workspace-popover {
@@ -11,7 +11,17 @@ index a4349b4..e744ae4 100644
    .notification-title {
      @if $variant == mixed { color: $inv_sec_fg; }
      @else { color: $sec_fg; }
-@@ -3754,7 +3754,7 @@ window.background.chromium {
+@@ -3738,6 +3738,9 @@ window.background:not(.solid-csd) > box.vertical {
+ }
+ 
+ window.background.chromium {
++
++  background-color: $dark_bg;
++
+   menubar {
+     @extend %chromium_unfocused_tab; // for SSDs
+   }
+@@ -3754,7 +3757,7 @@ window.background.chromium {
    }
  
    button { // for active-tab top edge borders
@@ -20,7 +30,7 @@ index a4349b4..e744ae4 100644
    }
  
    > button:not(.suggested-action):not(.destructive-action),
-@@ -3771,7 +3771,7 @@ window.background.chromium {
+@@ -3771,7 +3774,7 @@ window.background.chromium {
    }
  
    > button.suggested-action:selected { // for 'focused' prominent button

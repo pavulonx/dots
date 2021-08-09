@@ -14,7 +14,7 @@ optdepends=('gtk-engine-murrine: for gtk2 themes'
 source=("git+https://gitlab.com/tista500/plata-theme.git#tag=${pkgver}"
         "chromium_style.patch")
 sha256sums=('SKIP'
-            '32132c025e9654c257c84e3e2a9aa907604d03a97f5317a0c3c47ca39fbb755a')
+            '252956cccee532c56604d59a558f3faa1c2c9c2d24f3b11b005473aff744d303')
 
 build() {
   # Dirty hack for aur:
