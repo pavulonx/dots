@@ -12,8 +12,7 @@ dots:
  - shellscript for generating chezmoi data
  - create .zshenv?
  - add jps
- - polybar sysupdate `read`
- - chromium style - all black
+ - zsh completions for jcmd, jps etc
 
 other:
  - right click to run system update script
