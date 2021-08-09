@@ -11,6 +11,9 @@ dots:
  - cleanup dots - bookmars, user dirs etc
  - shellscript for generating chezmoi data
  - create .zshenv?
+ - add jps
+ - polybar sysupdate `read`
+ - chromium style - all black
 
 other:
  - right click to run system update script

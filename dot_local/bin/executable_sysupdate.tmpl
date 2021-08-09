@@ -3,17 +3,20 @@
 {{- if eq .chezmoi.os "linux" }}
   {{- if eq .chezmoi.osRelease.id "debian" }}
 
-exec "sudo apt-get update && sudo apt-get upgrade"
+sudo apt-get update && sudo apt-get upgrade
 
   {{- else }}{{/* by default use pacman */}}
 
-exec paru -Syu --upgrademenu
+paru -Syu --upgrademenu
 
   {{- end }}
 {{- else if eq .chezmoi.os "android" }}{{/* by default use pacman */}}
 
-exec "pkg upgrade"
+pkg upgrade
 
 {{- end}}
 
+[ "$1" = "-w" ] &&
+  echo "Press any key to exit" &&
+  read -r;
 # vi: syntax=sh
