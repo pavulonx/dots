@@ -1,22 +1,20 @@
 #!/bin/sh
 
-{{- if eq .chezmoi.os "linux" }}
-  {{- if eq .chezmoi.osRelease.id "debian" }}
-
-sudo apt-get update && sudo apt-get upgrade
-
-  {{- else }}{{/* by default use pacman */}}
-
-paru -Syu --upgrademenu
-
-  {{- end }}
-{{- else if eq .chezmoi.os "android" }}{{/* by default use pacman */}}
-
-pkg upgrade
-
+{{ if eq .chezmoi.os "linux" }}
+{{- if eq .chezmoi.osRelease.id "debian" -}}
+    sudo apt-get update && sudo apt-get upgrade
+{{ else -}}
+    paru -Syu --upgrademenu
+{{- end }}
+{{- else if eq .chezmoi.os "android" -}}
+    pkg upgrade
 {{- end}}
+
+retval="$?"
 
 [ "$1" = "-w" ] &&
   echo "Press any key to exit" &&
   read -r;
+
+exit $retval
 # vi: syntax=sh
