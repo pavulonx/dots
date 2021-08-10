@@ -1,9 +1,32 @@
+[delta]
+  side-by-side = true
+  line-numbers = true
+  syntax-theme = base16
+  file-style                    = bold
+  file-decoration-style         = box
+  line-numbers-left-style       = omit
+  line-numbers-right-style      = omit
+  line-numbers-left-format      = {nm:^3}│
+  line-numbers-right-format     = {np:^3}│
+
+  hunk-header-style = omit
+  hunk-header-file-style = omit
+  hunk-header-decoration-style = ul
+  hunk-header-line-number-style = omit
+
+
+[pager]
+  diff = delta
+  log = delta
+  reflog = delta
+  show = delta
+
 [user]
-	email = {{ .user_email }}
-	name = {{ .user_fullname }}
+  email = {{ .user_email }}
+  name = {{ .user_fullname }}
 
 [pull]
-	rebase = true
+  rebase = true
 
 [init]
-	defaultBranch = master
+  defaultBranch = master

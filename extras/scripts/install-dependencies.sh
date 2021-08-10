@@ -8,6 +8,7 @@ install_all() {
 core=(
 bat
 chezmoi
+git-delta
 dust
 exa
 fd
