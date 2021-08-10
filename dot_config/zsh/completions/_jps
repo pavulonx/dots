@@ -1,0 +1,13 @@
+#compdef jps
+
+_jps() {
+  _arguments -s \
+        '-m[show arguments passed to the main method]' \
+        '-l[show package name or path to JAR file]' \
+        '-v[show the arguments passed to the JVM]' \
+        '-V[produce a list of only local JVM identifiers]'
+}
+
+_jps
+
+# vim: ft=zsh sw=2 ts=2 et

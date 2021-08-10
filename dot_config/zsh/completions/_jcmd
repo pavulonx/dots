@@ -1,0 +1,69 @@
+#compdef jcmd
+
+_jcmd_jvm_procs() {
+  local -a procs
+  procs=($(jps | tr ' ' ':'))
+  _describe -t procs 'procs' procs
+}
+
+_jcmd_commands() {
+  _cmds=(
+    'Compiler.CodeHeap_Analytics'
+    'Compiler.codecache'
+    'Compiler.codelist'
+    'Compiler.directives_add'
+    'Compiler.directives_clear'
+    'Compiler.directives_print'
+    'Compiler.directives_remove'
+    'Compiler.queue'
+    'GC.class_histogram'
+    'GC.class_stats'
+    'GC.finalizer_info'
+    'GC.heap_dump'
+    'GC.heap_info'
+    'GC.run'
+    'GC.run_finalization'
+    'JFR.check'
+    'JFR.configure'
+    'JFR.dump'
+    'JFR.start'
+    'JFR.stop'
+    'JVMTI.agent_load'
+    'JVMTI.data_dump'
+    'ManagementAgent.start'
+    'ManagementAgent.start_local'
+    'ManagementAgent.status'
+    'ManagementAgent.stop'
+    'Thread.print'
+    'VM.class_hierarchy'
+    'VM.classloader_stats'
+    'VM.classloaders'
+    'VM.command_line'
+    'VM.dynlibs'
+    'VM.flags'
+    'VM.info'
+    'VM.log'
+    'VM.metaspace'
+    'VM.native_memory'
+    'VM.print_touched_methods'
+    'VM.set_flag'
+    'VM.stringtable'
+    'VM.symboltable'
+    'VM.system_properties'
+    'VM.systemdictionary'
+    'VM.uptime'
+    'VM.version'
+    'help'
+  )
+  _describe 'jcmd command' _cmds
+}
+
+_jcmd() {
+  _arguments -C \
+    '1:java process:_jcmd_jvm_procs' \
+    '2:jcmd command:_jcmd_commands'
+}
+
+_jcmd
+
+# vim: ft=zsh sw=2 ts=2 et

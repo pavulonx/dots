@@ -12,7 +12,6 @@ dots:
  - shellscript for generating chezmoi data
  - create .zshenv?
  - add jps
- - zsh completions for jcmd, jps etc
 
 other:
  - right click to run system update script

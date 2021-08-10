@@ -1,7 +1,7 @@
 [[ $- != *i* ]] && return # If not running interactively, don't do anything
 
 # add plugins directory to fpath
-fpath=($ZDOTDIR/plugins $fpath)
+fpath=($ZDOTDIR/completions $ZDOTDIR/plugins $fpath)
 
 alias reload='source $ZDOTDIR/.zshrc'
 
@@ -149,3 +149,5 @@ zinit wait lucid for \
 
 zinit wait"1" lucid for \
     zdharma/history-search-multi-word
+
+# vim: ft=zsh sw=2 ts=2 et
