@@ -38,6 +38,7 @@ EOF
 )"
 
 query="$*"
+
 while out="$($_jps -lm \
   | grep -Ev '^[0-9]+ jdk.jcmd/sun.tools.jps.Jps' \
   | fzf \
