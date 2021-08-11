@@ -1,10 +1,10 @@
-#!/bin/bash
-set -euo pipefail
+#!/bin/sh
 
+query="$*"
 response="$({
     chezmoi managed --include=files | awk '{ print "c " $0}';
     fd '.*' "$(chezmoi source-path)" -tf --exclude '*dot_*' --exclude '*run_*' | awk -F"$HOME/" '{ print "g " $2 }';
-  } | fzf --query="${1:-}" --select-1 -m --ansi --color=border:0 \
+  } | fzf --query="$query" --select-1 -m --ansi --color=border:0 \
       --header='c - chezmoi managed, g - only git managed' --preview='bat --color=always ~/{2..}')"
 
 d_type="$(echo "$response" | cut -d' ' -f1)"
