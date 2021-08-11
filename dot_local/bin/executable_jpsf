@@ -1,10 +1,15 @@
 #!/bin/sh
+
+JPSF_JCMD_TIMEOUT="${JPSF_JCMD_TIMEOUT:-5s}"
+
 _preview_command="$(cat <<EOF
 {
-  echo "proc_cwd:$(pwdx 24956 | cut -d' ' -f2-)";
-  echo "proc_usr:$(ps -p 24956 -o user=)";
-  echo "proc_cmd:$(ps -p 24956 -o command=)";
-  jcmd {1} VM.info | grep -E '^Command Line|^Time|^jvm_args|^java_command|^java_class_path|^vm_info'
+  echo "proc_cwd:\$(pwdx {1} | cut -d' ' -f2-)";
+  echo "proc_usr:\$(ps -p {1} -o user=)";
+  echo "proc_cmd:\$(ps -p {1} -o command=)";
+  timeout $JPSF_JCMD_TIMEOUT jcmd {1} VM.info \
+    | grep -E '^Command Line|^Time|^jvm_args|^java_command|^java_class_path|^vm_info' \
+    || echo "Couldn't get JVM info for proc {1}. Exit: \$? ";
 } |
 
   sed '
@@ -14,9 +19,9 @@ _preview_command="$(cat <<EOF
     s/^java_class_path[^:]*:/40;\x1b[31;1mJava ClassPath:\x1b[0m\\n41;/g
     s/^vm_info:/50;\x1b[31;1mJVM info:\x1b[0m\\n51;/g
     s/^Time:/60;\x1b[31;1mJVM time:\x1b[0m\\n61;/g
-    s/^proc_cmd:/70;\x1b[31;1mProcess command:\x1b[0m\\n71;/g
-    s/^proc_usr:/80;\x1b[31;1mProcess user:\x1b[0m\\n81;/g
-    s/^proc_cwd:/90;\x1b[31;1mProcess working dir:\x1b[0m\\n91;/g
+    s/^proc_cmd:/70;\x1b[33;1mProcess command:\x1b[0m\\n71;/g
+    s/^proc_usr:/80;\x1b[33;1mProcess user:\x1b[0m\\n81;/g
+    s/^proc_cwd:/90;\x1b[33;1mProcess working dir:\x1b[0m\\n91;/g
   ' |
   sort -n -k1.1,1.2 |
   cut -d';' -f2- |
@@ -25,8 +30,37 @@ _preview_command="$(cat <<EOF
 EOF
 )"
 
-jps -lm | grep -Ev '^[0-9]+ jdk.jcmd/sun.tools.jps.Jps' \
-  | fzf --reverse \
-  --preview="$_preview_command" \
+while out="$(jps -lm \
+  | grep -Ev '^[0-9]+ jdk.jcmd/sun.tools.jps.Jps' \
+  | fzf \
+  --reverse \
+  --query="$query" --print-query \
+  --header="^T - kill -TERM | F9 - kill -KILL" \
+  --expect=ctrl-t,f9 \
   --bind=ctrl-alt-j:preview-down --bind=ctrl-alt-k:preview-up \
-  --preview-window=bottom:70%:wrap
+  --bind=ctrl-r:refresh-preview \
+  --preview="$_preview_command" \
+  --preview-window=bottom:70%:wrap)";
+do
+  query=$(echo "$out" | sed -n '1p')
+  action=$(echo "$out" | sed -n '2p')
+  resp=$(echo "$out" | sed -n '3p')
+  pid=$(echo "$resp" | cut -d' ' -f1)
+  case "$action" in
+    ctrl-t)
+      echo "TERM $pid: [ $resp ]"
+      kill -TERM $pid
+      ;;
+    f9)
+      echo "Do you really want to KILL $pid [y/N]?"
+      read -r yN;
+      case "$yN" in
+        y|yes|Y|YES)
+          echo "KILL $pid: [ $resp ]"
+          kill -KILL $pid
+          ;;
+        *) :
+          ;;
+      esac
+  esac
+done
