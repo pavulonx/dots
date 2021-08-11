@@ -11,7 +11,8 @@ dots:
  - cleanup dots - bookmars, user dirs etc
  - shellscript for generating chezmoi data
  - create .zshenv?
- - add jps
+ - global config for fzf vim keys binding (movement, scroll) and align with those defined in zsh (ctrl+j vs alt+j)
+ - vimkeys in rofi
 
 other:
  - right click to run system update script
