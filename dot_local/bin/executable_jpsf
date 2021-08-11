@@ -1,27 +1,34 @@
 #!/bin/sh
 
-JPSF_JCMD_TIMEOUT="${JPSF_JCMD_TIMEOUT:-5s}"
+_jcmd="${JPSF_JCMD:-jcmd}"
+_jps="${JPSF_JPS:-jps}"
+JPSF_JCMD_TIMEOUT="${JPSF_JCMD_TIMEOUT:-3s}"
 
 _preview_command="$(cat <<EOF
 {
   echo "proc_cwd:\$(pwdx {1} | cut -d' ' -f2-)";
   echo "proc_usr:\$(ps -p {1} -o user=)";
   echo "proc_cmd:\$(ps -p {1} -o command=)";
-  timeout $JPSF_JCMD_TIMEOUT jcmd {1} VM.info \
-    | grep -E '^Command Line|^Time|^jvm_args|^java_command|^java_class_path|^vm_info' \
-    || echo "Couldn't get JVM info for proc {1}. Exit: \$? ";
+  _jcmd_out="\$(timeout $JPSF_JCMD_TIMEOUT $_jcmd {1} VM.info)";
+  _jcmd_retval="\$?"
+  if [ "\$_jcmd_retval" -ne 0 ]; then
+    printf ";\33[31;1mCouldn't get JVM info for proc {1} - $_jcmd exit status \$_jcmd_retval.\33[0m";
+  else
+    echo "\$_jcmd_out" |
+      grep -E '^Command Line|^Time|^jvm_args|^java_command|^java_class_path|^vm_info'
+  fi
 } |
 
   sed '
-    s/^Command Line:/10;\x1b[31;1mCMD line:\x1b[0m\\n11;/g
-    s/^java_command:/20;\x1b[31;1mJava CMD:\x1b[0m\\n21;/g
-    s/^jvm_args:/30;\x1b[31;1mJVM Args:\x1b[0m\\n31;/g
-    s/^java_class_path[^:]*:/40;\x1b[31;1mJava ClassPath:\x1b[0m\\n41;/g
-    s/^vm_info:/50;\x1b[31;1mJVM info:\x1b[0m\\n51;/g
-    s/^Time:/60;\x1b[31;1mJVM time:\x1b[0m\\n61;/g
-    s/^proc_cmd:/70;\x1b[33;1mProcess command:\x1b[0m\\n71;/g
-    s/^proc_usr:/80;\x1b[33;1mProcess user:\x1b[0m\\n81;/g
-    s/^proc_cwd:/90;\x1b[33;1mProcess working dir:\x1b[0m\\n91;/g
+    s/^Command Line:/10;\x1b[32;1mCMD line:\x1b[0m\\n11;/g
+    s/^java_command:/20;\x1b[32;1mJava CMD:\x1b[0m\\n21;/g
+    s/^jvm_args:/30;\x1b[32;1mJVM Args:\x1b[0m\\n31;/g
+    s/^java_class_path[^:]*:/40;\x1b[32;1mJava ClassPath:\x1b[0m\\n41;/g
+    s/^vm_info:/50;\x1b[32;1mJVM info:\x1b[0m\\n51;/g
+    s/^Time:/60;\x1b[32;1mJVM time:\x1b[0m\\n61;/g
+    s/^proc_cmd:/70;\x1b[34;1mProcess command:\x1b[0m\\n71;/g
+    s/^proc_usr:/80;\x1b[34;1mProcess user:\x1b[0m\\n81;/g
+    s/^proc_cwd:/90;\x1b[34;1mProcess working dir:\x1b[0m\\n91;/g
   ' |
   sort -n -k1.1,1.2 |
   cut -d';' -f2- |
@@ -30,7 +37,7 @@ _preview_command="$(cat <<EOF
 EOF
 )"
 
-while out="$(jps -lm \
+while out="$($_jps -lm \
   | grep -Ev '^[0-9]+ jdk.jcmd/sun.tools.jps.Jps' \
   | fzf \
   --reverse \
@@ -38,7 +45,7 @@ while out="$(jps -lm \
   --header="^T - kill -TERM | F9 - kill -KILL" \
   --expect=ctrl-t,f9 \
   --bind=ctrl-alt-j:preview-down --bind=ctrl-alt-k:preview-up \
-  --bind=ctrl-r:refresh-preview \
+  --bind=ctrl-r:accept \
   --preview="$_preview_command" \
   --preview-window=bottom:70%:wrap)";
 do
@@ -49,7 +56,7 @@ do
   case "$action" in
     ctrl-t)
       echo "TERM $pid: [ $resp ]"
-      kill -TERM $pid
+      kill -TERM "$pid"
       ;;
     f9)
       echo "Do you really want to KILL $pid [y/N]?"
@@ -57,7 +64,7 @@ do
       case "$yN" in
         y|yes|Y|YES)
           echo "KILL $pid: [ $resp ]"
-          kill -KILL $pid
+          kill -KILL "$pid"
           ;;
         *) :
           ;;
