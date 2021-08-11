@@ -1,0 +1,25 @@
+#!/bin/sh
+_preview_command="$(cat <<EOF
+
+jcmd {1} VM.info |
+  grep -E '^Command Line|^jvm_args|^java_command|^java_class_path|^vm_info' |
+  sed '
+    s/^Command Line:/10;\x1b[31;1mCMD line:\x1b[0m\\n11;/g
+    s/^java_command:/20;\x1b[31;1mJava CMD:\x1b[0m\\n21;/g
+    s/^jvm_args:/30;\x1b[31;1mJVM Args:\x1b[0m\\n31;/g
+    s/^java_class_path[^:]*:/40;\x1b[31;1mClassPath:\x1b[0m\\n41;/g
+    s/^vm_info:/50;\x1b[31;1mJVM Info:\x1b[0m\\n51;/g
+  ' |
+  sort -n -k1.1,1.2 |
+  cut -d';' -f2- |
+  sed 's/^\s*//g'
+
+EOF
+)"
+  #--preview="jcmd {1} VM.info | grep -E '^Command Line|^jvm_args|^java_command|^java_class_path|^vm_info'" \
+jps -lm \
+  | grep -Ev '^[0-9]+ jdk.jcmd/sun.tools.jps.Jps' \
+  | fzf --reverse \
+  --preview="$_preview_command" \
+  --bind=ctrl-alt-j:preview-down --bind=ctrl-alt-k:preview-up \
+  --preview-window=bottom:60%:wrap
