@@ -1,9 +1,6 @@
 #!/bin/sh
 
-git log --graph --color=always \
-  --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" |
-  fzf --ansi --height 95% --no-sort --reverse --tiebreak=index --bind=ctrl-s:toggle-sort \
-  --bind=ctrl-alt-j:preview-down --bind=ctrl-alt-k:preview-up \
+git log --graph --color=always --format="%C(auto)%h%d %s %C(black)%C(bold)%cr" "$@" \
+  | fzf --ansi --height 95% --no-sort --reverse --tiebreak=index \
   --header "Press CTRL-S to toggle sort" \
-  --preview "echo {} | grep -o '[a-f0-9]\\{7\\}' | head -1 |
-  xargs -I % sh -c 'git show --color=always % | head -200 '"
+  --preview "echo {} | grep -o '[a-f0-9]\\{7\\}' | head -1 | xargs -I % sh -c 'git show --color=always % | head -200 '"

@@ -3,8 +3,6 @@
 git status -s \
   | grep -E '^.[^\ ].*' \
   | fzf --multi --no-sort --reverse \
-  --preview 'git diff --color=always {2} | diff-so-fancy' \
-  --bind=ctrl-alt-j:preview-down --bind=ctrl-alt-k:preview-up \
-  --preview-window=right:60%:wrap \
+  --preview 'git diff --color=always {2}' \
   | awk '{print $2}' \
   | xargs -r git add

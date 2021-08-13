@@ -10,6 +10,8 @@ response="$({
 d_type="$(echo "$response" | cut -d' ' -f1)"
 d_file="$HOME/$(echo "$response" | cut -d' ' -f2-)"
 
+[ "$d_file" = "$HOME/" ] && echo "No file selected" && exit 0
+
 if [ "$d_type" = "c" ]; then
   eval exec "chezmoi edit" "$d_file"
 else

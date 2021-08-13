@@ -46,7 +46,6 @@ while out="$($_jps -lm \
   --query="$query" --print-query \
   --header="^T - kill -TERM | F9 - kill -KILL" \
   --expect=ctrl-t,f9 \
-  --bind=ctrl-alt-j:preview-down --bind=ctrl-alt-k:preview-up \
   --bind=ctrl-r:accept \
   --preview="$_preview_command" \
   --preview-window=bottom:70%:wrap)";
