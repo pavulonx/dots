@@ -1,5 +1,5 @@
 configuration {
-    modi: "combi,run,keys,window";
+    modi: "combi,run,window";
     width: 45;
     lines: 16;
     /*columns: 1;*/
@@ -18,4 +18,9 @@ configuration {
     /*            backgrnd  border   separator */
     color-window: "#080808, #ebdbb2, #ebdbb2";
     combi-hide-mode-prefix: true;
+    /* keybindings */
+    kb-row-up: "Alt+k,Up,Control+p,ISO_Left_Tab";
+    kb-row-down: "Alt+j,Down,Control+n";
+    kb-mode-next: "Alt+l,Shift+Right,Control+Tab";
+    kb-mode-previous:	"Alt-h,Shift+Left,Control+ISO_Left_Tab";
 }
