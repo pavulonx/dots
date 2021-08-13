@@ -8,7 +8,7 @@ Type = Package
 Target = *
 
 [Action]
-Description = refreshing updatestatus
+Description = Refreshing updatestatus...
 Depends = coreutils
 When = PostTransaction
 Exec = /bin/sh -c "runuser $(who | cut -d ' ' -f1 | uniq) -c 'command -v updatestatus >/dev/null && updatestatus -r >/dev/null'"

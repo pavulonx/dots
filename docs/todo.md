@@ -13,6 +13,7 @@ dots:
  - create .zshenv?
  - global config for fzf vim keys binding (movement, scroll) and align with those defined in zsh (ctrl+j vs alt+j)
  - vimkeys in rofi
+ - chromium hostory rofi/dmenu/fzf?
 
 other:
  - right click to run system update script
