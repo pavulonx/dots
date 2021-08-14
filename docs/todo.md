@@ -5,14 +5,13 @@ dots:
  - vimrc cleanup
  - support for patch files in system custom
  - ^ system - use install instad of cp
- - move updatestatus to system level prog?
- - use diff-so-fancy
  - cleanup chezmoi params see https://www.chezmoi.io/docs/reference/#lookpath-examples
  - cleanup dots - bookmars, user dirs etc
  - shellscript for generating chezmoi data
  - create .zshenv?
  - chromium hostory rofi/dmenu/fzf?
  - move git shell conf to separate file
+ - inputrc
 
 other:
  - right click to run system update script
