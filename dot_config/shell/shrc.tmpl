@@ -21,15 +21,11 @@ export LESSOPEN='| /usr/bin/highlight -O ansi %s 2>/dev/null'
 # files
 alias \
         zshconf='$EDITOR $ZDOTDIR/.zshrc' \
-        i3conf='$EDITOR ~/.config/i3/config' \
-        xmconf='$EDITOR ~/.config/xmonad/xmonad.hs' \
-        vconf='$EDITOR ~/.config/nvim/init.vim' \
         de='dotedit';
 
 # system
 alias \
         ka='killall' \
-        pac='sudo pacman' \
         pacmanclean='sudo pacman -R `pacman -Qdtq`' \
         xlogs='cat $XDG_CACHE_HOME/xsessionlogs/current.log';
 
@@ -68,7 +64,9 @@ alias \
 # dirs
 alias \
         d='dirs -v | head -10' \
-        cd..='cd ..' \
+        cd..='cd ..' ...='../..' \
+        .1='cd ..' .2='cd ../..' .3='cd ../../..' \
+        .4='cd ../../../..' .5='../../../../..' \
         -='cd -' \
         1='cd -'  2='cd -2' 3='cd -3' \
         4='cd -4' 5='cd -5' 6='cd -6' \
