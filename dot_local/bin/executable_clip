@@ -1,0 +1,65 @@
+#!/bin/sh
+
+_help() {
+  cat <<_EOF_
+Usage: $(basename "$0") [get|set|-h|--help|help] [FILE]
+    MODE:
+    get             - print clipboard (default)
+    set [FILE]      - set system clipboard from stdin or FILE if provided
+    -h|--help|help  - help messsage
+
+If no mode is provided 'get' is assumed when TTY is attached to stdin.
+When running trough te pipe 'set' is assumed.
+
+  $ echo 'New content of clipboard' | clip
+    is equal to
+  $ echo 'New content of clipboard' | clip set
+
+  $ clip < ~/.bashrc
+    is equal to
+  $ clip set < ~/.bashrc
+
+  $ clip
+    is equal to
+  $ clip get
+
+  $ clip ~/.bashrc
+    is equal to (only if file exists and its name is not one of the reserved modes
+  $ clip set ~/.bashrc
+
+_EOF_
+}
+
+
+mode="$1"
+if [ -z "$mode" ]; then # if no mode selected
+  if [ -t 0 ]; then     # if not running trough te pipe
+    mode=get
+  else
+    mode=set
+  fi
+fi
+[ "$#" -gt 0 ] && shift;
+
+case "$mode" in
+  get)
+    xclip -out -selection clipboard;
+    ;;
+  set)
+    file=; [ -f "$1" ] && file="$1"
+    xclip -in -selection clipboard < "${file:-/dev/stdin}";
+    ;;
+  -h|--help|help)
+    _help
+    ;;
+  *)
+    if [ -f "$mode" ]; then
+      file="$mode";
+      xclip -in -selection clipboard < "$file";
+    else
+      echo "Bad mode or no such file: '$mode'"; exit 1;
+    fi
+    ;;
+esac
+
+exit 0;
