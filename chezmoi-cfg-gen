@@ -24,6 +24,7 @@ _render_template() {
 # PROFILE
 [ -z "$def_profile" ] && def_profile="$(chezmoi execute-template '{{.conf.profile}}' 2>/dev/null)"
 [ -z "$def_profile" ] && [ "$(chezmoi execute-template '{{.chezmoi.os}}' 2>/dev/null)" = 'android' ] && def_profile="phone"
+[ -z "$def_profile" ] && [ -n "$TERMUX_VERSION" ] && def_profile="phone"
 [ -z "$def_profile" ] && [ "$(chezmoi execute-template '{{.chezmoi.osRelease.id}}' 2>/dev/null)" = 'debian' ] && def_profile="server"
 [ -z "$def_profile" ] && [ -n "$SSH_CONNECTION" ] && def_profile="server"
 [ -z "$def_profile" ] && def_profile="pc"
