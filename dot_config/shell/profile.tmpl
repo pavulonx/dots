@@ -40,7 +40,7 @@ export PASSWORD_STORE_DIR="$XDG_DATA_HOME/password-store"
 
 # for signle, global ssh agent
 export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
-{{ if not (eq .conf.pid1 "systemd") -}}
+{{ if eq .conf.pid1 "init" -}}
 if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
   export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
   /usr/bin/dbus-daemon --session --fork --nopidfile --address=$DBUS_SESSION_BUS_ADDRESS
