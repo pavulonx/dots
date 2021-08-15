@@ -1,6 +1,8 @@
 #!/bin/bash
 
-template="$(chezmoi source-path)/chezmoi-cfg-tmpl"
+template="$(chezmoi source-path 2>/dev/null)/chezmoi-cfg-tmpl"
+[ ! -f "$template" ] && template="$XDG_DATA_HOME/chezmoi/chezmoi-cfg-tmpl"
+[ ! -f "$template" ] && echo "Tempate file: '$template' not found" && exit 1;
 chezmoi_cfg_dir="$XDG_CONFIG_HOME/chezmoi"
 destination="$chezmoi_cfg_dir/chezmoi.yaml"
 
