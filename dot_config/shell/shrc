@@ -18,11 +18,6 @@ export LESS_TERMCAP_us=$(printf '\e[1;36m')
 export LESS_TERMCAP_ue=$(printf '\e[0m')
 export LESSOPEN='| /usr/bin/highlight -O ansi %s 2>/dev/null'
 
-# files
-alias \
-        zshconf='$EDITOR $ZDOTDIR/.zshrc' \
-        de='dotedit';
-
 # system
 alias \
         ka='killall' \
@@ -48,6 +43,7 @@ alias \
         v='$EDITOR' \
         chm='chezmoi' \
         chmcd='cd "$(chezmoi source-path)"' \
+        de='dotedit' \
         shck='shellcheck' \
         yt='youtube-dl --add-metadata -i' \
         yta='yt -x -f bestaudio/best';
@@ -83,7 +79,7 @@ alias \
         drri='docker run -it --rm' \
         drri.='docker run -it --rm --workdir=/ctx --volume "$PWD:/ctx"' \
         drc='docker-compose' \
-        drip='docker inspect -f {{`"{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}`}}"'; {{- /*`# chezmoi template escaping`*/}}
+        drip='docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"';
 
 # git
 alias \
