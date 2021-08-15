@@ -41,8 +41,6 @@ alias \
 alias \
         o='xdg-open' \
         v='$EDITOR' \
-        chm='chezmoi' \
-        chmcd='cd "$(chezmoi source-path)"' \
         de='dotedit' \
         shck='shellcheck' \
         yt='youtube-dl --add-metadata -i' \
@@ -172,6 +170,13 @@ gcmsgt() {
   git commit -m "$message"
 }
 
+chm() {
+  if [ "$#" -eq 0 ]; then
+    cd "$(chezmoi source-path)"
+  else
+    chezmoi "$@"
+  fi
+}
 
 # sbt
 alias \
