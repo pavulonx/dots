@@ -13,11 +13,11 @@ chezmoi-cfg-tmpl
 .config/backup/
 {{- end }}
 
-{{- if ne .machine_type "pc" }}
+{{- if ne .conf.profile "pc" }}
 .local/bin/gui
 {{- end }}
 
-{{- if eq .chezmoi.os "android" }}
+{{- if eq .conf.profile "phone" }}
 !.config/shell
 !.config/zsh
 !.config/nvim
@@ -43,7 +43,7 @@ chezmoi-cfg-tmpl
 .termux
 {{- end }}
 
-{{- if eq .machine_type "server" }}
+{{- if eq .conf.profile "server" }}
 !.config/systemd
 !.config/shell
 !.config/zsh

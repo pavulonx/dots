@@ -1,10 +1,12 @@
 # chezmoi config
 data:
-  machine_type:   '%%!profile!%%'
-  browser:        '%%!browser!%%'
-  user_email:     '%%!email!%%'
-  user_fullname:  '%%!uname!%%'
-  init_system:    '%%!init!%%'
+  conf:
+    profile:      '%%!profile!%%'
+    browser:      '%%!browser!%%'
+    pid1:         '%%!pid1!%%'
+    user:
+      email:      '%%!u_email!%%'
+      fullname:   '%%!u_fullname!%%'
 
 merge:
   command: "nvim"

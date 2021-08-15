@@ -6,7 +6,7 @@ export PATH="${_user_path}${PATH}:$HOME/.local/share/coursier/bin"
 export TERMINAL="/usr/bin/terminal"
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
-export BROWSER="{{- .browser }}"
+export BROWSER="{{- .conf.browser }}"
 export READER="zathura"
 export PAGER="less"
 
@@ -40,7 +40,7 @@ export PASSWORD_STORE_DIR="$XDG_DATA_HOME/password-store"
 
 # for signle, global ssh agent
 export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
-{{ if not (eq .init_system "systemd") -}}
+{{ if not (eq .conf.pid1 "systemd") -}}
 if [ -z "$DBUS_SESSION_BUS_ADDRESS" ]; then
   export DBUS_SESSION_BUS_ADDRESS="unix:path=$XDG_RUNTIME_DIR/bus"
   /usr/bin/dbus-daemon --session --fork --nopidfile --address=$DBUS_SESSION_BUS_ADDRESS
@@ -55,7 +55,7 @@ export QT_QPA_PLATFORMTHEME="qt5ct"
 _profile_local="$XDG_CONFIG_HOME/shell/profile.local"
 [ -e "$_profile_local" ] && . "$_profile_local"
 
-{{ if eq .machine_type "pc" -}}
+{{ if eq .conf.profile "pc" -}}
 # start graphical interface on login on tty1
 if [ "$(tty)" = "/dev/tty1" ] && ! pgrep startx; then
   if command -v startxw > /dev/null 2>&1; then

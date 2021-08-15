@@ -22,3 +22,4 @@ other:
  - ranger/lf config
  - fix 'The XKEYBOARD keymap compiler (xkbcomp) reports:' from xinit
  - dircolors
+ - add unclutter

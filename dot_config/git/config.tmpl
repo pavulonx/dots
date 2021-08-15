@@ -22,8 +22,8 @@
   show = delta
 
 [user]
-  email = {{ .user_email }}
-  name = {{ .user_fullname }}
+  email = {{ .conf.user.email }}
+  name = {{ .conf.user.fullname }}
 
 [pull]
   rebase = true
