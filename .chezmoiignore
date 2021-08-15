@@ -4,6 +4,8 @@ backups
 extras
 README.md
 LICENSE
+chezmoi-cfg-gen
+chezmoi-cfg-tmpl
 
 
 {{- if ne .chezmoi.hostname "jrarch" }}

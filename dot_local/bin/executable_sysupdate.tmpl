@@ -1,14 +1,15 @@
 #!/bin/sh
 
-{{ if eq .chezmoi.os "linux" }}
-{{- if eq .chezmoi.osRelease.id "debian" -}}
-    sudo apt-get update && sudo apt-get upgrade
-{{ else -}}
-    paru -Syu --upgrademenu
-{{- end }}
-{{- else if eq .chezmoi.os "android" -}}
-    pkg upgrade
-{{- end}}
+# generated from chezmoi template
+#{{ if eq .chezmoi.os "linux" -}}
+#   {{- if eq .chezmoi.osRelease.id "debian" }}
+sudo apt-get update && sudo apt-get upgrade
+#   {{- else }}
+paru -Syu --upgrademenu
+#   {{- end -}}
+#{{- else if eq .chezmoi.os "android" }}
+pkg upgrade
+#{{- end}}
 
 retval="$?"
 

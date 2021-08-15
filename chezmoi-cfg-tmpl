@@ -1,0 +1,15 @@
+# chezmoi config
+data:
+  machine_type:   '%%!profile!%%'
+  browser:        '%%!browser!%%'
+  user_email:     '%%!email!%%'
+  user_fullname:  '%%!uname!%%'
+  init_system:    '%%!init!%%'
+
+merge:
+  command: "nvim"
+  args: "-d"
+
+pager: delta
+
+# vi: syntax=yaml
