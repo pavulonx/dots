@@ -30,6 +30,13 @@ When running trough te pipe 'set' is assumed.
 _EOF_
 }
 
+{{ if eq .chezmoi.os "android" -}}
+_clipboard_get() { termux-clipboard-get; }
+_clipboard_set() { termux-clipboard-set; }
+{{ else -}}
+_clipboard_get() { xclip -out -selection clipboard; }
+_clipboard_set() { xclip -in -selection clipboard; }
+{{- end }}
 
 mode="$1"
 if [ -z "$mode" ]; then # if no mode selected
@@ -43,19 +50,19 @@ fi
 
 case "$mode" in
   get)
-    xclip -out -selection clipboard;
+    _clipboard_get;
     ;;
   set)
     file=; [ -f "$1" ] && file="$1"
-    xclip -in -selection clipboard < "${file:-/dev/stdin}";
+    _clipboard_set < "${file:-/dev/stdin}";
     ;;
   -h|--help|help)
-    _help
+    _help;
     ;;
   *)
     if [ -f "$mode" ]; then
       file="$mode";
-      xclip -in -selection clipboard < "$file";
+      _clipboard_set < "$file";
     else
       echo "Bad mode or no such file: '$mode'"; exit 1;
     fi
@@ -63,3 +70,5 @@ case "$mode" in
 esac
 
 exit 0;
+
+# vim: syntax=sh ft=sh sw=2 ts=2 et

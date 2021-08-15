@@ -12,6 +12,7 @@ dots:
  - chromium hostory rofi/dmenu/fzf?
  - move git shell conf to separate file
  - inputrc
+ - chm function for cd to chezmoi (with completions)
 
 other:
  - right click to run system update script
