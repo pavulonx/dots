@@ -13,7 +13,7 @@
 retval="$?"
 
 [ "$1" = "-w" ] &&
-  echo "Press any key to exit" &&
+  printf "\33[1m> Press Return to exit <\33[0m\n" &&
   read -r;
 
 exit $retval
