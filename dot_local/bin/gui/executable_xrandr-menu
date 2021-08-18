@@ -1,11 +1,21 @@
 #!/bin/sh
 
-LAYOUTS_DIR="$HOME/.screenlayout"
+LAYOUTS_DIR="$XDG_DATA_HOME/screenlayouts"
+DEFAULT_LAYOUT="$LAYOUTS_DIR/default"
 
 cmd="$({
 
-find "$LAYOUTS_DIR" -maxdepth 1 -type f,l -printf "exec %f\n";
+[ -x "$DEFAULT_LAYOUT" ] && echo "exec default";
+
+echo
+fd . "$LAYOUTS_DIR" --follow --type executable |
+  grep -v "$DEFAULT_LAYOUT" |
+  awk -F"$LAYOUTS_DIR/" '{print "exec " $2}';
+
+echo
 autorandr | awk '{print "autorandr load " $0}';
+
+echo
 echo "
   autorandr run common
   autorandr run horizontal
@@ -13,7 +23,7 @@ echo "
   autorandr run change
 " | xargs -n3;
 
-}| rofi -dmenu -i -p "Screen layout")"
+} | rofi -dmenu -i -p "Screen layout")"
 
 to_exec="$(echo "$cmd" | awk '/^exec/ {print "'$LAYOUTS_DIR'/"$2}')"
 if [ -n "$to_exec" ]; then
