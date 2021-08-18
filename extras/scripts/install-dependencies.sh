@@ -64,6 +64,7 @@ thunar
 thunar-archive-plugin
 thunar-volmanudiskie
 ueberzug
+unclutter
 xautomation
 xbindkeys
 xclip
