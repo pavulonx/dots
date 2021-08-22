@@ -16,7 +16,7 @@ fzf
 git
 htop
 jq
-lf
+lf-bin
 lua
 moreutils
 neofetch

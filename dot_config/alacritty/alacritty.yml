@@ -21,29 +21,30 @@ window:
     x: 4
     y: 4
 
+
 schemes:
   default: &default
     primary:
       background: '#080808'
       foreground: '#ebdbb2'
     normal:
-      black:   '#263238'
-      red:     '#e53935'
-      green:   '#43a047'
-      yellow:  '#ffb300'
-      blue:    '#1e88e5'
-      magenta: '#8e24aa'
-      cyan:    '#00acc1'
-      white:   '#eeeeee'
+      black:   '#212121' # grey 900
+      red:     '#E53935' # red 600
+      green:   '#43A047' # green 600
+      yellow:  '#FFB300' # amber 600
+      blue:    '#1E88E5' # blue 600
+      magenta: '#D81B60' # pink 600
+      cyan:    '#00ACC1' # cyan 600
+      white:   '#EEEEEE' # grey 200
     bright:
-      black:   '#37474f'
-      red:     '#ef5350'
-      green:   '#66bb6a'
-      yellow:  '#ffd54f'
-      blue:    '#42a5f5'
-      magenta: '#ab47bc'
-      cyan:    '#26c6da'
-      white:   '#f5f5f5'
+      black:   '#424242' # grey 800
+      red:     '#EF5350' # red 400
+      green:   '#66BB6A' # green 400
+      yellow:  '#FFCA28' # amber 400
+      blue:    '#42A5F5' # blue 400
+      magenta: '#EC407A' # pink 400
+      cyan:    '#26C6DA' # cyan 400
+      white:   '#FAFAFA' # grey 100
 
   solarized_light: &solarized_light
     primary:
