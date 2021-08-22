@@ -34,6 +34,7 @@ alias \
         md='mkdir -pv' \
         diff='diff --color=auto' \
         grep='grep --color=auto --exclude-dir={.bzr,CVS,.git,.hg,.svn,.idea,.tox}' \
+        ip='ip -color=auto' \
         h='fc -li 1' \
         :q='exit';
 
