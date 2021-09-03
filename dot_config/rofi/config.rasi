@@ -1,22 +1,9 @@
 configuration {
     modi: "combi,run,window";
-    width: 45;
-    lines: 16;
-    /*columns: 1;*/
-    bw: 1;
-    /*	location: 0;*/
-    padding: 10;
     terminal: "/usr/bin/terminal";
     show-icons: true;
     sidebar-mode: true;
     combi-modi: "window,drun";
-    scrollbar-width: 5;
-    /*            'bg',    'fg',    'bgalt', 'hlbg',  'hlfg'  */
-    color-normal: "#080808, #ebdbb2, #080808, #ebdbb2, #1D1D1D";
-    color-urgent: "#080808, #cc241d, #080808, #cc241d, #ebdbb2";
-    color-active: "#786954, #ebdbb2, #080808, #ebdbb2, #080808";
-    /*            backgrnd  border   separator */
-    color-window: "#080808, #ebdbb2, #ebdbb2";
     combi-hide-mode-prefix: true;
     /* keybindings */
     kb-row-up: "Alt+k,Up,Control+p,ISO_Left_Tab";
@@ -24,3 +11,5 @@ configuration {
     kb-mode-next: "Alt+l,Shift+Right,Control+Tab";
     kb-mode-previous:	"Alt-h,Shift+Left,Control+ISO_Left_Tab";
 }
+
+@theme "ebdbb2"
