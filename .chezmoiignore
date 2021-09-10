@@ -7,44 +7,19 @@ LICENSE
 chezmoi-cfg-gen
 chezmoi-cfg-tmpl
 
-
 {{- if ne .chezmoi.hostname "jrarch" }}
 .config/backup/**
 .config/backup/
 {{- end }}
 
-{{- if ne .conf.profile "pc" }}
-.local/bin/gui
-{{- end }}
-
 {{- if eq .conf.profile "phone" }}
-!.config/shell
-!.config/zsh
-!.config/nvim
-!.config/git
-!.config/
-.config/*
-!.local/bin
-!.local/share/bash
-!.local/share/zsh
-!.local/share
-.local/share/*
-!.local
-.local/*
-!.vimrc
-!.bashrc
-!.zprofile
-!.bash_profile
-!.profile
 !.termux
-*
 {{- else }}
 90_android_postinstall
 .termux
 {{- end }}
 
-{{- if eq .conf.profile "server" }}
-!.config/systemd
+{{- if ne .conf.profile "pc" }}
 !.config/shell
 !.config/zsh
 !.config/nvim
@@ -52,6 +27,7 @@ chezmoi-cfg-tmpl
 !.config/
 .config/*
 !.local/bin
+.local/bin/gui
 !.local/share/bash
 !.local/share/zsh
 !.local/share
@@ -63,6 +39,5 @@ chezmoi-cfg-tmpl
 !.zprofile
 !.bash_profile
 !.profile
-10_system_settings
 *
 {{- end }}
