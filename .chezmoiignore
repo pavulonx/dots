@@ -7,11 +7,6 @@ LICENSE
 chezmoi-cfg-gen
 chezmoi-cfg-tmpl
 
-{{- if ne .chezmoi.hostname "jrarch" }}
-.config/backup/**
-.config/backup/
-{{- end }}
-
 {{- if eq .conf.profile "phone" }}
 !.termux
 {{- else }}
