@@ -72,6 +72,7 @@ gui=(
   lxappearance
   maim
   mate-polkit
+  network-manager-applet
   networkmanager-dmenu-git
   picom
   polybar
