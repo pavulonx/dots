@@ -30,7 +30,7 @@ nm-applet &
 wallpaper restore &
 solaar -w hide &
 
-{{ if not (eq .conf.pid1 "systemd") -}}
+{{ if ne .conf.pid1 "systemd" -}}
 pipewire-launch &
 {{- end }}
 
