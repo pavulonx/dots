@@ -1,13 +1,28 @@
 #!/bin/sh
-
+#set -x
 kernel_cmdline="${SDBOOT_LINUX_CMDLINE:-}"
 
 os_name="$(grep -E '^NAME=' /etc/os-release | cut -d'"' -f2)"
 os_id="$(grep -E '^ID=' /etc/os-release | cut -d'=' -f2)"
 hostname="$(cat /etc/hostname)"
 
-tmpd="$(mktemp -d -p /tmp systemd-boot-gen.XXXX)/loader"
+dst_dir="/boot/loader"
+
+#dst_dir="/tmp/sdboottmp"
+#if [ "$1" = "reset" ]; then
+#rm -rf "$dst_dir"
+#mkdir -p "$dst_dir"
+#cp -r -v "/boot/loader" "$dst_dir"
+#fi
+#dst_dir="/tmp/sdboottmp/loader"
+
+tmproot="$(mktemp -d -p /tmp systemd-boot-gen.XXXX)"
+tmpd="$tmproot/loader"
 mkdir -p "$tmpd/entries"
+
+backupd="$tmproot-backup"
+mkdir -p "$backupd"
+cp -r "$dst_dir" "$backupd"
 
 index=1
 loader_conf="\
@@ -59,15 +74,35 @@ done
 echo "Config saved to dir: '$tmpd':"
 find "$tmpd" -type f | sort -u
 
-printf "\n\nloader.conf diff:\n\n"
-diff --color "/boot/loader/loader.conf" "$tmpd/loader.conf"
+changes=false
+printf "\nloader.conf diff:\n"
+if diff --color "$dst_dir/loader.conf" "$tmpd/loader.conf"; then echo "No changes"; else changes=true; fi
+printf "\nEntries diff:\n"
+if diff --color -r -N "$dst_dir/entries" "$tmpd/entries"; then echo "No changes"; else changes=true; fi
 
-printf "\n\nEntries diff:\n\n"
-diff --color -r -N "/boot/loader/entries" "$tmpd/entries" 2>/dev/null
+! $changes && exit 0;
 
-old_entries="$(LANG=C diff --color -r "/boot/loader/entries" "$tmpd/entries" 2>/dev/null | grep '^Only in /boot/loader/entries' | cut -d' ' -f4- | awk '{print "/boot/loader/entries/"$1}')"
+old_entries="$(LANG=C diff --color -r "$dst_dir/entries" "$tmpd/entries" | grep "^Only in $dst_dir/entries" | cut -d' ' -f4- | awk "{print \"$dst_dir/entries/\"\$1}")"
 if [ -n "$old_entries" ]; then
   echo "Old entries:
 $old_entries
 "
 fi
+
+# add -o root
+printf "Apply changes? [y/N]: " && read -r resp
+case "$resp" in
+  y|Y|yes|YES)
+    for src_f in $(find "$tmpd" -type f); do
+      dst_f="$dst_dir/${src_f#$tmpd/}"
+      install -v -D -m0755 "$src_f" "$dst_f"
+    done
+    for old_e in $old_entries; do
+      rm -v "$old_e"
+    done
+    echo "Done!"
+    echo "Saved backup into '$backupd'"
+    ;;
+  *) :
+    ;;
+esac
