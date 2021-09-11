@@ -25,6 +25,10 @@ _set_location() {
   [ -z "$name" ] && echo "Name is not set!" && exit 1;
   geo="$2"
   [ -z "$geo" ] && echo "Geo is not set!" && exit 1;
+  if ! echo "$geo" | grep -Eq '^[0-9]+\.[0-9]*\,[0-9]+\.[0-9]*$'; then
+    echo "Bad format of geo. Must be <LAT>,<LONG>. LAT and LONG should be floating point number with dot '.' as a separator.";
+    exit 1
+  fi
   [ -f "$LOCATION_CONF" ] && echo "Overwriting old $LOCATION_CONF:" && cat "$LOCATION_CONF" && echo ""
   printf "name=%s\ngeo=%s\n" "$name" "$geo" > "$LOCATION_CONF"
   echo "Location config saved to: $LOCATION_CONF "
