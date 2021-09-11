@@ -24,8 +24,10 @@ fi
 
 _log_install "Installing core"
 core=(
+#  arch-install-scripts
   bat
   chezmoi
+  git
   git-delta
   dust
   exa
