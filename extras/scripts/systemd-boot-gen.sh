@@ -23,7 +23,7 @@ loader_conf="\
 # hostname: $hostname
 
 timeout 2
-default $index-$os_id
+default $index-$os_id.conf
 console-mode max\
 "
 echo "$loader_conf" > "$tmpd/loader.conf"
