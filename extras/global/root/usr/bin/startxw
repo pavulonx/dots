@@ -11,6 +11,8 @@ ENABLED_SESSIONS="${ENABLED_SESSIONS:-"i3 xmonad bspwm dwm awesome xfce"}"
 #shellcheck disable=SC2086
 _available_sessions="$(command -V $ENABLED_SESSIONS 2> /dev/null | grep -v "not found" | cut -d' ' -f1)"
 
+[ -z "$_available_sessions" ] && printf "No available session found!\nInstall one or set ENABLED_SESSIONS variable\n\nENABLED_SESSIONS='%s'\n" "$ENABLED_SESSIONS" && exit 2
+
 _args="$*"
 _wrapper_args="${_args%% -- *}"
 _startx_args="${_args#* -- }"

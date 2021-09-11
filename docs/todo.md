@@ -14,5 +14,4 @@ other:
  - chsh
  - install script include location conf
  - git not installed ( paru requires cargo)
- - startxw - do not execute when no DE available
  - oneshot install script
