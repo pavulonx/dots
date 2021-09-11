@@ -8,3 +8,10 @@ other:
  - polkit agent
  - ranger/lf config
  - fix 'The XKEYBOARD keymap compiler (xkbcomp) reports:' from xinit
+ - chezmoi-init-gen first init - no XDG_CONFIG_HOME set
+ - no such file - .config/chezmoi
+ - cannot create regular file pacman hooks, xorg keymap
+ - chsh
+ - install script include location conf
+ - startxw - do not execute when no DE available
+ - oneshot install script

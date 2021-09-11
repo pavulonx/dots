@@ -60,6 +60,7 @@ _install "${core[@]}"
 _log_install "Installing minimal gui"
 gui=(
   adwaita-icon-theme
+  alacritty
   arandr
   autorandr
   clipmenu
@@ -93,9 +94,12 @@ gui=(
   xmonad
   xmonad-contrib
   xmonad-utils
+  xorg
+  xorg-xinit
   xorg-xkill
   xsel
   xss-lock
+  xterm
 )
 _install "${gui[@]}"
 
@@ -123,6 +127,7 @@ fonts=(
   noto-fonts
   noto-fonts-emoji
   noto-fonts-extra
+  ttf-dejavu
   ttf-droid
   ttf-font-awesome
   ttf-hack
