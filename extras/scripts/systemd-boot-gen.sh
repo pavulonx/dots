@@ -1,5 +1,4 @@
 #!/bin/sh
-#set -x
 kernel_cmdline="${SDBOOT_LINUX_CMDLINE:-}"
 
 os_name="$(grep -E '^NAME=' /etc/os-release | cut -d'"' -f2)"
@@ -7,14 +6,6 @@ os_id="$(grep -E '^ID=' /etc/os-release | cut -d'=' -f2)"
 hostname="$(cat /etc/hostname)"
 
 dst_dir="/boot/loader"
-
-#dst_dir="/tmp/sdboottmp"
-#if [ "$1" = "reset" ]; then
-#rm -rf "$dst_dir"
-#mkdir -p "$dst_dir"
-#cp -r -v "/boot/loader" "$dst_dir"
-#fi
-#dst_dir="/tmp/sdboottmp/loader"
 
 tmproot="$(mktemp -d -p /tmp systemd-boot-gen.XXXX)"
 tmpd="$tmproot/loader"
