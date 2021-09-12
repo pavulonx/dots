@@ -15,3 +15,4 @@ other:
  - install script include location conf
  - git not installed ( paru requires cargo)
  - oneshot install script
+ - script for installing deploy limine hook
