@@ -115,7 +115,7 @@ bindkey '^v' edit-command-line
 autoload -U edit-command-line && zle -N edit-command-line;
 bindkey -M vicmd "^v" edit-command-line
 
-# terminal programs shortcuts
+# programs shortcuts
 bindkey -s "^F" "ctrlf\n"
 bindkey -s "^O" "openf\n"
 bindkey -s "^G" "z -I .\n"

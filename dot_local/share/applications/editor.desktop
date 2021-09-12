@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
-TryExec=/usr/bin/terminal
-Exec=/usr/bin/terminal -e nvim %u
+TryExec=alacritty
+Exec=alacritty -e nvim %u
 Icon=text-plain
 Terminal=false
 Categories=Utility;TextEditor;

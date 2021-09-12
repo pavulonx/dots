@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
-TryExec=/usr/bin/terminal
-Exec=/usr/bin/terminal
+TryExec=alacritty
+Exec=alacritty
 Icon=Terminal
 Terminal=false
 Categories=System;TerminalEmulator;

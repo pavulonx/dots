@@ -1,7 +1,7 @@
 # shellcheck shell=sh
 # shellcheck disable=SC2155
 
-# terminal programs settings
+# programs settings
 export FZF_DEFAULT_OPTS="--layout=reverse --height=70% --bind=ctrl-s:toggle-sort --bind=alt-h:clear-query --bind=ctrl-alt-k:preview-up --bind=alt-j:down --bind=alt-k:up --bind=alt-l:accept --bind=ctrl-alt-j:preview-down --bind=ctrl-alt-k:preview-up"
 ## ls cfg
 export LSCOLORS="Gxfxcxdxbxegedabagacad"

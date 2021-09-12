@@ -169,7 +169,7 @@ myModMask :: KeyMask
 myModMask = mod4Mask       -- Sets modkey to super/windows key
 
 myTerminal :: String
-myTerminal = "/usr/bin/terminal"   -- Sets default terminal
+myTerminal = "$TERMINAL"   -- Sets default terminal
 
 myBorderWidth :: Dimension
 myBorderWidth = 1          -- Sets border width for windows

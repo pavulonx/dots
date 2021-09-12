@@ -1,6 +1,5 @@
 configuration {
     modi: "combi,run,window";
-    terminal: "/usr/bin/terminal";
     show-icons: true;
     sidebar-mode: true;
     combi-modi: "window,drun";
