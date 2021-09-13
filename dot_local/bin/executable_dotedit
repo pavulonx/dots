@@ -1,19 +1,36 @@
 #!/bin/sh
 
+dots_dir="$(chezmoi source-path)"
+
+_preview_command="$(cat <<EOF
+type='{1}'
+file='{2}'
+if [ "\$type" = "c" ]; then
+  bat --color=always "\$(chezmoi source-path "~/\$file")"
+else
+  bat --color=always "$dots_dir"/"\$file"
+fi
+EOF
+)"
+
 query="$*"
 response="$({
     chezmoi managed --include=files | awk '{ print "c " $0}';
-    fd '.*' "$(chezmoi source-path)" -tf --exclude '*dot_*' --exclude '*run_*' | awk -F"$HOME/" '{ print "g " $2 }';
+    fd '.*' "$dots_dir" -tf --exclude '*dot_*' --exclude '*run_*' | awk -F"$dots_dir/" '{ print "g " $2 }';
   } | fzf --query="$query" --select-1 -m --ansi --color=border:0 \
-      --header='c - chezmoi managed, g - only git managed' --preview='bat --color=always ~/{2..}')"
+      --header='c - chezmoi managed, g - ignored by chezmoi in repo' --preview="$_preview_command")"
+      #TODO: list files using git and remove not ignored by chezmoi
 
 d_type="$(echo "$response" | cut -d' ' -f1)"
-d_file="$HOME/$(echo "$response" | cut -d' ' -f2-)"
+d_file="$(echo "$response" | cut -d' ' -f2-)"
 
-[ "$d_file" = "$HOME/" ] && echo "No file selected" && exit 0
+if [ -z "$d_type" ] || [ -z "$d_file" ]; then
+  echo "No file selected";
+  exit 0
+fi
 
 if [ "$d_type" = "c" ]; then
-  eval exec "chezmoi edit" "$d_file"
+  eval exec "chezmoi edit" "$HOME/$d_file"
 else
-  eval exec "$EDITOR" "$d_file"
+  eval exec "$EDITOR" "$dots_dir/$d_file"
 fi
