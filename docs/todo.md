@@ -13,6 +13,7 @@ other:
  - cannot create regular file pacman hooks, xorg keymap
  - chsh
  - install script include location conf
+ - modiify pacman.conf - parallel downloads, verbose changes etc
  - git not installed ( paru requires cargo)
  - oneshot install script
  - script for installing deploy limine hook
