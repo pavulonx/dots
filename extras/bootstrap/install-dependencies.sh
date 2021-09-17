@@ -52,6 +52,7 @@ core=(
   tree
   tumbler
   unzip
+  w3m
   zip
   zsh
   zsh-completions
