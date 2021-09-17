@@ -17,3 +17,4 @@ other:
  - git not installed ( paru requires cargo)
  - oneshot install script
  - script for installing deploy limine hook
+ - minimal config for root - zshrc/bashrc etc
