@@ -24,7 +24,7 @@ fi
 
 _log_install "Installing core"
 core=(
-#  arch-install-scripts
+  arch-install-scripts
   bat
   chezmoi
   git
