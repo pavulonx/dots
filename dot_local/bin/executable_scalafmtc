@@ -1,0 +1,20 @@
+#!/bin/sh
+
+current_dir_cfg="$PWD/.scalafmt.conf"
+current_repo_root="$(git rev-parse --show-toplevel 2>/dev/null)"
+current_git_repo_cfg=""; [ -n "$current_repo_root" ] && current_git_repo_cfg="$current_repo_root/.scalafmt.conf"
+global_cfg="$XDG_CONFIG_HOME/scala/scalafmt.conf"
+
+if [ -f "$current_dir_cfg" ]; then
+  scalafmt_config="$current_dir_cfg"
+elif [ -f "$current_git_repo_cfg" ]; then
+  scalafmt_config="$current_git_repo_cfg"
+elif [ -f "$global_cfg" ]; then
+  scalafmt_config="$global_cfg"
+else
+  echo "No config found!"
+  return 1
+fi
+
+echo "Using scalafmt config file: $scalafmt_config"
+scalafmt -c "$scalafmt_config" "$@"

@@ -181,7 +181,7 @@ chm() {
 
 # sbt
 alias \
-        sbt_init_src='sbt "compile;updateClassifiers;updateSbtClassifiers;"';
+        sbt-dl-src='sbt "compile;updateClassifiers;updateSbtClassifiers;"';
 
 # view or edit command
 vcmd() {
