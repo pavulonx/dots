@@ -1,6 +1,6 @@
 #!/bin/sh
 
-kernel_cmdline="${LIMINE_LINUX_CMDLINE:-}"
+kernel_cmdline="${BOOTLOADER_LINUX_CMDLINE:-}"
 
 os_name="$(grep -E '^NAME=' /etc/os-release | cut -d'"' -f2)"
 hostname="$(cat /etc/hostname)"

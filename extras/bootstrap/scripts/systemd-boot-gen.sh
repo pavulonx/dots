@@ -1,5 +1,5 @@
 #!/bin/sh
-kernel_cmdline="${SDBOOT_LINUX_CMDLINE:-}"
+kernel_cmdline="${BOOTLOADER_LINUX_CMDLINE:-}"
 
 os_name="$(grep -E '^NAME=' /etc/os-release | cut -d'"' -f2)"
 os_id="$(grep -E '^ID=' /etc/os-release | cut -d'=' -f2)"
