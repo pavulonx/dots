@@ -172,6 +172,7 @@ if [[ $REPLY =~ ^[Yy]$ ]]; then
   _log_install "Installing printer packages"
   printer=(cups cups-pdf ghostscript gsfonts libcups system-config-printer)
   _install "${printer[@]}"
+  sudo systemctl enable cups.service
 fi
 
 
@@ -179,7 +180,7 @@ fi
 printf "\nInstall laptop dependencies? [y/N]: "
 read -r REPLY
 if [[ "$REPLY" =~ ^[Yy]$ ]]; then
-  laptop=(tlp tlpui acpi acpid acpi_call)
+  laptop=(tlp tlpui acpi acpid)
 
   _log_install "Installing laptop packages"
   _install "${laptop[@]}"
@@ -211,7 +212,7 @@ if [[ "$reply" =~ ^[yy]$ ]]; then
     echo "Enabling bluetooth.service"
     sudo systemctl enable bluetooth.service
     sudo systemctl start bluetooth.service
-    sudo sed -i 's/'#AutoEnable=false'/'AutoEnable=true'/g' /etc/bluetooth/main.conf
+    sudo sed -i 's|#AutoEnable=false|AutoEnable=true|g' /etc/bluetooth/main.conf
   fi
 fi
 
