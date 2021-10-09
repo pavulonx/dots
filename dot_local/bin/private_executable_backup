@@ -31,9 +31,11 @@ TIMESTAMP=$(date +%Y%m%d%H%M%S)
 
 # backup dotfiles
 _filterfile="$(mktemp -p /tmp filterfile-XXXX)"
-touch "$_filterfile"
-command -v chezmoi && chezmoi managed | grep -Ev '^.(config|local(/share)?)$' | awk 'BEGIN{print "+ /.config/\n+ /.local/"} {print "+ " $0 "/***"} END{print "- /.config/**\n- /.local/**"}' >> "$_filterfile"
+: > "$_filterfile"
+[ -f "$FILTER_FILE.local" ] && cat "$FILTER_FILE.local" >> "$_filterfile"
 cat "$FILTER_FILE" >> "$_filterfile"
+echo "Using filter file: '$_filterfile'"
+cat "$_filterfile"
 
 rsync_commands=(
   "-av"
