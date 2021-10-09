@@ -47,6 +47,7 @@ core=(
   psmisc
   ranger
   ripgrep
+  rsync
   shellcheck
   tealdeer
   tree

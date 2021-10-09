@@ -10,6 +10,7 @@ REAL_RUN="no"
 _backup_conf_file="$XDG_CONFIG_HOME/backup/backuprc"
 if [ ! -f "$_backup_conf_file" ]; then
   echo "No config file found in '$_backup_conf_file'!"
+  echo "BCKP_DESTINATION is not set"
   exit 1
 fi
 source "$_backup_conf_file"
