@@ -13,6 +13,7 @@ if [ ! -f "$_backup_conf_file" ]; then
   echo "BCKP_DESTINATION is not set"
   exit 1
 fi
+#shellcheck disable=1090
 source "$_backup_conf_file"
 
 [ "$BCKP_DESTINATION" == "/" ] && echo "Destination needs to be provided in $_backup_conf_file" && exit 1
@@ -29,38 +30,38 @@ BCKP_DESTINATION="${BCKP_DESTINATION%/}/$(cat /etc/hostname)_${USER}-$(id -u "$U
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
 
 # backup dotfiles
-_filterfile="/tmp/filterfile_$TIMESTAMP"
+_filterfile="$(mktemp -p /tmp filterfile-XXXX)"
 touch "$_filterfile"
 command -v chezmoi && chezmoi managed | grep -Ev '^.(config|local(/share)?)$' | awk 'BEGIN{print "+ /.config/\n+ /.local/"} {print "+ " $0 "/***"} END{print "- /.config/**\n- /.local/**"}' >> "$_filterfile"
 cat "$FILTER_FILE" >> "$_filterfile"
 
 rsync_commands=(
-    "-av"
-    "--progress"
-    "--human-readable"
-    "--log-file=$LOG_DIR/rsync.$TIMESTAMP.log"
-    "--delete"
-    "--delete-excluded"
-    "--filter=merge $_filterfile"
-    "--filter=dir-merge,- .gitignore"
-    "$BCKP_SOURCE"
-    "$BCKP_DESTINATION"
+  "-av"
+  "--progress"
+  "--human-readable"
+  "--log-file=$LOG_DIR/rsync.$TIMESTAMP.log"
+  "--delete"
+  "--delete-excluded"
+  "--filter=merge $_filterfile"
+  "--filter=dir-merge,- .gitignore"
+  "$BCKP_SOURCE"
+  "$BCKP_DESTINATION"
 )
 
 do_rsync() {
-    rsync "${rsync_commands[@]}"
+  rsync "${rsync_commands[@]}"
 }
 
 do_rsync_dry_run() {
-    rsync --dry-run "${rsync_commands[@]}"
+  rsync --dry-run "${rsync_commands[@]}"
 }
 
 echo "Source:       $BCKP_SOURCE"
 echo "Destination:  $BCKP_DESTINATION"
 echo
 if [ "$REAL_RUN" == "yes" ]; then
-    do_rsync
+  do_rsync
 else
-    do_rsync_dry_run
-    printf "\n\nRun command with -c to backup\n"
+  do_rsync_dry_run
+  printf "\n\nRun command with -c to backup\n"
 fi
