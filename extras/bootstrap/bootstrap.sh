@@ -123,16 +123,16 @@ ntpdate 0.us.pool.ntp.org > /dev/null 2>&1 &&
   timedatectl set-ntp 1 &&
   hwclock --systohc
 
-_log "Adding user"
-_add_user_with_pass ||
-  _error "Could not add user"
-
 _log "Installing networkmanager"
 installpkg networkmanager ||
   _error "Could not install networkmanager"
 systemctl enable NetworkManager
 systemctl enable NetworkManager-wait-online
 systemctl start NetworkManager
+
+_log "Adding user"
+_add_user_with_pass ||
+  _error "Could not add user"
 
 # Allow user to run sudo without password. Since AUR programs must be installed
 # in a fakeroot environment, this is required for all builds with AUR.
