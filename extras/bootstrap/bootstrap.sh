@@ -59,7 +59,7 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_STATE_HOME="$HOME/.local/state"
-' >> "/home/$username/.profile"
+' | tee -a "/home/$username/.profile" "/home/$username/.zshenv" "/home/$username/.bash_profile"
   chown -R "$username:$username" "/home/$username"
   passwd "$username"
 }
@@ -67,8 +67,8 @@ export XDG_STATE_HOME="$HOME/.local/state"
 makepkginstall() {
   # Installs $1 manually. Used only for AUR helper here.
   # Should be run after repodir is created and var is set.
-  echo "Installing \"$1\", an AUR helper..."
-  dir="$repodir/$1"
+  echo "Installing '$1'"
+  dir="/home/$username/.local/src/$1"
   sudo -u "$username" mkdir -p "$dir"
   sudo -u "$username" git clone "https://aur.archlinux.org/$1.git" "$dir" > /dev/null 2>&1 \
     || {
