@@ -34,6 +34,7 @@ core=(
   fd
   fzf
   git
+  gnu-netcat
   htop
   jq
   lf-bin
@@ -41,10 +42,12 @@ core=(
   moreutils
   neofetch
   neovim
+  nodejs # needed by nvim coc
   openssh
   pacman-contrib
   polkit
   psmisc
+  pv
   ranger
   ripgrep
   rsync
@@ -54,6 +57,7 @@ core=(
   tumbler
   unzip
   w3m
+  wget
   zip
   zsh
   zsh-completions
@@ -164,6 +168,36 @@ programs=(
 _log_install "Installing programs packages"
 _install "${programs[@]}"
 
+
+development=(
+  # current jdk
+  jdk-openjdk
+  openjdk-doc
+  openjdk-src
+  # jdk 11
+  jdk11-openjdk
+  openjdk11-doc
+  openjdk11-src
+  # scala
+  scala
+  coursier
+  # build tools
+  sbt
+  maven
+  gradle
+  # ide
+  intellij-idea-ultimate-edition
+  intellij-idea-ultimate-edition-jre
+)
+_log_install "Installing development packages"
+_install "${development[@]}"
+
+_log_install "Installing development packages - coursier"
+coursier install \
+  scala3 \
+  ammonite \
+  bloop \
+  metals
 
 
 printf "\nInstall printers packages? [y/N]: "
