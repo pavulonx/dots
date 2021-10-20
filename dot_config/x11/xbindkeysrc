@@ -1,27 +1,11 @@
-# specify a mouse button
-"xterm"
-   control + b:2
-
-# todo: interpret ctl still pressed and new b6/5 as distinct events
-#
-#pgdown+ctrl
-"xdotool key Control+Page_Down"
-   Control + b:6
-
-#pgup+ctrl-onctrl
-"xdotool key Control+Page_Up"
-   Control + b:7
-
 # thumb wheel down => previous tab
-#"xte 'keydown Control_L' 'key Page_Down' 'keyup Control_L'"
 "xte 'keydown Control_L' 'key Tab' 'keyup Control_L'"
-    b:6
+  b:6
 
 # thumb wheel up => next tab
-#"xte 'keydown Control_L' 'key Page_Up' 'keyup Control_L'"
 "xte 'keydown Control_L' 'keydown Shift_L' 'key Tab' 'keyup Shift_L' 'keyup Control_L'"
-    b:7
+  b:7
 
-# thumb wheel up => next tab
+# thumb click - close window
 "sleep 0.1 && xte 'keydown Control_L' 'key w' 'keyup Control_L'"
-    Control+Alt + Tab
+  Control + Alt + Tab
