@@ -1,0 +1,158 @@
+#!/bin/sh
+
+_fail() {
+  echo "$1" >&2
+  exit 1
+}
+
+_help() {
+  cat <<EOF
+Usage: $0 <COMMAND> [CRYPT]
+
+Manages encrypted device CRYPT defined in CRYPT_CONFIG
+
+Available COMMANDs:
+  mount   CRYPT    - mounts CRYPT
+  open    CRYPT    - mounts and opens CRYPT
+  umount  CRYPT    - umounts CRYPT
+  close   CRYPT    - umounts and closes CRYPT
+  status  CRYPT    - show info about CRYPT
+  list             - lists available crypts in CRYPT_CONFIG
+
+Environment vairables:
+  CRYPT_CONFIG    - path to crypt config (set to '$CRYPT_CONFIG')
+EOF
+}
+
+[ "$(id -u)" -eq 0 ] && _fail "Must not be executed with superuser priviledges!"
+
+CWD="$PWD"
+CRYPT_CONFIG=${CRYPT_CONFIG:-}
+[ -z "$CRYPT_CONFIG" ] && _fail "CRYPT_CONFIG is not set!"
+! [ -f "$CRYPT_CONFIG" ] && _fail "CRYPT_CONFIG file: '$CRYPT_CONFIG' not found"
+
+
+#
+# COMMANDS
+#
+_mount() {
+  [ ! "$(find "$CRYPT_MOUNTPOINT" | wc -l)" = 1 ] && _fail "Mount directory '$CRYPT_MOUNTPOINT' is not empty!"
+  sudo mount "$CRYPT_MAPPER_PATH" "$CRYPT_MOUNTPOINT" ||
+    _fail "Unable to mount '$CRYPT_NAME' at '$CRYPT_MOUNTPOINT'";
+}
+
+_open() {
+  sudo cryptsetup open "$CRYPT_DRIVE_PATH" "$CRYPT_NAME" ||
+    _fail "Unable to open '$CRYPT_NAME'"
+  _mount
+}
+
+_umount() {
+  echo "$CWD" | grep "$CRYPT_MOUNTPOINT" && cd ~ || exit 1
+  sudo umount "$CRYPT_MAPPER_PATH" ||
+    _fail "Unable to umount '$CRYPT_NAME' of '$CRYPT_MAPPER_PATH'"
+}
+
+_close() {
+  _umount
+  sudo cryptsetup close "$CRYPT_NAME" ||
+    _fail "Unable to close '$CRYPT_NAME'"
+}
+
+_status() {
+  if grep -qs "$CRYPT_MOUNTPOINT " /proc/mounts; then
+    echo "Mount: "
+    grep "$CRYPT_MOUNTPOINT " /proc/mounts
+    # TODO: support for non block devices if needed
+    # do not fail if CRYPT_DRIVE_PATH is not block device
+    # [ -b "$CRYPT_DRIVE_PATH" ] && lsblk "$CRYPT_DRIVE_PATH"
+    lsblk "$CRYPT_DRIVE_PATH"
+  else
+    echo "$CRYPT_NAME is not mounted"
+  fi
+  echo
+  sudo cryptsetup status "$CRYPT_NAME"
+}
+
+_get_crypts() {
+  awk '/[[:blank:]*][^#].*/  { if (NF == 3) { printf "%s:%s:%s\n", $1, $2, $3 } }' "$CRYPT_CONFIG" | sort -u -t':' -k1,1
+}
+
+_list() {
+  {
+    echo "NAME:PARTITION UUID:MOUNTPOINT"
+    _get_crypts
+  } | awk -F: '{ printf "%-20s%-42s%s\n", $1, $2, $3 }'
+}
+
+_parse() {
+  [ -z "$_crypt_name" ] && _fail "Specify crypt name name to use" true
+  _crypt_settings="$(_get_crypts | grep -E "^$_crypt_name:")"
+  [ -z "$_crypt_settings" ] && _fail "Crypt '$_crypt_name' not found!" true
+
+  # CONFIGURATION:
+  CRYPT_NAME="$(echo "$_crypt_settings" | cut -d: -f1)"
+  CRYPT_MAPPER_PATH="/dev/mapper/$CRYPT_NAME"
+
+  CRYPT_DISK_UUID="$(echo "$_crypt_settings" | cut -d: -f2)"
+  CRYPT_DRIVE_PATH="$(readlink -f "/dev/disk/by-uuid/$CRYPT_DISK_UUID")"
+  [ ! -b "$CRYPT_DRIVE_PATH" ] && _fail "'$CRYPT_DRIVE_PATH' is not block special!"
+
+  CRYPT_MOUNTPOINT="$(echo "$_crypt_settings" | cut -d: -f3)"
+  [ ! -d "$CRYPT_MOUNTPOINT" ] && _fail "Mount directory '$CRYPT_MOUNTPOINT' not found!"
+
+
+  echo "'$CRYPT_NAME' configuration:"
+  cat <<EOF
+  CRYPT_NAME          $CRYPT_NAME
+  CRYPT_MAPPER_PATH   $CRYPT_MAPPER_PATH
+  CRYPT_DISK_UUID     $CRYPT_DISK_UUID
+  CRYPT_DRIVE_PATH    $CRYPT_DRIVE_PATH
+  CRYPT_MOUNTPOINT    $CRYPT_MOUNTPOINT
+EOF
+  echo ""
+}
+
+#
+# ACTIAL SCRIPT
+#
+
+_cmd="$1"
+_crypt_name="$2"
+
+case $_cmd in
+  umount)
+    _parse
+    _umount
+    ;;
+  mount)
+    _parse
+    _mount
+    ;;
+  open)
+    _parse
+    _open
+    ;;
+  close)
+    _parse
+    _close
+    ;;
+  status)
+    _parse
+    _status
+    ;;
+  get-config)
+    _get_crypts
+    exit 0
+    ;;
+  list)
+    _list
+    ;;
+  ''|help)
+    _help
+    ;;
+  *)
+    _fail "Unrecognized command: '$_cmd'. Run '$0 help' to print help message"
+    exit 1
+    ;;
+esac

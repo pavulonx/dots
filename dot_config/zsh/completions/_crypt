@@ -1,0 +1,30 @@
+#compdef crypt
+
+_crypt_crypts() {
+  local -a crypts
+  crypts=($(crypt get-config | tr ' ' ':'))
+  _describe -t crypts 'crypts' crypts
+}
+
+_crypt_commands() {
+  _cmds=(
+    'mount'
+    'open'
+    'umount'
+    'close'
+    'status'
+    'list'
+    'help'
+  )
+  _describe 'crypt command' _cmds
+}
+
+_crypt() {
+  _arguments -C \
+    '1:crypt command:_crypt_commands' \
+    '2:crypt name:_crypt_crypts'
+}
+
+_crypt
+
+# vim: ft=zsh sw=2 ts=2 et
