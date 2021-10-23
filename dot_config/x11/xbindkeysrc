@@ -1,3 +1,6 @@
+"swapescape-toggle"
+  Mod4 + F1
+
 # thumb wheel down => previous tab
 "xte 'keydown Control_L' 'key Tab' 'keyup Control_L'"
   b:6
@@ -8,4 +11,4 @@
 
 # thumb click - close window
 "sleep 0.1 && xte 'keydown Control_L' 'key w' 'keyup Control_L'"
-  Control + Alt + Tab
+  Control+Alt + Tab
