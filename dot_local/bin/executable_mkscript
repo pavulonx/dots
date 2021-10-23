@@ -1,13 +1,25 @@
 #!/bin/sh
 
-[ -z "${1:-}" ] && echo "Usage: $0 <path>" >&2 && exit 1
+MKSCRIPT_CONTEXT="$HOME/.local/bin"
 
-[ -f "$1" ] && echo "File '$1' exists!" >&2 && exit 1
+_context="$PWD"
+[ "$1" = "-b" ] && _context="$MKSCRIPT_CONTEXT" && shift
+
+[ -z "${1:-}" ] && echo "
+Usage: $0 [-b] <path>
+  -b     create in context of '$MKSCRIPT_CONTEXT'
+" >&2 && exit 1
+
+_path="${_context}/${1}"
+
+[ -f "$_path" ] && echo "File '$_path' exists!" >&2 && exit 1
+
+echo "Script path: $_path"
 
 echo '#!/bin/sh
-echo "Script $0 created by mkscript"
-' > "$1"
 
-chmod u+x "$1"
+' > "${_context}/${1}"
 
-eval exec "$EDITOR" "$1" "+2"
+chmod u+x "$_path"
+
+eval exec "$EDITOR" "$_path" "+2"

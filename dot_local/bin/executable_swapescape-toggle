@@ -1,0 +1,10 @@
+#!/bin/sh
+kb_layout=pl
+
+if LANG=C setxkbmap -print | grep -q 'xkb_symbols.*swapescape' >/dev/null 2>&1; then
+  setxkbmap -option
+  setxkbmap -layout "$kb_layout" -option caps:escape
+else
+  setxkbmap -option
+  setxkbmap -layout "$kb_layout" -option caps:swapescape
+fi
