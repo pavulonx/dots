@@ -1,0 +1,69 @@
+#!/bin/bash
+
+echo "Backup run $(date)"
+
+# 1. defaults
+BCKP_DESTINATION="/"
+REAL_RUN="no"
+
+# 2. config overrides
+_backup_conf_file="$XDG_CONFIG_HOME/backup/backuprc"
+if [ ! -f "$_backup_conf_file" ]; then
+  echo "No config file found in '$_backup_conf_file'!"
+  echo "BCKP_DESTINATION is not set"
+  exit 1
+fi
+#shellcheck disable=1090
+source "$_backup_conf_file"
+
+[ "$BCKP_DESTINATION" == "/" ] && echo "Destination needs to be provided in $_backup_conf_file" && exit 1
+[ "$1" == "-c" ] && REAL_RUN="yes"
+
+## CONSTANTS
+FILTER_FILE="$XDG_CONFIG_HOME/backup/backup.filter"
+BCKP_SOURCE="$HOME/"
+LOG_DIR="$XDG_CACHE_HOME/backup"
+mkdir -p "$LOG_DIR"
+
+# Append current PC (hostname) and username to destination
+BCKP_DESTINATION="${BCKP_DESTINATION%/}/$(cat /etc/hostname)_${USER}-$(id -u "$USER")"
+TIMESTAMP=$(date +%Y%m%d%H%M%S)
+
+# backup dotfiles
+_filterfile="$(mktemp -p /tmp filterfile-XXXX)"
+: > "$_filterfile"
+[ -f "$FILTER_FILE.local" ] && cat "$FILTER_FILE.local" >> "$_filterfile"
+cat "$FILTER_FILE" >> "$_filterfile"
+echo "Using filter file: '$_filterfile'"
+cat "$_filterfile"
+
+rsync_commands=(
+  "-av"
+  "--progress"
+  "--human-readable"
+  "--log-file=$LOG_DIR/rsync.$TIMESTAMP.log"
+  "--delete"
+  "--delete-excluded"
+  "--filter=merge $_filterfile"
+  "--filter=dir-merge,- .gitignore"
+  "$BCKP_SOURCE"
+  "$BCKP_DESTINATION"
+)
+
+do_rsync() {
+  rsync "${rsync_commands[@]}"
+}
+
+do_rsync_dry_run() {
+  rsync --dry-run "${rsync_commands[@]}"
+}
+
+echo "Source:       $BCKP_SOURCE"
+echo "Destination:  $BCKP_DESTINATION"
+echo
+if [ "$REAL_RUN" == "yes" ]; then
+  do_rsync
+else
+  do_rsync_dry_run
+  printf "\n\nRun command with -c to backup\n"
+fi

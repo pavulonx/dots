@@ -1,54 +1,75 @@
 #!/bin/bash
+_run_timestamp="$(date +%Y%m%d%H%M%S)"
 
-echo "Backup run $(date)"
+_do_run=false;
+_use_gitignore=false;
+_backup_conf_file=
+_backup_filter_file=
 
-# 1. defaults
-BCKP_DESTINATION="/"
-REAL_RUN="no"
+args="$*"
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    -s|--src)       _backup_src="$2";         shift 2;;
+    -d|--dst)       _backup_dst="$2";         shift 2;;
+    #-c|--config)  _backup_conf_file="$2";    shift 2;;
+    -f|--filter)    _backup_filter_file="$2"; shift 2;;
+    -g|--gitignore) _use_gitignore=true;      shift 1;;
+    run)            _do_run=true;             shift 1;;
+    *) echo "Unrecognized arg: '$1' in '$args'"; exit 1;;
+  esac
+done
 
-# 2. config overrides
-_backup_conf_file="$XDG_CONFIG_HOME/backup/backuprc"
-if [ ! -f "$_backup_conf_file" ]; then
-  echo "No config file found in '$_backup_conf_file'!"
-  echo "BCKP_DESTINATION is not set"
-  exit 1
-fi
-#shellcheck disable=1090
-source "$_backup_conf_file"
+## parse config
+#if [ -n "$_backup_conf_file" ]; then
+#  if [ ! -f "$_backup_conf_file" ]; then
+#    echo "No config file found in '$_backup_conf_file'!" 1>&2
+#    exit 1
+#  else
+#
+#  fi
+#fi
 
-[ "$BCKP_DESTINATION" == "/" ] && echo "Destination needs to be provided in $_backup_conf_file" && exit 1
-[ "$1" == "-c" ] && REAL_RUN="yes"
+# validation
+_error=false
+[ -n "$_backup_filter_file" ] && [ ! -f "$_backup_filter_file" ] && echo "No filter file found in '$_backup_filter_file'!" 1>&2 && _error=true
+[ -z "$_backup_src" ] && echo "Backup source (-s/--src) is not set!" 1>&2 && _error=true
+[ -z "$_backup_dst" ] && echo "Backup destination (-d/--dst) is not set! " 1>&2 && _error=true
+# exit on error reported;
+$_error && exit 1
 
-## CONSTANTS
-FILTER_FILE="$XDG_CONFIG_HOME/backup/backup.filter"
-BCKP_SOURCE="$HOME/"
-LOG_DIR="$XDG_CACHE_HOME/backup"
-mkdir -p "$LOG_DIR"
+echo "_backup_src='$_backup_src'"
+echo "_backup_dst='$_backup_dst'"
+echo "_backup_conf_file='$_backup_conf_file'"
+echo "_backup_filter_file='$_backup_filter_file'"
+echo "_do_run='$_do_run'"
+#exit 1
 
-# Append current PC (hostname) and username to destination
-BCKP_DESTINATION="${BCKP_DESTINATION%/}/$(cat /etc/hostname)_${USER}-$(id -u "$USER")"
-TIMESTAMP=$(date +%Y%m%d%H%M%S)
+_log_dir="$_backup_dst/.logs"
+_log_suff=""; "$_do_run" && _log_suff="-dry-run"
+_log_file="$_log_dir/backup.${_run_timestamp}${_log_suff}.log"
 
-# backup dotfiles
-_filterfile="$(mktemp -p /tmp filterfile-XXXX)"
-: > "$_filterfile"
-[ -f "$FILTER_FILE.local" ] && cat "$FILTER_FILE.local" >> "$_filterfile"
-cat "$FILTER_FILE" >> "$_filterfile"
-echo "Using filter file: '$_filterfile'"
-cat "$_filterfile"
+mkdir -p "$_backup_dst"
+mkdir -p "$_log_dir"
+ln -sf "$_log_file" "$_log_dir/latest.log"
 
+# preparing rsync commands
 rsync_commands=(
   "-av"
   "--progress"
   "--human-readable"
-  "--log-file=$LOG_DIR/rsync.$TIMESTAMP.log"
+  "--log-file=$_log_file"
   "--delete"
   "--delete-excluded"
-  "--filter=merge $_filterfile"
-  "--filter=dir-merge,- .gitignore"
-  "$BCKP_SOURCE"
-  "$BCKP_DESTINATION"
 )
+[ -n "$_backup_filter_file" ] && rsync_commands+=("--filter=merge $_filterfile")
+"$_use_gitignore" && rsync_commands+=("--filter=dir-merge,- .gitignore")
+rsync_commands+=(
+  "$_backup_src"
+  "$_backup_dst"
+)
+
+echo "Executing:"
+echo "  rsync" "${rsync_commands[@]}"
 
 do_rsync() {
   rsync "${rsync_commands[@]}"
@@ -58,12 +79,16 @@ do_rsync_dry_run() {
   rsync --dry-run "${rsync_commands[@]}"
 }
 
-echo "Source:       $BCKP_SOURCE"
-echo "Destination:  $BCKP_DESTINATION"
-echo
-if [ "$REAL_RUN" == "yes" ]; then
+echo "
+Source:       $_backup_src
+Destination:  $_backup_dst
+Log:          $_log_file
+"
+
+if "$_do_run"; then
   do_rsync
 else
+  printf "\n*\n* DRY RUN\n*\n"
   do_rsync_dry_run
-  printf "\n\nRun command with -c to backup\n"
+  printf "\n\nRun command with 'run' to backup\n"
 fi
