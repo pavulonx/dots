@@ -1,17 +1,14 @@
-#!/usr/bin/env sh
-
 #!/bin/sh
-# Toggles a problem on and off
 
-ID=$(pidof "$1")
+program="$1"
+pid=$(pidof "$program")
 
-program=$1
 shift;
 
-if [ -z "$ID" ]; then
+if [ -z "$pid" ]; then
   # shellcheck disable=SC2068
   "$program" $@
 else
-  killall "$program" && notify-send "Killed $program"
+  killall "$program" &&
+    notify-send "Killed $program"
 fi
-
