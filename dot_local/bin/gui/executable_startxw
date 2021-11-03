@@ -1,17 +1,25 @@
 #!/bin/sh
 
-# usage: startxw SESSION [-- ARGS...]
+# usage: xstart SESSION [-- ARGS...]
 # SESSION         seesion to start if not specified run interactive mode
 # ARGS...         startx arguments
 
-XSESSION_LOGS_DIR="${XSESSION_LOGS_DIR:-"$XDG_CACHE_HOME/xsessionlogs"}"
-XSESSION_LOGS_HISTORY="${XSESSION_LOGS_HISTORY:-5}"
-STARTXW_EXEC_DIR="${STARTXW_EXEC_DIR:-$HOME}"
-ENABLED_SESSIONS="${ENABLED_SESSIONS:-"i3 xmonad bspwm dwm awesome xfce"}"
-#shellcheck disable=SC2086
-_available_sessions="$(command -V $ENABLED_SESSIONS 2> /dev/null | grep -v "not found" | cut -d' ' -f1)"
+XSTART_DEFAULT_SESSION="${XSTART_DEFAULT_SESSION:-1}"
+XSTART_LOGS_DIR="${XSTART_LOGS_DIR:-"$XDG_CACHE_HOME/xsessionlogs"}"
+XSTART_LOGS_HISTORY="${XSTART_LOGS_HISTORY:-5}"
+XSTART_EXEC_DIR="${XSTART_EXEC_DIR:-$HOME}"
+XSTART_ENABLED_SESSIONS="${XSTART_ENABLED_SESSIONS:-"i3 xmonad bspwm dwm awesome xfce"}"
 
-[ -z "$_available_sessions" ] && printf "No available session found!\nInstall one or set ENABLED_SESSIONS variable\n\nENABLED_SESSIONS='%s'\n" "$ENABLED_SESSIONS" && exit 2
+xpids="$(pgrep xinit 2>/dev/null)"
+if [ -n "$xpids" ]; then
+  echo "WARNING! Xorg is probably running with pid(s):" >&2
+  echo "$xpids" >&2
+  echo "Press Return to coniunue" >&2
+  read -r
+fi
+# shellcheck disable=SC2086
+_available_sessions="$(command -v $XSTART_ENABLED_SESSIONS 2> /dev/null | xargs -I {} basename {})"
+[ -z "$_available_sessions" ] && printf "No available session found!\nInstall one or set XSTART_ENABLED_SESSIONS variable\n\nXSTART_ENABLED_SESSIONS='%s'\n" "$XSTART_ENABLED_SESSIONS" && exit 2
 
 _args="$*"
 _wrapper_args="${_args%% -- *}"
@@ -19,13 +27,14 @@ _startx_args="${_args#* -- }"
 
 _choice="${_wrapper_args:-}"
 
+# choose session
 if [ -z "$_choice" ]; then
   trap 'exit 1' INT
   echo "Available sessions:"
   echo "$_available_sessions" | awk '{print "  " NR ") " $0}'
   printf "Select name or number (defaut 1): "
   read -r _choice </dev/tty
-  _choice="${_choice:-1}"
+  _choice="${_choice:-"$XSTART_DEFAULT_SESSION"}"
   trap - INT
 fi
 if test "$_choice" -gt 0 2>/dev/null; then
@@ -33,19 +42,24 @@ if test "$_choice" -gt 0 2>/dev/null; then
 else
   _xsession="$(echo "$_available_sessions" | grep -Eo "^$_choice$")"
 fi
+if [ -z "$_xsession" ] || [ "$(echo "$_xsession" | wc -l)" -ne 1 ]; then
+  echo "Bad session!"
+  exit 1
+fi
 
-[ "$(echo "$_xsession" | wc -l)" -ne 1 ] && echo "Ambigous selection matched:" && echo "$_xsession" && exit 1
-[ -z "$_xsession" ] && echo "Bad session: '$_choice'!" && exit 1;
+# prepare logging
+mkdir -p "$XSTART_LOGS_DIR"
+log_file="$XSTART_LOGS_DIR/$(date +'%F_%H-%M-%S').log"
+ln -sf "$log_file" "$XSTART_LOGS_DIR/current.log"
+[ "$XSTART_LOGS_HISTORY" -gt 0 ] && # keep XSTART_LOGS_HISTORY logs in XSTART_LOGS_DIR
+  find "$XSTART_LOGS_DIR" -type f -name '*.log' -printf "%T@:%p\n" |
+  sort -nr | tail -n "+$XSTART_LOGS_HISTORY" | cut -d: -f2- |
+  xargs -r rm
 
-# logging
-_log_file="$XSESSION_LOGS_DIR/$(date +'%F_%H-%M-%S').log"
-mkdir -p "$XSESSION_LOGS_DIR"
-find "$XSESSION_LOGS_DIR" -type f -printf "%T@:%p\n" | sort -nr | tail -n "+$XSESSION_LOGS_HISTORY" | cut -d: -f2- |
-  xargs -r rm || true # remove old logs
-ln -sf "$_log_file" "$XSESSION_LOGS_DIR/current.log" # select log file
-
+# start X with given session
 echo "Starting_session: $_xsession"
-_cwd="$PWD"
-cd "$STARTXW_EXEC_DIR" || exit 5
-DESKTOP_SESSION="$_xsession" exec startx "$_startx_args" 2>&1 | ts '[%Y-%m-%d %H:%M:%S]' > "$_log_file" 2>&1
-cd "$_cwd" || exit 5
+cd "$XSTART_EXEC_DIR" || exit 2
+
+DESKTOP_SESSION="$_xsession" \
+  exec startx "$_startx_args" 2>&1 |
+  ts '[%Y-%m-%d %H:%M:%S]' >"$log_file" 2>&1

@@ -58,11 +58,7 @@ _profile_local="$XDG_CONFIG_HOME/shell/profile.local"
 {{ if eq .conf.profile "pc" -}}
 # start graphical interface on login on tty1
 if [ "$(tty)" = "/dev/tty1" ] && ! pgrep startx; then
-  if command -v startxw > /dev/null 2>&1; then
-    startxw
-  else
-    DESKTOP_SESSION=i3 startx
-  fi
+  startxw
 fi
 {{- end }}
 # vi:syntax=sh
