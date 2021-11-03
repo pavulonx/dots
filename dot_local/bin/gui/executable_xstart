@@ -1,65 +1,114 @@
 #!/bin/sh
 
-# usage: xstart SESSION [-- ARGS...]
-# SESSION         seesion to start if not specified run interactive mode
-# ARGS...         startx arguments
+# Start xinit with DESKTOP_SESSION environment variable passed to it
 
-XSTART_DEFAULT_SESSION="${XSTART_DEFAULT_SESSION:-1}"
+# TODO:
+#   - check if xinitrc uses DESKTOP_SESSION env variable, warn if not
+#   - write help command
+#   - use xinit directly without startx
+#   - add verbose logging option
+
+# usage: xstart [ SESSION_NAME ]
+# SESSION_NAME   name of the session if not set run in interactive mode
+# flags: -c confirm -v verbose
+
+XSTART_X11_CONFIG_DIR="${XSTART_X11_CONFIG_DIR:-"$XDG_CONFIG_HOME/x11"}"
+XSTART_ENABLED_SESSIONS="${XSTART_ENABLED_SESSIONS:-"i3 xmonad bspwm dwm awesome xfce"}"
 XSTART_LOGS_DIR="${XSTART_LOGS_DIR:-"$XDG_CACHE_HOME/xsessionlogs"}"
 XSTART_LOGS_HISTORY="${XSTART_LOGS_HISTORY:-5}"
 XSTART_EXEC_DIR="${XSTART_EXEC_DIR:-$HOME}"
-XSTART_ENABLED_SESSIONS="${XSTART_ENABLED_SESSIONS:-"i3 xmonad bspwm dwm awesome xfce"}"
 
 xpids="$(pgrep xinit 2>/dev/null)"
 if [ -n "$xpids" ]; then
-  echo "WARNING! Xorg is probably running with pid(s):" >&2
-  echo "$xpids" >&2
-  echo "Press Return to coniunue" >&2
+  cat <<-EOF >&2
+WARNING! Xorg is probably running with pid(s):
+$xpids
+Press Return to coniunue
+EOF
   read -r
 fi
+
+
+resolve_xinitrc() {
+  _xinitrc_path=""
+  _session="$1"
+  _dir="$XSTART_X11_CONFIG_DIR"
+  [ -d "$_dir" ] || _dir="$HOME";
+  [ -f "/etc/X11/xinit/xinitrc" ] && _xinitrc_path="/etc/X11/xinit/xinitrc"
+  [ -f "$HOME/.xinitrc" ] && _xinitrc_path="$HOME/.xinitrc"
+  [ -f "$_dir/xinitrc" ] && _xinitrc_path="$_dir/xinitrc"
+  [ -f "$_dir/.xinitrc-$_session" ] && _xinitrc_path="$_dir/.xinitrc-$_session"
+  [ -f "$_dir/xinitrc-$_session" ] && _xinitrc_path="$_dir/xinitrc-$_session"
+  # shellcheck disable=SC2153
+  [ -f "$XINITRC" ] && _xinitrc_path="$XINITRC"
+  realpath "$_xinitrc_path"
+  unset _xinitrc_path _dir _session
+}
+
+
+#### MAIN
+
+# parse cmdline args
+_choice="$1"
+
+
+# resolving available sessions
 # shellcheck disable=SC2086
-_available_sessions="$(command -v $XSTART_ENABLED_SESSIONS 2> /dev/null | xargs -I {} basename {})"
-[ -z "$_available_sessions" ] && printf "No available session found!\nInstall one or set XSTART_ENABLED_SESSIONS variable\n\nXSTART_ENABLED_SESSIONS='%s'\n" "$XSTART_ENABLED_SESSIONS" && exit 2
+available_sessions="$(command -v $XSTART_ENABLED_SESSIONS 2> /dev/null | xargs -I {} basename {})"
+if [ -z "$available_sessions" ]; then
+  cat <<EOF >&2
+No available session found!
+Install one or set XSTART_ENABLED_SESSIONS variable
+XSTART_ENABLED_SESSIONS='$XSTART_ENABLED_SESSIONS'
+EOF
+  exit 1
+fi
 
-_args="$*"
-_wrapper_args="${_args%% -- *}"
-_startx_args="${_args#* -- }"
 
-_choice="${_wrapper_args:-}"
-
-# choose session
+# interactive choose session if session not set
 if [ -z "$_choice" ]; then
-  trap 'exit 1' INT
+  trap 'exit 0' INT
   echo "Available sessions:"
-  echo "$_available_sessions" | awk '{print "  " NR ") " $0}'
+  echo "$available_sessions" | awk '{print "  " NR ") " $0}'
   printf "Select name or number (defaut 1): "
   read -r _choice </dev/tty
-  _choice="${_choice:-"$XSTART_DEFAULT_SESSION"}"
+  _choice="${_choice:-1}"
+  if test "$_choice" -gt 0 2>/dev/null; then
+    _choice="$(echo "$available_sessions" | awk "NR == $_choice")"
+  fi
   trap - INT
 fi
-if test "$_choice" -gt 0 2>/dev/null; then
-  _xsession="$(echo "$_available_sessions" | awk "NR == $_choice")"
-else
-  _xsession="$(echo "$_available_sessions" | grep -Eo "^$_choice$")"
-fi
-if [ -z "$_xsession" ] || [ "$(echo "$_xsession" | wc -l)" -ne 1 ]; then
+
+
+# check if choosen session is available
+xsession="$(echo "$available_sessions" | grep -Eo "^$_choice$")"
+if [ -z "$xsession" ] || [ "$(echo "$xsession" | wc -l)" -ne 1 ]; then
   echo "Bad session!"
   exit 1
 fi
 
+
+# resolve xinitrc
+xinitrc="$(resolve_xinitrc "$xsession")"
+[ -z "$xinitrc" ] && echo "Could not resolve xinitrc config" >&2 && exit 2
+
 # prepare logging
 mkdir -p "$XSTART_LOGS_DIR"
-log_file="$XSTART_LOGS_DIR/$(date +'%F_%H-%M-%S').log"
-ln -sf "$log_file" "$XSTART_LOGS_DIR/current.log"
+log_file="$XSTART_LOGS_DIR/$(date +'%F_%H-%M-%S').$xsession.log"
+ln -sf "$log_file" "$XSTART_LOGS_DIR/latest.log"
 [ "$XSTART_LOGS_HISTORY" -gt 0 ] && # keep XSTART_LOGS_HISTORY logs in XSTART_LOGS_DIR
   find "$XSTART_LOGS_DIR" -type f -name '*.log' -printf "%T@:%p\n" |
   sort -nr | tail -n "+$XSTART_LOGS_HISTORY" | cut -d: -f2- |
   xargs -r rm
 
+
 # start X with given session
-echo "Starting_session: $_xsession"
+echo "Starting session: $xsession" | tee "$log_file"
+echo "Using xinitrc init script: '$xinitrc'" >>"$log_file"
 cd "$XSTART_EXEC_DIR" || exit 2
 
-DESKTOP_SESSION="$_xsession" \
-  exec startx "$_startx_args" 2>&1 |
-  ts '[%Y-%m-%d %H:%M:%S]' >"$log_file" 2>&1
+
+# shellcheck disable=SC2086
+DESKTOP_SESSION="$xsession" \
+  exec startx "$xinitrc" 2>&1 |
+  ts '[%Y-%m-%d %H:%M:%S]' >>"$log_file" 2>&1
