@@ -103,7 +103,7 @@ ln -sf "$log_file" "$XSTART_LOGS_DIR/latest.log"
 
 
 # start X with given session
-echo "Starting session: $xsession" | tee "$log_file"
+echo "Starting session: $xsession" | tee -a "$log_file"
 echo "Using xinitrc init script: '$xinitrc'" >>"$log_file"
 cd "$XSTART_EXEC_DIR" || exit 2
 

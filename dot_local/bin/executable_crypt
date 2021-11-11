@@ -82,7 +82,7 @@ _list() {
   {
     echo "NAME:PARTITION UUID:MOUNTPOINT"
     _get_crypts
-  } | awk -F: '{ printf "%-20s%-42s%s\n", $1, $2, $3 }'
+  } | awk -F: '{ printf "%-16s%-40s%s\n", $1, $2, $3 }'
 }
 
 _parse() {
