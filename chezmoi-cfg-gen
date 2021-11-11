@@ -6,7 +6,7 @@ template="$(chezmoi source-path 2>/dev/null)/chezmoi-cfg-tmpl"
 chezmoi_cfg_dir="$XDG_CONFIG_HOME/chezmoi"
 destination="$chezmoi_cfg_dir/chezmoi.yaml"
 
-if [ "$(find "$chezmoi_cfg_dir" -type f | grep -v '.boltdb$' | wc -l)" -gt 1 ]; then
+if [ "$(find "$chezmoi_cfg_dir" -type f | grep -cv '.boltdb$')" -gt 1 ]; then
   echo "Multiple configs files found in '$chezmoi_cfg_dir'. Exiting";
   exit 1;
 fi
@@ -14,7 +14,7 @@ fi
 _render_template() {
   sed '
   s/%%!profile!%%/'"$profile"'/g
-  s~%%!browser!%%~'$browser'~g
+  s~%%!browser!%%~'"$browser"'~g
   s/%%!u_email!%%/'"$u_email"'/g
   s/%%!u_fullname!%%/'"$u_fullname"'/g
   s/%%!pid1!%%/'"$pid1"'/g
@@ -28,7 +28,7 @@ _render_template() {
 [ -z "$def_profile" ] && [ "$(chezmoi execute-template '{{.chezmoi.osRelease.id}}' 2>/dev/null)" = 'debian' ] && def_profile="server"
 [ -z "$def_profile" ] && [ -n "$SSH_CONNECTION" ] && def_profile="server"
 [ -z "$def_profile" ] && def_profile="pc"
-printf "Profile [pc|server|phone] (default: '$def_profile'): "
+printf "Profile [pc|server|phone] (default: '%s'): " "$def_profile"
 read -r profile
 [ -z "$profile" ] && profile="$def_profile"
 case "$profile" in
@@ -40,13 +40,14 @@ esac
 # BROWSER
 browsers="$(command -v brave-beta brave firefox-developer-edition firefox chromium links false 2>/dev/null)"
 [ -z "$def_browser" ] && def_browser="$(chezmoi execute-template '{{.conf.browser}}' 2>/dev/null)"
+#shellcheck disable=2153
 [ -z "$def_browser" ] && def_browser="$BROWSER"
 [ -z "$def_browser" ] && def_browser="$(echo "$browsers" | head -n1)"
 echo "
 Available browsers (name or false for none):
 $(echo "$browsers" | awk '{print " - " $0}')
 "
-printf "Select browser (default: '$def_browser'): "
+printf "Select browser (default: '%s'): " "$def_browser"
 read -r browser
 [ -z "$browser" ] && browser="$def_browser"
 if command -v "$browser" >/dev/null 2>&1; then
@@ -59,7 +60,7 @@ fi
 # USER EMAIL
 [ -z "$def_u_email" ] && def_u_email="$(chezmoi execute-template '{{.conf.user.email}}' 2>/dev/null)"
 [ -z "$def_u_email" ] && def_u_email="$(git config --get user.email 2>/dev/null)"
-printf "User u_email (default: '$def_u_email'): "
+printf "User u_email (default: '%s'): " "$def_u_email"
 read -r u_email
 [ -z "$u_email" ] && u_email="$def_u_email"
 [ -z "$u_email" ] && echo "u_email cannot be empty!" && exit 1
@@ -69,7 +70,7 @@ read -r u_email
 [ -z "$def_u_fullname" ] && def_u_fullname="$(chezmoi execute-template '{{.conf.user.fullname}}' 2>/dev/null)"
 [ -z "$def_u_fullname" ] && def_u_fullname="$(git config --get user.name 2>/dev/null)"
 [ -z "$def_u_fullname" ] && def_u_fullname="$USER"
-printf "User fullname (default: '$def_u_fullname'): "
+printf "User fullname (default: '%s'): " "$def_u_fullname"
 read -r u_fullname
 [ -z "$u_fullname" ] && u_fullname="$def_u_fullname"
 [ -z "$u_fullname" ] && echo "u_fullname cannot be empty!" && exit 1
@@ -78,7 +79,7 @@ read -r u_fullname
 # PID1
 [ -z "$def_pid1" ] && def_pid1="$(chezmoi execute-template '{{.conf.pid1}}' 2>/dev/null)"
 [ -z "$def_pid1" ] && test -f /proc/1/comm && def_pid1="$(cat /proc/1/comm)"
-printf "pid1 (init system) (default: '$def_pid1'): "
+printf "pid1 (init system) (default: '%s'): " "$def_pid1"
 read -r pid1
 [ -z "$pid1" ] && pid1="$def_pid1"
 
