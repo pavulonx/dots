@@ -129,7 +129,7 @@ autoload -Uz term_window_title;   term_window_title
 if [ ! -f $ZDOTDIR/.zinit/bin/zinit.zsh ]; then
   print -P "%F{33}Installing zinit%f"
   command mkdir -p "$ZDOTDIR/.zinit"
-  command git clone https://github.com/zdharma/zinit "$ZDOTDIR/.zinit/bin"
+  command git clone https://github.com/zdharma-continuum/zinit "$ZDOTDIR/.zinit/bin"
 fi
 source "$ZDOTDIR/.zinit/bin/zinit.zsh"
 autoload -Uz _zinit
@@ -139,13 +139,13 @@ zinit wait lucid for \
   atload"_ZL_FZF_HEIGHT='50%'; _ZL_FZF_FLAG='+s -e --preview=\"exa --level 2 --tree --color=always --group-directories-first {2}\"'" \
     skywind3000/z.lua \
   atinit"ZINIT[COMPINIT_OPTS]=-C; __completions_init; zpcdreplay;" \
-    zdharma/fast-syntax-highlighting \
+    zdharma-continuum/fast-syntax-highlighting \
   atload"!_zsh_autosuggest_start" \
     zsh-users/zsh-autosuggestions \
   blockf \
     zsh-users/zsh-completions
 
 zinit wait"1" lucid for \
-    zdharma/history-search-multi-word
+    zdharma-continuum/history-search-multi-word
 
 # vim: ft=zsh sw=2 ts=2 et
