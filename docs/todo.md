@@ -1,10 +1,9 @@
-dots:
+TODOs:
  - support for patch files in system custom
  - cleanup chezmoi params see https://www.chezmoi.io/docs/reference/#lookpath-examples
  - create .zshenv?
  - chromium history rofi/dmenu/fzf?
 
-other:
  - polkit agent
  - ranger/lf config
  - fix 'The XKEYBOARD keymap compiler (xkbcomp) reports:' from xinit
@@ -21,3 +20,4 @@ other:
  - call xinit directly from startxw without startx
  - startxw - refactor and handle session on specific tty
  - dunst - match slack and use icon in chrome notification
+ - remove chezmoi
