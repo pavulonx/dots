@@ -108,7 +108,50 @@ echo "Using xinitrc init script: '$xinitrc'" >>"$log_file"
 cd "$XSTART_EXEC_DIR" || exit 2
 
 
+server="/usr/bin/X"
+[ -f "/etc/X11/xinit/xserverrc" ] && server="/etc/X11/xinit/xserverrc"
+[ -f "$HOME/.xserverrc" ] && server="$HOME/.xserverrc"
+
+if [ -z "$XAUTHORITY" ]; then
+  XAUTHORITY="${XDG_RUNTIME_DIR:-$HOME}/.Xauthority"
+  export XAUTHORITY
+fi
+
+# determine display
+d=0
+while [ -e "/tmp/.X$d-lock" ] || [ -S "/tmp/.X11-unix/X$d" ]; do
+  d=$((d + 1))
+done
+display=":$d"
+unset d
+
+# datermine tty
+tty=$(tty)
+tty_num="${tty#/dev/tty}"
+if ! [ "$tty_num" -ge 0 ] >/dev/null 2>&1; then
+  echo "TTY '$tty' is invalid" >&2
+  exit 1
+fi
+
+# get cookie
+mcookie="$(/usr/bin/mcookie)"
+if [ -z "$mcookie" ]; then
+  echo "Couldn't create cookie" >&2
+  exit 1
+fi
+
+cleanup() {
+  rc=$?
+  echo "cleanup invoked: '$rc' | '$$'" >> /home/jr/xstartlog
+  xauth remove "$display"
+  command -v deallocvt > /dev/null 2>&1 && deallocvt
+  exit $rc
+}
+
+trap 'cleanup' EXIT HUP TERM EXIT INT QUIT
+xauth add "$display" MIT-MAGIC-COOKIE-1 "$mcookie"
+
 # shellcheck disable=SC2086
 DESKTOP_SESSION="$xsession" \
-  exec startx "$xinitrc" 2>&1 |
+  exec xinit "$xinitrc" -- "$server" "$display" "vt$tty_num" -keeptty -auth "$XAUTHORITY" 2>&1 |
   ts '[%Y-%m-%d %H:%M:%S]' >>"$log_file" 2>&1
