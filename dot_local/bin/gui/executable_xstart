@@ -5,7 +5,6 @@
 # TODO:
 #   - check if xinitrc uses DESKTOP_SESSION env variable, warn if not
 #   - write help command
-#   - use xinit directly without startx
 #   - add verbose logging option
 
 # usage: xstart [ SESSION_NAME ]
@@ -45,6 +44,17 @@ resolve_xinitrc() {
   unset _xinitrc_path _dir _session
 }
 
+resolve_xserver() {
+  _dir="$XSTART_X11_CONFIG_DIR"
+  [ -d "$_dir" ] || _dir="$HOME";
+  _xserver="/usr/bin/X"
+  [ -f "/etc/X11/xinit/xserverrc" ] && _xserver="/etc/X11/xinit/xserverrc"
+  [ -f "$HOME/.xserverrc" ] && _xserver="$HOME/.xserverrc"
+  [ -f "$_dir/.xserverrc" ] && _xserver="$_dir/.xserverrc"
+  [ -f "$_dir/xserverrc" ] && _xserver="$_dir/xserverrc"
+  echo "$_xserver"
+  unset _xserver
+}
 
 #### MAIN
 
@@ -61,7 +71,7 @@ No available session found!
 Install one or set XSTART_ENABLED_SESSIONS variable
 XSTART_ENABLED_SESSIONS='$XSTART_ENABLED_SESSIONS'
 EOF
-  exit 1
+exit 1
 fi
 
 
@@ -92,6 +102,12 @@ fi
 xinitrc="$(resolve_xinitrc "$xsession")"
 [ -z "$xinitrc" ] && echo "Could not resolve xinitrc config" >&2 && exit 2
 
+
+# resolve xinitrc
+xserver="$(resolve_xserver)"
+[ -z "$xinitrc" ] && echo "Could not resolve X server" >&2 && exit 2
+
+
 # prepare logging
 mkdir -p "$XSTART_LOGS_DIR"
 log_file="$XSTART_LOGS_DIR/$(date +'%F_%H-%M-%S').$xsession.log"
@@ -102,15 +118,6 @@ ln -sf "$log_file" "$XSTART_LOGS_DIR/latest.log"
   xargs -r rm
 
 
-# start X with given session
-echo "Starting session: $xsession" | tee -a "$log_file"
-echo "Using xinitrc init script: '$xinitrc'" >>"$log_file"
-cd "$XSTART_EXEC_DIR" || exit 2
-
-
-server="/usr/bin/X"
-[ -f "/etc/X11/xinit/xserverrc" ] && server="/etc/X11/xinit/xserverrc"
-[ -f "$HOME/.xserverrc" ] && server="$HOME/.xserverrc"
 
 if [ -z "$XAUTHORITY" ]; then
   XAUTHORITY="${XDG_RUNTIME_DIR:-$HOME}/.Xauthority"
@@ -126,23 +133,31 @@ display=":$d"
 unset d
 
 # datermine tty
-tty=$(tty)
-tty_num="${tty#/dev/tty}"
-if ! [ "$tty_num" -ge 0 ] >/dev/null 2>&1; then
-  echo "TTY '$tty' is invalid" >&2
-  exit 1
-fi
+tty=$(tty); tty_num="${tty#/dev/tty}"
+! [ "$tty_num" -ge 0 ] >/dev/null 2>&1 && echo "TTY '$tty' is invalid" >&2 && exit 1
 
 # get cookie
 mcookie="$(/usr/bin/mcookie)"
-if [ -z "$mcookie" ]; then
-  echo "Couldn't create cookie" >&2
-  exit 1
-fi
+[ -z "$mcookie" ] && echo "Couldn't create cookie" >&2 && exit 1
+
+# start X with given session
+echo "Starting session: $xsession" | tee -a "$log_file"
+cat <<EOF >>"$log_file"
+----------------------------------------------------------
+Info:
+  session     $xsession
+  xserver     $xserver
+  xinitrc     $xinitrc
+  display     $display
+  tty         $tty
+  auth        $XAUTHORITY
+----------------------------------------------------------
+EOF
+
+cd "$XSTART_EXEC_DIR" || exit 2
 
 cleanup() {
   rc=$?
-  echo "cleanup invoked: '$rc' | '$$'" >> /home/jr/xstartlog
   xauth remove "$display"
   command -v deallocvt > /dev/null 2>&1 && deallocvt
   exit $rc
@@ -153,5 +168,5 @@ xauth add "$display" MIT-MAGIC-COOKIE-1 "$mcookie"
 
 # shellcheck disable=SC2086
 DESKTOP_SESSION="$xsession" \
-  exec xinit "$xinitrc" -- "$server" "$display" "vt$tty_num" -keeptty -auth "$XAUTHORITY" 2>&1 |
+  exec xinit "$xinitrc" -- "$xserver" "$display" "vt$tty_num" -keeptty -auth "$XAUTHORITY" 2>&1 |
   ts '[%Y-%m-%d %H:%M:%S]' >>"$log_file" 2>&1
