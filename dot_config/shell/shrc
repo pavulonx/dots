@@ -45,7 +45,8 @@ alias \
         de='dotedit' \
         shck='shellcheck' \
         yt='youtube-dl --add-metadata -i' \
-        yta='yt -x -f bestaudio/best';
+        yta='yt -x -f bestaudio/best' \
+        xlogs='cat $HOME/.cache/xstart/latest.log';
 
 # ls
 alias \
