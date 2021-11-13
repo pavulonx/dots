@@ -1,0 +1,26 @@
+#!/bin/sh
+
+if [ -f '/etc/os-release' ]; then
+  os="$(grep '^ID=' /etc/os-release)"; os="${os#ID=}"
+else
+  os="$(uname -o)"
+fi
+
+case "$os" in
+  arch|artix)
+    paru -Sl --color=always |
+      fzf --ansi --multi --preview 'paru -Si {2}' |
+      awk '{print $2}' ;;
+  debian|ubuntu)
+    apt-cache pkgnames |
+      sort -u |
+      fzf --multi --preview 'apt-cache show {1}' ;;
+  Android)
+    pkg list-all |
+      fzf --multi --preview-window down --preview 'pkg show {1}' |
+      awk '{print $1}' ;;
+  *)
+    echo "Not implemented for os: $os"; exit 1;;
+esac
+
+# vi: syntax=sh
