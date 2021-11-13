@@ -16,6 +16,5 @@ TODOs:
  - minimal config for root - zshrc/bashrc etc
  - bootstrap minimal packages
  - bootstrap for server
- - call xinit directly from startxw without startx
  - dunst - match slack and use icon in chrome notification
  - remove chezmoi
