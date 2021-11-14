@@ -41,7 +41,7 @@ update_status() {
   _int="${_int%% *}"
 
   if test -n "$_int"; then
-    _lb="  UP"
+    _lb="  LAN"
 
     wireless=false; test -e "/sys/class/net/$_int/wireless" && wireless=true
     wireless_ssid='WiFi'
