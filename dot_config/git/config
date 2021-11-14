@@ -14,19 +14,17 @@
   hunk-header-decoration-style = ul
   hunk-header-line-number-style = omit
 
-
 [pager]
   diff = delta
   log = delta
   reflog = delta
   show = delta
 
-[user]
-  email = {{ .conf.user.email }}
-  name = {{ .conf.user.fullname }}
-
 [pull]
   rebase = true
 
 [init]
   defaultBranch = master
+
+[include]
+  path = ~/.config/git/config.local
