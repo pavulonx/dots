@@ -1,26 +1,26 @@
 [Default Applications]
 application/pdf=evince.desktop
-application/x-extension-htm=browser.desktop
-application/x-extension-html=browser.desktop
-application/x-extension-shtml=browser.desktop
-application/x-extension-xht=browser.desktop
-application/x-extension-xhtml=browser.desktop
+application/x-extension-htm=web-browser.desktop
+application/x-extension-html=web-browser.desktop
+application/x-extension-shtml=web-browser.desktop
+application/x-extension-xht=web-browser.desktop
+application/x-extension-xhtml=web-browser.desktop
 application/x-shellscript=editor.desktop;
-application/xhtml+xml=browser.desktop
+application/xhtml+xml=web-browser.desktop
 image/jpeg=viewnior.desktop;
 image/png=viewnior.desktop;
 inode/directory=Thunar.desktop
-text/html=browser.desktop
+text/html=web-browser.desktop
 text/plain=editor.desktop
-x-scheme-handler/about=browser.desktop
-x-scheme-handler/chrome=browser.desktop
-x-scheme-handler/ftp=browser.desktop
-x-scheme-handler/geo=browser.desktop
-x-scheme-handler/http=browser.desktop
-x-scheme-handler/https=browser.desktop
-x-scheme-handler/mailto=browser.desktop
-x-scheme-handler/unknown=browser.desktop
-x-scheme-handler/webcal=browser.desktop
+x-scheme-handler/about=web-browser.desktop
+x-scheme-handler/chrome=web-browser.desktop
+x-scheme-handler/ftp=web-browser.desktop
+x-scheme-handler/geo=web-browser.desktop
+x-scheme-handler/http=web-browser.desktop
+x-scheme-handler/https=web-browser.desktop
+x-scheme-handler/mailto=web-browser.desktop
+x-scheme-handler/unknown=web-browser.desktop
+x-scheme-handler/webcal=web-browser.desktop
 
 [Added Associations]
 application/gzip=org.gnome.FileRoller.desktop;xarchiver.desktop;
