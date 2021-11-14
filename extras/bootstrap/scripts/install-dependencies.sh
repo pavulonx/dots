@@ -26,6 +26,7 @@ _log_install "Installing core"
 core=(
   arch-install-scripts
   bat
+  bmon
   chezmoi
   git
   git-delta

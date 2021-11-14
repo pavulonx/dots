@@ -9,19 +9,17 @@ margin-bottom = 0
 {{- if eq .chezmoi.hostname "LT33693" }}
 hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon9/temp1_input
 battery = BAT1
-lan-interface = enp0s31f6
-wlan-interface = wlan0
-modules-right = music weather updatestatus vpn wlan lan backlight filesystem temperature cpu memory xdpms battery pulseaudio
+modules-right = music weather updatestatus network filesystem temperature cpu memory xdpms battery pulseaudio
+;modules-right = music weather updatestatus filesystem temperature cpu memory xdpms battery pulseaudio ; TODO: remove backlight module
 {{- else if eq .chezmoi.hostname "jrarch" }}
 hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon1/temp1_input
-lan-interface = enp0s31f6
-modules-right = music weather updatestatus vpn lan filesystem temperature cpu memory xdpms pulseaudio
+modules-right = music weather updatestatus network filesystem temperature cpu memory xdpms pulseaudio
+;modules-right = music weather updatestatus filesystem temperature cpu memory xdpms pulseaudio
 {{- else if eq .chezmoi.hostname "arc" }}
 hwmon-path = /sys/devices/platform/coretemp.0/hwmon/hwmon3/temp1_input
-lan-interface = enp0s31f6
-modules-right = music weather updatestatus vpn lan filesystem temperature cpu memory xdpms pulseaudio
+modules-right = music weather updatestatus network filesystem temperature cpu memory xdpms pulseaudio
 {{- else }}
-modules-right = music weather updatestatus filesystem cpu memory xdpms pulseaudio
+modules-right = music weather updatestatus network filesystem cpu memory xdpms pulseaudio
 {{- end }}
 
 [colors]
