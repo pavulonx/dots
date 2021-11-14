@@ -1,0 +1,114 @@
+#!/bin/sh
+
+# TODO:
+# - parse 'iw dev $interface link' data - SSID and signal strengh https://eyesaas.com/wi-fi-signal-strength/
+
+verbose=false
+interval=2
+follow=false
+combined=false
+
+while [ -n "$1" ]; do
+  case "$1" in
+    -f|--follow)
+      follow=true
+      shift
+      ;;
+    -i|--interval)
+      if [ "$2" -ge 0 ] 2>/dev/null; then
+        interval="$2"
+        shift 2
+      else
+        echo "Interval must be a number"
+        exit 1
+      fi
+      ;;
+    -c|--combined)
+      combined=true;
+      shift;
+      ;;
+    -v|--verbose)
+      verbose=true;
+      shift;
+      ;;
+    *)
+      echo "Bad argument: '$1'"
+      exit 1
+      ;;
+  esac
+done
+
+logv() {
+  "$verbose" && echo "$*"; :
+}
+
+get_bytes() {
+  bytes=0
+  for f; do
+    read -r b < "$f"
+    bytes=$((bytes + b))
+  done
+  echo "$bytes"
+}
+
+tx_old="$(get_bytes /sys/class/net/[ew]*/statistics/tx_bytes)"
+rx_old="$(get_bytes /sys/class/net/[ew]*/statistics/rx_bytes)"
+internet_conn=false
+
+
+get_stats() {
+  # interface:wireless:vpn:internet:tx:rx
+  interface="$(LANG=C ip route list exact default)"
+  interface="${interface#* dev }"
+  interface="${interface%% *}"
+  test -z "$interface" && logv "Default interface not found!"
+
+  wireless=false; test -e "/sys/class/net/$interface/wireless" && wireless=true
+  vpn=false; pgrep openvpn || pgrep f5vpn && vpn=true;
+
+  label=' DOWN'
+  test -n "$interface" && label='  LAN'
+  "$wireless" && label=' WiFi'
+  "$vpn" && label="$label [VPN]"
+
+
+  "$wireless" && logv "Wireless connection"
+  "$vpn" && logv "VPN connected"
+
+
+  if [ $((iteration % 10)) -eq 0 ]; then
+    if nc -zw1 1.1.1.1 443 >/dev/null 2>&1; then
+      logv "Network available";
+    else
+      label="$label  No Internet"
+      logv "No internet";
+    fi
+  fi
+
+  tx_new="$(get_bytes /sys/class/net/[ew]*/statistics/tx_bytes)"
+  rx_new="$(get_bytes /sys/class/net/[ew]*/statistics/rx_bytes)"
+  tx=$((tx_new - tx_old));
+  rx=$((rx_new - rx_old));
+  cx=$((tx + rx))
+  [ $tx -lt 1000 ] && tx=0
+  [ $rx -lt 1000 ] && rx=0
+  [ $cx -lt 1000 ] && cx=0
+  tx_old="$tx_new"
+  rx_old="$rx_new"
+
+  #printf "RX:%s TX:%s\n" "$(get_bytes /sys/class/net/[ew]*/statistics/rx_bytes)" "$(get_bytes /sys/class/net/[ew]*/statistics/tx_bytes)"
+  if "$combined"; then
+    printf "%s %sBs\n" "$label" "$(numfmt --to=iec "$((cx / interval))")"
+  else
+    printf "%s %s %4s %4s\n" "$label" "$(numfmt --to=iec "$cx")" "$(numfmt --to=iec "$rx")" "$(numfmt --to=iec "$tx")"
+  fi
+
+  iteration=$((iteration + 1))
+}
+
+get_stats
+while "$follow"; do
+  sleep "$interval"
+  get_stats
+done
+##
