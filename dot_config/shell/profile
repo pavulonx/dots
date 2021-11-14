@@ -6,7 +6,7 @@ export PATH="${_user_path}${PATH}:$HOME/.local/share/coursier/bin"
 export TERMINAL="/usr/bin/alacritty"
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
-export BROWSER="{{- .conf.browser }}"
+export BROWSER="firefox-developer-edition"
 export READER="zathura"
 export PAGER="less"
 
@@ -49,10 +49,9 @@ export QT_QPA_PLATFORMTHEME="qt5ct"
 _profile_local="$XDG_CONFIG_HOME/shell/profile.local"
 [ -e "$_profile_local" ] && . "$_profile_local"
 
-{{ if eq .conf.profile "pc" -}}
-# start graphical interface on login on tty1
-if [ "$(tty)" = "/dev/tty1" ] && ! pgrep startx; then
+# run xstart if X are not running
+if [ "$(tty)" = "/dev/tty1" ] && ! pgrep X; then
   xstart
 fi
-{{- end }}
+
 # vi:syntax=sh

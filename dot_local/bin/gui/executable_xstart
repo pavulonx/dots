@@ -17,14 +17,13 @@ XSTART_LOGS_DIR="${XSTART_LOGS_DIR:-"$XDG_CACHE_HOME/xstart"}"
 XSTART_LOGS_HISTORY="${XSTART_LOGS_HISTORY:-5}"
 XSTART_EXEC_DIR="${XSTART_EXEC_DIR:-$HOME}"
 
-xpids="$(pgrep xinit 2>/dev/null)"
+xpids="$(pgrep nvim 2>/dev/null)"
 if [ -n "$xpids" ]; then
-  cat <<-EOF >&2
-WARNING! Xorg is probably running with pid(s):
-$xpids
-Press Return to coniunue
-EOF
-  read -r
+  printf "WARNING! Xorg is running with pid(s): \n"
+  echo "$xpids"
+  printf "Continue? [y/N]: "
+  read -r yn
+  echo "$yn" | grep -qE '[yY][eE]?[sS]?' || exit 1
 fi
 
 
