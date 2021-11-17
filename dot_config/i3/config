@@ -49,7 +49,7 @@ bindsym XF86Calculator        exec gnome-calculator
 
 # dunst control
 bindsym $mod+Mod1+h           exec --no-startup-id dunstctl history-pop
-bindsym $mod+Mod1+c           exec --no-startup-id dunstctl action
+bindsym $mod+Mod1+c           exec --no-startup-id dunstctl context
 bindsym $mod+Mod1+space       exec --no-startup-id dunstctl close
 bindsym $mod+Mod1+Ctrl+space  exec --no-startup-id dunstctl close-all
 

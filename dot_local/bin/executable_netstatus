@@ -36,6 +36,7 @@ logv() {
 
 label=
 update_status() {
+  _up_ifs="$(LANG=C ip -brief link | awk '{ if ($2 == "UP" ) print $1 }')"
   _int="$(LANG=C ip route list exact default)"
   _int="${_int#* dev }"
   _int="${_int%% *}"
@@ -44,8 +45,12 @@ update_status() {
     _lb="  LAN"
 
     wireless=false; test -e "/sys/class/net/$_int/wireless" && wireless=true
-    wireless_ssid='WiFi'
-    "$wireless" && _lb=" $wireless_ssid"
+    if "$wireless"; then
+      iwout="$(iw dev wlan0 link)"
+      wireless_ssid="$(echo "$iwout" | awk '/SSID: / { print $2 }')"
+      #wireless_signal="$(echo "$iwout" | awk '/signal: / { print $2$3 }')"
+      _lb=" $wireless_ssid"
+    fi
 
     if pgrep openvpn || pgrep f5vpn; then # chack if connected via VPN
       _lb="$_lb [VPN]"
