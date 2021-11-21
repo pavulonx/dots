@@ -2,12 +2,14 @@
 
 _show_details=false
 _send_notification=false
+_use_plain_symobls=false
 _wait_for_user_input=false
 
 for arg; do
     case "$arg" in
         -v) _show_details=true ;;
         -n) _send_notification=true ;;
+        -p) _use_plain_symobls=true ;;
         -w) _wait_for_user_input=true ;;
          *) [ -z "$location" ] && location="$arg";
     esac
@@ -15,7 +17,8 @@ done
 [ -z "$location" ] && location="$(location name)"
 
 # sed drops varioation characters
-weather="$(curl -s "wttr.in/$location?format=:%c:%t" | sed 's|^:\(.\).*:\(.*\)|\1 \2|')"
+symbols="%c"; $_use_plain_symobls && symbols="%x"
+weather="$(curl -s "wttr.in/$location?format=:$symbols:%t" | sed 's|^:\(.*\):\(.*\)|\1 \2|')"
 
 if echo "$weather" | grep -qE "(Unknown|curl|HTML)" ; then
     echo "  Weather unavailable"
