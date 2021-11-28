@@ -1,0 +1,9 @@
+[Unit]
+Description=Trigger refresh updatestatus every 2 hours
+
+[Timer]
+OnBootSec=10min
+OnUnitActiveSec=2h
+
+[Install]
+WantedBy=timers.target

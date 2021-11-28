@@ -33,6 +33,7 @@ _gen_update_stats() {
 }
 
 _show_details=false
+_show_info_oneline=false
 _send_notification=false
 _show_debug=false
 _refresh=false
@@ -40,6 +41,7 @@ for arg; do
     case "$arg" in
         -r) _refresh=true ;;
         -d) _show_details=true ;;
+        -o) _show_info_oneline=true ;;
         -v) _show_debug=true ;;
         -n) _send_notification=true ;;
          *) ;;
@@ -75,6 +77,8 @@ if $_show_details; then
     echo "  Ignored groups:"
     echo "$ignored_grp" | tr ' ' '\n' | xargs -r -I {} echo "    - {}"
   fi
+elif $_show_info_oneline; then
+  echo "updatestatus: package updates: $updates_count (main = $main_count, aur = $aur_count)"
 else
   echo "$updates_count"
 fi

@@ -1,0 +1,9 @@
+[Unit]
+Description=Refresh updatestatus and send notification
+
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/env updatestatus -r -n -o
+
+[Install]
+WantedBy=default.target
