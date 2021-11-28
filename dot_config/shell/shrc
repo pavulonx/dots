@@ -186,21 +186,25 @@ alias \
 
 # view or edit command
 vcmd() {
-  [ -z "$1" ] && echo "Usage: vcmd <command>" && return 1;
+  [ -z "$1" ] && printf "Usage: vcmd <command> [-]\ntrailing '-' will open containing file\n" && return 1;
   command -V "$1" || return 1;
-  _vx_cmd="$(command -v "$1")";
-  if [ "$_vx_cmd" = "$1" ]; then # builtin function
-    which "$_vx_cmd" | cat | bat --language=sh --style=grid,numbers --color=always
-  elif [ -x "$_vx_cmd" ]; then
-    file "$_vx_cmd"
-    if file "$_vx_cmd" | grep -Eq ".*shell\ script.*executable.*"; then
-      bat --color=always "$_vx_cmd"
+  _print_info=false; [ "$2" = '-' ] && _print_info=true;
+  _cmd_info="$(LANG=C command -V "$1")";
+  _cmd="$(command -v "$1")";
+  if expr "$_cmd_info" : ".* is a shell function.*" >/dev/null 2>&1; then # builtin function
+    "$_print_info" && declare -f "$_cmd" | cat | bat --language=sh --style=grid,numbers --color=always
+  elif expr "$_cmd_info" : "$1 is /.*" >/dev/null 2>&1; then
+    _file="${_cmd_info#* is }"
+    _file_realpath="$(realpath "$_file")"
+    file "$_file"
+    if "$_print_info" && LANG=C file -i "$_file_realpath" 2>&1 | \grep -q ':\s*text/'; then
+      bat --color=always "$_file_realpath"
       echo "Press Enter to edit, CTRL+C to abort"
       read -r </dev/stdin
-      "$EDITOR" "$_vx_cmd"
+      "$EDITOR" "$_file_realpath"
     fi
   fi
-  unset _vx_cmd
+  unset _cmd
 }
 
 ssha() {
