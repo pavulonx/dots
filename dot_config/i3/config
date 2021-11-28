@@ -231,7 +231,7 @@ assign [class="Steam"] $ws6
 assign [class="jetbrains-*"] $ws3
 
 # Open specific applications in floating mode
-for_window [title="alsamixer"] floating enable border pixel 1
+for_window [instance="floating-terminal"] floating enable
 for_window [class="deluge|Deluge-gtk"] floating enable
 for_window [class="GParted"] floating enable border normal
 for_window [class="[nN]m-connection-editor"] floating enable sticky enable border normal
