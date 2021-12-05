@@ -27,6 +27,7 @@ core=(
   arch-install-scripts
   bat
   bmon
+  bottom
   chezmoi
   git
   git-delta
@@ -54,6 +55,7 @@ core=(
   rsync
   shellcheck
   tealdeer
+  tig
   tree
   tumbler
   unzip
