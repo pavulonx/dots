@@ -56,6 +56,7 @@ core=(
   shellcheck
   tealdeer
   tig
+  tmux
   tree
   tumbler
   unzip
