@@ -16,6 +16,5 @@ TODOs:
  - minimal config for root - zshrc/bashrc etc
  - bootstrap minimal packages
  - bootstrap for server
- - dunst - match slack and use icon in chrome notification
  - remove chezmoi
  - setup xbacklight - notification about backlight - https://unix.stackexchange.com/questions/301724/xbacklight-not-working
