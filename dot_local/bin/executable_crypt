@@ -75,14 +75,19 @@ _status() {
 }
 
 _get_crypts() {
-  awk '/[[:blank:]*][^#].*/  { if (NF == 3) { printf "%s:%s:%s\n", $1, $2, $3 } }' "$CRYPT_CONFIG" | sort -u -t':' -k1,1
+  mounts="$(mktemp -p /tmp mounts-XXXXXX)"
+  awk '{print $2":"$3}' /proc/mounts | sort -t: -k1,1 >"$mounts"
+  awk '/[[:blank:]*][^#].*/  { if (NF == 3) { printf "%s:%s:%s\n", $1, $2, $3 } }' "$CRYPT_CONFIG" | sort -u -t: -k3,3 |
+    join -t: -1 1 -2 3 -a 2 -e '-' -o 2.1,2.2,2.3,1.2 "$mounts" - |
+    sort -u -t':' -k1,1
+  rm -f "$mounts"
 }
 
 _list() {
   {
-    echo "NAME:PARTITION UUID:MOUNTPOINT"
+    echo "NAME:PARTITION UUID:MOUNTPOINT:MOUNTED"
     _get_crypts
-  } | awk -F: '{ printf "%-16s%-40s%s\n", $1, $2, $3 }'
+  } | awk -F: '{ printf "%-16s%-40s%-24s%s\n", $1, $2, $3, $4 }'
 }
 
 _parse() {
