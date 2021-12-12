@@ -1,8 +1,8 @@
-import Graphics.X11.Xlib
-import Graphics.X11.Xlib.Extras
-import System.Environment
-import System.IO
-import Data.Char
+import           Data.Char
+import           Graphics.X11.Xlib
+import           Graphics.X11.Xlib.Extras
+import           System.Environment
+import           System.IO
 
 main :: IO ()
 main = parse True "XMONAD_COMMAND" =<< getArgs
@@ -24,15 +24,10 @@ parse input addr args = case args of
 
 
 repl :: String -> IO ()
-repl addr = do e <- isEOF
-               case e of
-                True -> return ()
-                False -> do l <- getLine
-                            sendCommand addr l
-                            repl addr
+repl addr = do eof <- isEOF; if eof then putStrLn "Bye!" else getLine >>= sendCommand addr >> repl addr
 
 sendAll :: String -> [String] -> IO ()
-sendAll addr ss = foldr (\a b -> sendCommand addr a >> b) (return ()) ss
+sendAll addr = foldr (\a b -> sendCommand addr a >> b) (return ())
 
 sendCommand :: String -> String -> IO ()
 sendCommand addr s = do
@@ -48,4 +43,4 @@ sendCommand addr s = do
 
 showHelp :: IO ()
 showHelp = do pn <- getProgName
-              putStrLn ("Send commands to a running instance of xmonad. xmonad.hs must be configured with XMonad.Hooks.ServerMode to work.\n-a atomname can be used at any point in the command line arguments to change which atom it is sending on.\nIf sent with no arguments or only -a atom arguments, it will read commands from stdin.\nEx:\n" ++ pn ++ " cmd1 cmd2\n" ++ pn ++ " -a XMONAD_COMMAND cmd1 cmd2 cmd3 -a XMONAD_PRINT hello world\n" ++ pn ++ " -a XMONAD_PRINT # will read data from stdin.\nThe atom defaults to XMONAD_COMMAND.")
+              putStrLn ("Send commands to a running instance of xmonad. xmonad.hs must be configured with XMonad.Hooks.ServerMode to work.\n\t-a atomname can be used at any point in the command line arguments to change which atom it is sending on.\nIf sent with no arguments or only -a atom arguments, it will read commands from stdin.\nExample:\n\t" ++ pn ++ " cmd1 cmd2\n\t" ++ pn ++ " -a XMONAD_COMMAND cmd1 cmd2 cmd3 -a XMONAD_PRINT hello world\n\t" ++ pn ++ " -a XMONAD_PRINT # will read data from stdin.\nThe atom defaults to XMONAD_COMMAND.")

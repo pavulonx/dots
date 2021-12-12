@@ -328,8 +328,7 @@ myManageHook = composeAll
      , className =? "mpv"     --> doShift ( myWorkspaces !! 7 )
      , className =? "Gimp"    --> doShift ( myWorkspaces !! 8 )
      , className =? "Gimp"    --> doFloat
-     , fmap (isInfixOf "floating-terminal") className  --> doFloat
-     -- , fmap (isInfixOf "floating-terminal") className  --> doFloat
+     , appName =? "floating-terminal"  --> doFloat
      , title =? "Oracle VM VirtualBox Manager"     --> doFloat
      , className =? "VirtualBox Manager" --> doShift  ( myWorkspaces !! 4 )
      , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat  -- Float Firefox Dialog
