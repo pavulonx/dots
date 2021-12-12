@@ -65,7 +65,7 @@ case "$cmd" in
   exit)
     case "$DESKTOP_SESSION" in
       i3)     i3-msg exit ;;
-      xmonad) "$XMONAD_CONFIG_DIR/xmonadctl" quit-wm ;;
+      xmonad) xmonadctl quit-wm ;;
       bspwm)  bspc quit ;;
       dwm)    pkill dwm ;;
       *)

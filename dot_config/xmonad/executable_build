@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd "$XDG_CONFIG_HOME/xmonad" || exit 1
+stack build
+stack install
