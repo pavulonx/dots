@@ -10,7 +10,7 @@ import           XMonad.Actions.CopyWindow           (kill1)
 import           XMonad.Actions.CycleWS              (WSType (..), moveTo,
                                                       nextScreen, nextWS,
                                                       prevScreen, prevWS,
-                                                      shiftNextScreen,
+                                                      shiftNextScreen, emptyWS,
                                                       shiftPrevScreen, shiftTo,
                                                       toggleWS)
 import           XMonad.Actions.GridSelect
@@ -29,6 +29,7 @@ import qualified Data.Map                            as M
 import           Data.Maybe                          (fromJust, isJust)
 import           Data.Monoid
 import           Data.Tree
+import           Data.List                            (isInfixOf)
 
     -- Hooks
 import           XMonad.Hooks.DynamicLog             (PP (..), dynamicLogWithPP,
@@ -38,6 +39,7 @@ import           XMonad.Hooks.EwmhDesktops
 import           XMonad.Hooks.FadeInactive
 import           XMonad.Hooks.ManageDocks            (ToggleStruts (..),
                                                       avoidStruts,
+                                                      docks,
                                                       docksEventHook,
                                                       manageDocks)
 import           XMonad.Hooks.ManageHelpers          (doFullFloat, isFullscreen)
@@ -186,8 +188,14 @@ windowCount = gets $ Just . show . length . W.integrate' . W.stack . W.workspace
 
 myStartupHook :: X ()
 myStartupHook = do
+    -- Launching three instances of xmobar on their monitors.
+--    dbus <- mkDbusClient
+  spawnPipe "$XDG_CONFIG_HOME/polybar/launch.sh"
+  spawnPipe "wallpaper restore &"
+--    xmproc0 <- spawnPipe "xmobar -x 0 $XMONAD_CONFIG_DIR/xmobar/bar0.hs"
+--    xmproc1 <- spawnPipe "xmobar -x 1 $XMONAD_CONFIG_DIR/xmobar/bar2.hs"
+--    xmproc2 <- spawnPipe "xmobar -x 2 $XMONAD_CONFIG_DIR/xmobar/bar1.hs"
 --  spawnOnce "~/.config/polybar/launch.sh &"
---  spawnOnce "nitrogen --restore &"
   spawnOnce "autorandr -c &"
 --   spawnOnce "trayer --edge top --align right --widthtype request --padding 6 --SetDockType true --SetPartialStrut true --expand true --monitor 1 --transparent true --alpha 0 --tint 0x080808  --height 22 &"
   setWMName "LG3D"
@@ -320,6 +328,8 @@ myManageHook = composeAll
      , className =? "mpv"     --> doShift ( myWorkspaces !! 7 )
      , className =? "Gimp"    --> doShift ( myWorkspaces !! 8 )
      , className =? "Gimp"    --> doFloat
+     , fmap (isInfixOf "floating-terminal") className  --> doFloat
+     -- , fmap (isInfixOf "floating-terminal") className  --> doFloat
      , title =? "Oracle VM VirtualBox Manager"     --> doFloat
      , className =? "VirtualBox Manager" --> doShift  ( myWorkspaces !! 4 )
      , (className =? "firefox" <&&> resource =? "Dialog") --> doFloat  -- Float Firefox Dialog
@@ -381,9 +391,9 @@ myKeys =
 
 
         --, ("M-C-h", prevWS)   -- Swap focused window with next window
-        , ("M-C-<Left>", moveTo Prev NonEmptyWS )   -- Swap focused window with next window
+        , ("M-C-<Left>", moveTo Prev $ Not emptyWS )   -- Swap focused window with next window
         --, ("M-C-l", nextWS)   -- Swap focused window with next window
-        , ("M-C-<Right>", moveTo Next NonEmptyWS)   -- Swap focused window with next window
+        , ("M-C-<Right>", moveTo Next $ Not emptyWS)   -- Swap focused window with next window
 --        , ((modm,               xK_Down),  nextWS)
 --        , ((modm,               xK_Up),    prevWS)
 --  	, ((modm .|. shiftMask, xK_Down), shiftToNext >> nextWS)
@@ -454,16 +464,9 @@ myKeys =
 
 main :: IO ()
 main = do
-    -- Launching three instances of xmobar on their monitors.
---    dbus <- mkDbusClient
-    _ <- spawnPipe "$XDG_CONFIG_HOME/polybar/launch.sh"
-    _ <- spawnPipe "wallpaper restore &"
---    xmproc0 <- spawnPipe "xmobar -x 0 $XMONAD_CONFIG_DIR/xmobar/bar0.hs"
---    xmproc1 <- spawnPipe "xmobar -x 1 $XMONAD_CONFIG_DIR/xmobar/bar2.hs"
---    xmproc2 <- spawnPipe "xmobar -x 2 $XMONAD_CONFIG_DIR/xmobar/bar1.hs"
     -- the xmonad, ya know...what the WM is named after!
-    xmonad $ ewmh def
-        { manageHook = ( isFullscreen --> doFullFloat ) <+> myManageHook <+> manageDocks
+    xmonad $ ewmh $ docks $ def
+        { manageHook = ( isFullscreen --> doFullFloat ) <+> myManageHook
         -- Run xmonad commands from command line with "xmonadctl command". Commands include:
         -- shrink, expand, next-layout, default-layout, restart-wm, xterm, kill, refresh, run,
         -- focus-up, focus-down, swap-up, swap-down, swap-master, sink, quit-wm. You can run
@@ -472,11 +475,10 @@ main = do
         , handleEventHook    = serverModeEventHookCmd
                                <+> serverModeEventHook
                                <+> serverModeEventHookF "XMONAD_PRINT" (io . putStrLn)
-                               <+> docksEventHook
         , modMask            = myModMask
         , terminal           = myTerminal
         , startupHook        = myStartupHook
-        , layoutHook         = showWName' myShowWNameTheme $ myLayoutHook
+        , layoutHook         = showWName' myShowWNameTheme myLayoutHook
         , workspaces         = myWorkspaces
         , borderWidth        = myBorderWidth
         , normalBorderColor  = myNormColor

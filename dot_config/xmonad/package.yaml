@@ -16,8 +16,8 @@ description:         Please see the README on GitHub at <https://github.com/gith
 
 dependencies:
 - base >= 4.7 && < 5
-- xmonad == 0.15
-- xmonad-contrib == 0.16
+- xmonad >= 0.17
+- xmonad-contrib >= 0.17
 - X11
 - containers
 - text
