@@ -12,6 +12,7 @@ import           XMonad.Actions.CycleWS              (WSType (..), moveTo,
                                                       prevScreen, prevWS,
                                                       shiftNextScreen, emptyWS,
                                                       shiftPrevScreen, shiftTo,
+                                                      toggleOrDoSkip,
                                                       toggleWS)
 import           XMonad.Actions.GridSelect
 import           XMonad.Actions.MouseResize
@@ -405,6 +406,7 @@ myKeys =
 --        , ((modm .|. shiftMask, xK_Left),  shiftPrevScreen)
 --        , ((modm,               xK_z),     toggleWS)
         , ("M-z",     toggleWS)
+        -- , ("M-z",      toggleOrDoSkip [] W.view)
 
 
     -- Layouts
@@ -457,6 +459,25 @@ myKeys =
         , ("<XF86HomePage>", spawn "$BROWSER")
         , ("<XF86Calculator>", runOrRaise "gnome-calculator" (resource =? "gnome-calculator"))
         ]
+    ++
+    -- mod-[1..9] %! Switch to workspace N
+    -- mod-shift-[1..9] %! Move client to workspace N
+    -- [("M-" ++ modmasks ++ key, gets windowset >>= (\worksp -> if W.tag (W.workspace (W.current worksp)) == ws then toggleWS else windows $ action ws))
+    -- [("M-" ++ modmasks ++ key,  windows $ action ws)
+    -- todo: frobably can use toggleOrView
+    -- [("M-" ++ modmasks ++ key, gets (W.currentTag . windowset) >>= (\currWsTag -> if currWsTag == ws then toggleWS else windows $ action ws))
+    [("M-" ++ modmasks ++ key, toggleOrDoSkip [] action ws)
+        | (ws, key) <- zip myWorkspaces $ fmap show [1 .. 9]
+        -- , (action, modmasks) <- [(W.view, ""), (\ws -> W.shift ws >> W.view ws, "S-")]] -- desnt work
+        , (action, modmasks) <- [(W.view, ""), (W.shift, "S-")]]
+
+    -- TODO: use mod mask and typed keys instead of string
+    -- mod-[1..9] %! Switch to workspace N
+    -- mod-shift-[1..9] %! Move client to workspace N
+    -- [((m .|. modMask, k), windows $ f i)
+    --    | (i, k) <- zip (XMonad.workspaces conf) [xK_1 .. xK_9]
+    --    , (f, m) <- [(W.view, 0), (W.shift, shiftMask)]]
+
     -- The following lines are needed for named scratchpads.
           where nonNSP          = WSIs (return (\ws -> W.tag ws /= "nsp"))
                 nonEmptyNonNSP  = WSIs (return (\ws -> isJust (W.stack ws) && W.tag ws /= "nsp"))
