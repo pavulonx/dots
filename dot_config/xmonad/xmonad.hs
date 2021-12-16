@@ -168,8 +168,8 @@ myLogHook = fadeInactiveLogHook 0.95 -- 0.9
 myFont :: String
 myFont = "xft:Lato:bold:size=9:antialias=true:hinting=true"
 
-myModMask :: KeyMask
-myModMask = mod4Mask       -- Sets modkey to super/windows key
+superK :: KeyMask
+superK = mod4Mask       -- Sets modkey to super/windows key
 
 myTerminal :: String
 myTerminal = "$TERMINAL"   -- Sets default terminal
@@ -336,7 +336,6 @@ myManageHook = composeAll
      ] <+> namedScratchpadManageHook myScratchPads
 
 
-
 myKeys :: [(String, X ())]
 myKeys =
     -- Xmonad
@@ -495,7 +494,7 @@ main = do
         , handleEventHook    = serverModeEventHookCmd
                                <+> serverModeEventHook
                                <+> serverModeEventHookF "XMONAD_PRINT" (io . putStrLn)
-        , modMask            = myModMask
+        , modMask            = superK
         , terminal           = myTerminal
         , startupHook        = myStartupHook
         , layoutHook         = showWName' myShowWNameTheme myLayoutHook

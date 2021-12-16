@@ -21,6 +21,7 @@ Plug 'lifepillar/vim-solarized8'
 Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
+Plug 'neovimhaskell/haskell-vim'
 Plug 'autozimu/LanguageClient-neovim', {'branch': 'next', 'do': 'bash install.sh'}
 " Plug 'ap/vim-css-color' " disabled because of https://github.com/ap/vim-css-color/issues/139
 call plug#end()
