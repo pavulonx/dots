@@ -1,6 +1,7 @@
 # setup path
 _user_path="$(find ~/.local/bin -type d | tac | tr '\n' ':')"
-export PATH="${_user_path}${PATH}:$HOME/.local/share/coursier/bin"
+_user_path="${_user_path}$HOME/.local/share/coursier/bin:$HOME/.local/share/ghcup/.ghcup/bin"
+export PATH="${_user_path}:${PATH}"
 
 # default programs
 export TERMINAL="/usr/bin/alacritty"
@@ -32,6 +33,7 @@ export ELECTRUMDIR="$XDG_DATA_HOME/electrum"
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
 export LESSHISTFILE="-"
 export GNUPGHOME="$XDG_DATA_HOME/gnupg"
+export GHCUP_INSTALL_BASE_PREFIX="$HOME/.local/share/ghcup"
 export XMONAD_DATA_DIR="$XDG_DATA_HOME/xmonad"
 export XMONAD_CONFIG_DIR="$XDG_CONFIG_HOME/xmonad"
 export XMONAD_CACHE_DIR="$XDG_CACHE_HOME/xmonad"
