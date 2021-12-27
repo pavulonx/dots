@@ -21,8 +21,7 @@ export LESSOPEN='| /usr/bin/highlight -O ansi %s 2>/dev/null'
 # system
 alias \
         ka='killall' \
-        pacmanclean='sudo pacman -R `pacman -Qdtq`' \
-        xlogs='cat $XDG_CACHE_HOME/xsessionlogs/current.log';
+        pacmanclean='sudo pacman -R `pacman -Qdtq`';
 
 # Use neovim for vim if present.
 [ -x "$(command -v nvim)" ] && alias vim='nvim' vimdiff='nvim -d';
@@ -45,8 +44,7 @@ alias \
         de='dotedit' \
         shck='shellcheck' \
         yt='youtube-dl --add-metadata -i' \
-        yta='yt -x -f bestaudio/best' \
-        xlogs='cat $HOME/.cache/xstart/latest.log';
+        yta='yt -x -f bestaudio/best';
 
 # ls
 alias \

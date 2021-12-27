@@ -166,6 +166,9 @@ trap 'cleanup' EXIT HUP TERM EXIT INT QUIT
 xauth add "$display" MIT-MAGIC-COOKIE-1 "$mcookie"
 
 # shellcheck disable=SC2086
-DESKTOP_SESSION="$xsession" \
-  exec xinit "$xinitrc" -- "$xserver" "$display" "vt$tty_num" -keeptty -auth "$XAUTHORITY" 2>&1 |
-  ts '[%Y-%m-%d %H:%M:%S]' >>"$log_file" 2>&1
+{
+  {
+    DESKTOP_SESSION="$xsession" \
+      exec xinit "$xinitrc" -- "$xserver" "$display" "vt$tty_num" -keeptty -auth "$XAUTHORITY"
+  } | ts '[%Y-%m-%d %H:%M:%S] [OUT] |' >>"$log_file"
+} 2>&1 | ts '[%Y-%m-%d %H:%M:%S] [ERR] |' >>"$log_file"
