@@ -54,6 +54,8 @@ _profile_local="$XDG_CONFIG_HOME/shell/profile.local"
 # run xstart if X are not running
 if [ "$(tty)" = "/dev/tty1" ] && ! pgrep X; then
   xstart
+else
+  :
 fi
 
 # vi:syntax=sh

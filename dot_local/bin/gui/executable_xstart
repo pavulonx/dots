@@ -1,31 +1,44 @@
 #!/bin/sh
 
-# Start xinit with DESKTOP_SESSION environment variable passed to it
-
-# TODO:
-#   - check if xinitrc uses DESKTOP_SESSION env variable, warn if not
-#   - write help command
-#   - add verbose logging option
-
-# usage: xstart [ SESSION_NAME ]
-# SESSION_NAME   name of the session if not set run in interactive mode
-# flags: -c confirm -v verbose
-
 XSTART_X11_CONFIG_DIR="${XSTART_X11_CONFIG_DIR:-"$XDG_CONFIG_HOME/x11"}"
 XSTART_ENABLED_SESSIONS="${XSTART_ENABLED_SESSIONS:-"i3 xmonad bspwm dwm awesome xfce"}"
 XSTART_LOGS_DIR="${XSTART_LOGS_DIR:-"$XDG_CACHE_HOME/xstart"}"
 XSTART_LOGS_HISTORY="${XSTART_LOGS_HISTORY:-5}"
 XSTART_EXEC_DIR="${XSTART_EXEC_DIR:-$HOME}"
 
-xpids="$(pgrep nvim 2>/dev/null)"
-if [ -n "$xpids" ]; then
-  printf "WARNING! Xorg is running with pid(s): \n"
-  echo "$xpids"
-  printf "Continue? [y/N]: "
-  read -r yn
-  echo "$yn" | grep -qE '[yY][eE]?[sS]?' || exit 1
-fi
+_die() {
+  echo "$@" >&2; exit 1
+}
 
+_help() {
+  cat <<EOF
+Starts X session and sets DESKTOP_SESSION enviroment variable
+Usage: $(basename "$0") [-h] [ SESSION_NAME ]
+  SESSION_NAME  - optional name of the session, if not set will run in interactive mode
+  -h/--help     - prints this message
+
+Environment:
+  XSTART_LOGS_DIR=$XSTART_LOGS_DIR
+    location of logs
+  XSTART_EXEC_DIR=$XSTART_EXEC_DIR
+    directory in which X will be started
+  XSTART_X11_CONFIG_DIR=$XSTART_X11_CONFIG_DIR
+    config directory for X files
+
+Use xlogs for retrieve formatted logs
+EOF
+}
+
+_check_X_running() {
+  xpids="$(pgrep X 2>/dev/null)"
+  if [ -n "$xpids" ]; then
+    printf "WARNING! Xorg is running with pid(s): \n"
+    echo "$xpids"
+    printf "Continue? [y/N]: "
+    read -r yn
+    echo "$yn" | grep -qE '[yY][eE]?[sS]?' || exit 1
+  fi
+}
 
 resolve_xinitrc() {
   _xinitrc_path=""
@@ -58,18 +71,31 @@ resolve_xserver() {
 #### MAIN
 
 # parse cmdline args
-_choice="$1"
-
+_choice=
+for arg; do
+  case "$arg" in
+    -h) _help; exit 0
+      ;;
+    *)
+      if [ -z "$_choice" ]; then
+        _choice="$arg";
+      else
+        _die "Bad argument '$arg'";
+      fi
+      ;;
+  esac
+done
 
 # resolving available sessions
 # shellcheck disable=SC2086
 available_sessions="$(command -v $XSTART_ENABLED_SESSIONS 2> /dev/null | xargs -I {} basename {})"
 if [ -z "$available_sessions" ]; then
-  cat <<EOF >&2
+  _die "$(cat <<EOF
 No available session found!
 Install one or set XSTART_ENABLED_SESSIONS variable
 XSTART_ENABLED_SESSIONS='$XSTART_ENABLED_SESSIONS'
 EOF
+)"
 exit 1
 fi
 
@@ -92,20 +118,20 @@ fi
 # check if choosen session is available
 xsession="$(echo "$available_sessions" | grep -Eo "^$_choice$")"
 if [ -z "$xsession" ] || [ "$(echo "$xsession" | wc -l)" -ne 1 ]; then
-  echo "Bad session!"
-  exit 1
+  _die "Bad session!"
 fi
 
 
 # resolve xinitrc
 xinitrc="$(resolve_xinitrc "$xsession")"
-[ -z "$xinitrc" ] && echo "Could not resolve xinitrc config" >&2 && exit 2
+[ -z "$xinitrc" ] && _die "Could not resolve xinitrc config"
 
 
 # resolve xinitrc
 xserver="$(resolve_xserver)"
-[ -z "$xinitrc" ] && echo "Could not resolve X server" >&2 && exit 2
+[ -z "$xinitrc" ] && _die "Could not resolve X server"
 
+_check_X_running
 
 # prepare logging
 mkdir -p "$XSTART_LOGS_DIR"
@@ -133,14 +159,14 @@ unset d
 
 # datermine tty
 tty=$(tty); tty_num="${tty#/dev/tty}"
-! [ "$tty_num" -ge 0 ] >/dev/null 2>&1 && echo "TTY '$tty' is invalid" >&2 && exit 1
+! [ "$tty_num" -ge 0 ] >/dev/null 2>&1 && _die "TTY '$tty' is invalid"
 
 # get cookie
 mcookie="$(/usr/bin/mcookie)"
-[ -z "$mcookie" ] && echo "Couldn't create cookie" >&2 && exit 1
+[ -z "$mcookie" ] && _die "Couldn't create cookie"
 
 # start X with given session
-echo "Starting session: $xsession" | tee -a "$log_file"
+_log "Starting session: $xsession" | tee -a "$log_file"
 cat <<EOF >>"$log_file"
 ----------------------------------------------------------
 Info:
@@ -165,7 +191,6 @@ cleanup() {
 trap 'cleanup' EXIT HUP TERM EXIT INT QUIT
 xauth add "$display" MIT-MAGIC-COOKIE-1 "$mcookie"
 
-# shellcheck disable=SC2086
 {
   {
     DESKTOP_SESSION="$xsession" \
