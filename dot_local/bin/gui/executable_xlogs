@@ -2,29 +2,36 @@
 
 follow=false
 force_color=false
+list=false
 for arg; do
   case "$arg" in
     -f|--follow) follow=true ;;
     -c|--color)  force_color=true ;;
+    l|list)      list=true ;;
     *) ;;
   esac
 done
 
-lastlog="$XDG_CACHE_HOME/xstart/latest.log"
+logfile=
+if "$list"; then
+  logfile="$(find "$XDG_CACHE_HOME/xstart" -type f | sort -ur | fzf --preview 'head -n20 {}')"
+else
+  logfile="$XDG_CACHE_HOME/xstart/latest.log"
+fi
+[ -z "$logfile" ] && exit 0
 
-! [ -f "$lastlog" ] && echo "File $lastlog does not exist!" >&2 && exit 1
+
+! [ -f "$logfile" ] && echo "File $logfile does not exist!" >&2 && exit 1
 
 printer='cat'
 "$follow" && printer='tail -f'
 
 if [ -t 1 ] || "$force_color"; then # colorize outfut when connected to terminal
-
-  $printer "$lastlog" | sed '
+  $printer "$logfile" | sed '
   s/^\(Starting session:.*\)/\x1b[1m\1\x1b[0m/
   s/^\(.*\)\[ERR\] |/\x1b[1m\1\x1b[0m\x1b[31;1m[ERR]\x1b[0m |/g
   s/^\(.*\)\[OUT\] |/\x1b[1m\1\x1b[0m\x1b[1m[OUT]\x1b[0m |/g
   '
-
 else
-  $printer "$lastlog"
+  $printer "$logfile"
 fi
