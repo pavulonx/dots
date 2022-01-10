@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 _fail() {
   echo "$1" >&2
   exit 1
@@ -90,10 +92,7 @@ _get_crypts() {
 }
 
 _list() {
-  {
-    echo "NAME:PARTITION UUID:MOUNTPOINT:MOUNTED"
-    _get_crypts
-  } | awk -F: '{ printf "%-16s%-40s%-24s%s\n", $1, $2, $3, $4 }'
+  _get_crypts | column -t -s: --table-columns 'NAME,CRYPT PATH,MOUNTPOINT,MOUNTED'
 }
 
 _parse() {
@@ -107,7 +106,6 @@ _parse() {
 
   CRYPT_PATH="$(echo "$_crypt_settings" | cut -d: -f2)"
   CRYPT_REAL_PATH="$(realpath -e "$CRYPT_PATH")"
-  [ ! -s "$CRYPT_REAL_PATH" ] && _fail "'$CRYPT_REAL_PATH' does not exist!"
 
   CRYPT_MOUNTPOINT="$(echo "$_crypt_settings" | cut -d: -f3)"
   [ ! -d "$CRYPT_MOUNTPOINT" ] && _fail "Mount directory '$CRYPT_MOUNTPOINT' not found!"

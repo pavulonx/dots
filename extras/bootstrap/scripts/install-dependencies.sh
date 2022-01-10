@@ -42,6 +42,8 @@ core=(
   lf-bin
   lua
   moreutils
+  man-db
+  man-pages
   neofetch
   neovim
   nodejs # needed by nvim coc
