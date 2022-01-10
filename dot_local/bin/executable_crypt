@@ -12,12 +12,14 @@ Usage: $0 <COMMAND> [CRYPT]
 Manages encrypted device CRYPT defined in CRYPT_CONFIG
 
 Available COMMANDs:
-  mount   CRYPT    - mounts CRYPT
-  open    CRYPT    - mounts and opens CRYPT
-  umount  CRYPT    - umounts CRYPT
-  close   CRYPT    - umounts and closes CRYPT
-  status  CRYPT    - show info about CRYPT
-  list             - lists available crypts in CRYPT_CONFIG
+  m|mount     CRYPT    - mounts CRYPT
+  o|open      CRYPT    - mounts and opens CRYPT
+  u|umount    CRYPT    - umounts CRYPT
+  c|close     CRYPT    - umounts and closes CRYPT
+  s|status    CRYPT    - show info about CRYPT
+  ls|list              - lists available crypts in CRYPT_CONFIG
+  cfg|config           - print parsed contents of CRYPT_CONFIG
+  h|help               - print help info
 
 Environment vairables:
   CRYPT_CONFIG    - path to crypt config (set to '$CRYPT_CONFIG')
@@ -27,7 +29,7 @@ EOF
 [ "$(id -u)" -eq 0 ] && _fail "Must not be executed with superuser priviledges!"
 
 CWD="$PWD"
-CRYPT_CONFIG=${CRYPT_CONFIG:-}
+CRYPT_CONFIG=${CRYPT_CONFIG:-"$XDG_CONFIG_HOME/crypt/crypt.conf"}
 [ -z "$CRYPT_CONFIG" ] && _fail "CRYPT_CONFIG is not set!"
 ! [ -f "$CRYPT_CONFIG" ] && _fail "CRYPT_CONFIG file: '$CRYPT_CONFIG' not found"
 
@@ -42,13 +44,15 @@ _mount() {
 }
 
 _open() {
-  sudo cryptsetup open "$CRYPT_DRIVE_PATH" "$CRYPT_NAME" ||
+  sudo cryptsetup open "$CRYPT_REAL_PATH" "$CRYPT_NAME" ||
     _fail "Unable to open '$CRYPT_NAME'"
   _mount
 }
 
 _umount() {
-  echo "$CWD" | grep "$CRYPT_MOUNTPOINT" && cd ~ || exit 1
+  if echo "$CWD" | grep -q "$CRYPT_MOUNTPOINT"; then
+    cd ~ || exit 1
+  fi
   sudo umount "$CRYPT_MAPPER_PATH" ||
     _fail "Unable to umount '$CRYPT_NAME' of '$CRYPT_MAPPER_PATH'"
 }
@@ -60,18 +64,20 @@ _close() {
 }
 
 _status() {
+  if grep -qs "$CRYPT_MAPPER_PATH " /proc/mounts; then
+    sudo cryptsetup status "$CRYPT_NAME"
+  else
+    echo "$CRYPT_NAME is locked"
+  fi
   if grep -qs "$CRYPT_MOUNTPOINT " /proc/mounts; then
+    echo
     echo "Mount: "
     grep "$CRYPT_MOUNTPOINT " /proc/mounts
-    # TODO: support for non block devices if needed
-    # do not fail if CRYPT_DRIVE_PATH is not block device
-    # [ -b "$CRYPT_DRIVE_PATH" ] && lsblk "$CRYPT_DRIVE_PATH"
-    lsblk "$CRYPT_DRIVE_PATH"
+    [ -b "$CRYPT_MAPPER_PATH" ] && lsblk "$CRYPT_MAPPER_PATH"
   else
     echo "$CRYPT_NAME is not mounted"
   fi
   echo
-  sudo cryptsetup status "$CRYPT_NAME"
 }
 
 _get_crypts() {
@@ -99,9 +105,9 @@ _parse() {
   CRYPT_NAME="$(echo "$_crypt_settings" | cut -d: -f1)"
   CRYPT_MAPPER_PATH="/dev/mapper/$CRYPT_NAME"
 
-  CRYPT_DISK_UUID="$(echo "$_crypt_settings" | cut -d: -f2)"
-  CRYPT_DRIVE_PATH="$(readlink -f "/dev/disk/by-uuid/$CRYPT_DISK_UUID")"
-  [ ! -b "$CRYPT_DRIVE_PATH" ] && _fail "'$CRYPT_DRIVE_PATH' is not block special!"
+  CRYPT_PATH="$(echo "$_crypt_settings" | cut -d: -f2)"
+  CRYPT_REAL_PATH="$(realpath -e "$CRYPT_PATH")"
+  [ ! -s "$CRYPT_REAL_PATH" ] && _fail "'$CRYPT_REAL_PATH' does not exist!"
 
   CRYPT_MOUNTPOINT="$(echo "$_crypt_settings" | cut -d: -f3)"
   [ ! -d "$CRYPT_MOUNTPOINT" ] && _fail "Mount directory '$CRYPT_MOUNTPOINT' not found!"
@@ -110,10 +116,10 @@ _parse() {
   echo "'$CRYPT_NAME' configuration:"
   cat <<EOF
   CRYPT_NAME          $CRYPT_NAME
-  CRYPT_MAPPER_PATH   $CRYPT_MAPPER_PATH
-  CRYPT_DISK_UUID     $CRYPT_DISK_UUID
-  CRYPT_DRIVE_PATH    $CRYPT_DRIVE_PATH
+  CRYPT_PATH          $CRYPT_PATH
   CRYPT_MOUNTPOINT    $CRYPT_MOUNTPOINT
+  CRYPT_REAL_PATH     $CRYPT_REAL_PATH
+  CRYPT_MAPPER_PATH   $CRYPT_MAPPER_PATH
 EOF
   echo ""
 }
@@ -126,34 +132,34 @@ _cmd="$1"
 _crypt_name="$2"
 
 case $_cmd in
-  umount)
+  u|umount)
     _parse
     _umount
     ;;
-  mount)
+  m|mount)
     _parse
     _mount
     ;;
-  open)
+  o|open)
     _parse
     _open
     ;;
-  close)
+  c|close)
     _parse
     _close
     ;;
-  status)
+  s|status)
     _parse
     _status
     ;;
-  get-config)
+  cfg|config)
     _get_crypts
     exit 0
     ;;
-  list)
+  ls|list)
     _list
     ;;
-  ''|help)
+  ''|h|help)
     _help
     ;;
   *)
