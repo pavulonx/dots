@@ -205,10 +205,8 @@ vcmd() {
   unset _cmd
 }
 
-ssha() {
-  test -z "$SSH_AUTH_SOCK" && echo "SSH_AUTH_SOCK is not set" && return 1;
-  test -e "$SSH_AUTH_SOCK" && echo "SSH_AUTH_SOCK=$SSH_AUTH_SOCK already exists. Is agent running?" && return 2;
-  eval "$(ssh-agent -a "$SSH_AUTH_SOCK")";
+sshae() {
+  eval "$(ssha)";
 }
 
 # archives

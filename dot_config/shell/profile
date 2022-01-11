@@ -17,7 +17,7 @@ export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_STATE_HOME="$HOME/.local/state"
 
-# cleanup home dir
+# home dir debloat
 export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
 export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc-2.0"
 export WGETRC="$XDG_CONFIG_HOME/wget/wgetrc"
@@ -31,7 +31,6 @@ export _Z_DATA="$XDG_DATA_HOME/z"
 export _ZL_DATA="$_Z_DATA"
 export ELECTRUMDIR="$XDG_DATA_HOME/electrum"
 export ZDOTDIR="$XDG_CONFIG_HOME/zsh"
-export LESSHISTFILE="-"
 export GNUPGHOME="$XDG_DATA_HOME/gnupg"
 export GHCUP_INSTALL_BASE_PREFIX="$HOME/.local/share/ghcup"
 export XMONAD_DATA_DIR="$XDG_DATA_HOME/xmonad"
@@ -40,13 +39,15 @@ export XMONAD_CACHE_DIR="$XDG_CACHE_HOME/xmonad"
 export PARALLEL_HOME="$XDG_CONFIG_HOME/parallel"
 export PASSWORD_STORE_DIR="$XDG_DATA_HOME/password-store"
 
-# for signle, global ssh agent
-export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
-export SSH_AUTH_PID_FILE="$XDG_RUNTIME_DIR/ssh-agent.pid"
-
-# applications settings
+# programs settings
+export LESSHISTFILE="-"
 export CM_LAUNCHER=rofi
 export QT_QPA_PLATFORMTHEME="qt5ct"
+
+# start ssh agent using ssha wrapper
+export SSH_AUTH_SOCK="$XDG_RUNTIME_DIR/ssh-agent.socket"
+export SSH_AGENT_PID_FILE="$XDG_RUNTIME_DIR/ssh-agent.pid"
+command -v ssha >/dev/null 2>&1 && eval "$(ssha 2>/dev/null)"
 
 # source local profile settings if present
 _profile_local="$XDG_CONFIG_HOME/shell/profile.local"
@@ -55,8 +56,6 @@ _profile_local="$XDG_CONFIG_HOME/shell/profile.local"
 # run xstart if X are not running
 if [ "$(tty)" = "/dev/tty1" ] && ! pgrep X; then
   xstart
-else
-  :
 fi
 
 # vi:syntax=sh

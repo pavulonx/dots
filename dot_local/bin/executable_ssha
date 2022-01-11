@@ -1,0 +1,46 @@
+#!/bin/sh
+
+set -e
+
+SSH_AUTH_SOCK="${SSH_AUTH_SOCK:-"$XDG_RUNTIME_DIR/ssh-agent.socket"}"
+SSH_AGENT_PID_FILE="${SSH_AGENT_PID_FILE:-"$XDG_RUNTIME_DIR/ssh-agent.pid"}"
+
+unset SSH_AGENT_PID # ignore existing SSH_AGENT_PID setting
+if [ -s "$SSH_AGENT_PID_FILE" ]; then
+  SSH_AGENT_PID="$(cat "$SSH_AGENT_PID_FILE")"
+fi
+
+_restart=false
+cmd="$1"
+case "$cmd" in
+  restart) _restart=true ;;
+  init) echo TODO ;;
+  kill) echo TODO ;;
+  '') : ;;
+  *)  echo "Unknown command: $cmd" >&2; exit 1 ;;
+esac
+
+if "$_restart"; then
+  pgrep -U "$(id -u)" ssh-agent >/dev/null && killall ssh-agent
+  rm -f "$SSH_AUTH_SOCK" "$SSH_AGENT_PID_FILE"
+  echo "unset SSH_AGENT_PID;"
+fi
+
+if ! [ -e "$SSH_AUTH_SOCK" ]; then
+  SSH_AGENT_PID="$(ssh-agent -a "$SSH_AUTH_SOCK" | sed '
+    s|SSH_AGENT_PID=\(.*\); export SSH_AGENT_PID;|\1|gp
+    d
+  ')"
+  echo "$SSH_AGENT_PID" >"$SSH_AGENT_PID_FILE"
+  echo "Agent pid: $SSH_AGENT_PID" >&2
+elif [ -S "$SSH_AUTH_SOCK" ] && [ -n "$SSH_AGENT_PID" ]; then
+  echo "Already started agent with pid: $SSH_AGENT_PID" >&2
+else
+  printf 'Agent started externally - ignoring\nrun ssha restart to kill agents and restart\n' >&2
+  exit 1
+fi
+
+cat <<EOF
+SSH_AUTH_SOCK=$SSH_AUTH_SOCK; export SSH_AUTH_SOCK;
+SSH_AGENT_PID=$SSH_AGENT_PID; export SSH_AGENT_PID;
+EOF
