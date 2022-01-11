@@ -10,46 +10,54 @@ battery_level_1=0
 battery_max_0=0
 battery_max_1=0
 
+output=""
+
 if [ -f "$PATH_AC/online" ]; then
   ac=$(cat "$PATH_AC/online")
+  [ "$ac" -eq 1 ] && output=""
 fi
 
-if [ -f "$PATH_BAT0/energy_now" ] && [ -f "$PATH_BAT0/energy_full" ]; then
-  battery_level_0=$(cat "$PATH_BAT0/energy_now")
-  battery_max_0=$(cat "$PATH_BAT0/energy_full")
+if [ -d "$PATH_BAT0" ] || [ -d "$PATH_BAT1" ]; then
+  if [ -f "$PATH_BAT0/energy_now" ] && [ -f "$PATH_BAT0/energy_full" ]; then
+    battery_level_0=$(cat "$PATH_BAT0/energy_now")
+    battery_max_0=$(cat "$PATH_BAT0/energy_full")
+  fi
+
+  if [ -f "$PATH_BAT1/energy_now" ] && [ -f "$PATH_BAT1/energy_full" ]; then
+    battery_level_1=$(cat "$PATH_BAT1/energy_now")
+    battery_max_1=$(cat "$PATH_BAT1/energy_full")
+  fi
+
+  charging=false
+  [ -f "$PATH_BAT0/status" ] && grep -q Charging "$PATH_BAT0/status" && charging=true
+  [ -f "$PATH_BAT1/status" ] && grep -q Charging "$PATH_BAT1/status" && charging=true
+  "$charging"     && output="$output "
+
+  battery_level=$(("$battery_level_0 + $battery_level_1"))
+  battery_max=$(("$battery_max_0 + $battery_max_1"))
+
+  battery_percent=$(("$battery_level * 100"))
+  battery_percent=$(("$battery_percent / $battery_max"))
+
+
+  if [ "$battery_percent" -lt 5 ]; then
+    output="$output !!! "
+  elif [ "$battery_percent" -lt 15 ]; then
+    output="$output "
+  elif [ "$battery_percent" -lt 40 ]; then
+    output="$output "
+  elif [ "$battery_percent" -lt 65 ]; then
+    output="$output "
+  elif [ "$battery_percent" -lt 90 ]; then
+    output="$output "
+  elif [ "$battery_percent" -lt 10000 ]; then
+    output="$output "
+  fi
+  output="$output $battery_percent%"
 fi
 
-if [ -f "$PATH_BAT1/energy_now" ] && [ -f "$PATH_BAT1/energy_full" ]; then
-  battery_level_1=$(cat "$PATH_BAT1/energy_now")
-  battery_max_1=$(cat "$PATH_BAT1/energy_full")
+if [ -n "$output" ]; then
+  echo "$output"
+else
+  exit 2
 fi
-
-charging=false
-[ -f "$PATH_BAT0/status" ] && grep -q Charging "$PATH_BAT0/status" && charging=true
-[ -f "$PATH_BAT1/status" ] && grep -q Charging "$PATH_BAT1/status" && charging=true
-
-battery_level=$(("$battery_level_0 + $battery_level_1"))
-battery_max=$(("$battery_max_0 + $battery_max_1"))
-
-battery_percent=$(("$battery_level * 100"))
-battery_percent=$(("$battery_percent / $battery_max"))
-
-icons=""
-[ "$ac" -eq 1 ] && icons=""
-"$charging"     && icons="$icons "
-
-if [ "$battery_percent" -lt 5 ]; then
-  icons="$icons !!! "
-elif [ "$battery_percent" -lt 15 ]; then
-  icons="$icons "
-elif [ "$battery_percent" -lt 40 ]; then
-  icons="$icons "
-elif [ "$battery_percent" -lt 65 ]; then
-  icons="$icons "
-elif [ "$battery_percent" -lt 90 ]; then
-  icons="$icons "
-elif [ "$battery_percent" -lt 10000 ]; then
-  icons="$icons "
-fi
-
-echo "$icons $battery_percent%"
