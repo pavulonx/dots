@@ -14,6 +14,16 @@
   hunk-header-decoration-style = ul
   hunk-header-line-number-style = omit
 
+[merge]
+  tool = nvimdiff
+
+[mergetool]
+	keepBackup = false
+
+[mergetool "nvimdiff"]
+	cmd = nvim -d $LOCAL $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
+
+
 [pager]
   diff = delta
   log = delta
