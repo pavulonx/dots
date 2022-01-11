@@ -122,9 +122,9 @@ EOF
   echo ""
 }
 
-#
-# ACTIAL SCRIPT
-#
+_edit() {
+  eval "$EDITOR" "$CRYPT_CONFIG"
+}
 
 _cmd="$1"
 _crypt_name="$2"
@@ -156,6 +156,9 @@ case $_cmd in
     ;;
   ls|list)
     _list
+    ;;
+  e|edit)
+    _edit
     ;;
   ''|h|help)
     _help
