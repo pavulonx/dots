@@ -1,25 +1,24 @@
 #!/bin/sh
 
-MKSCRIPT_CONTEXT="$HOME/.local/bin"
-
-_context="$PWD"
-[ "$1" = "-b" ] && _context="$MKSCRIPT_CONTEXT" && shift
+MKSCRIPT_USER_BIN_DIR="${MKSCRIPT_USER_BIN_DIR:-"$HOME/.local/bin"}"
 
 [ -z "${1:-}" ] && echo "
-Usage: $0 [-b] <path>
-  -b     create in context of '$MKSCRIPT_CONTEXT'
+Usage: $0 <path>
 " >&2 && exit 1
 
-_path="${_context}/${1}"
+_script_path="$(realpath -m "$1")"
+_dir="$(dirname "$_script_path")"
+if ! [ -d "$_dir" ]; then
+  mkdir -p "$_dir"
+fi
 
-[ -f "$_path" ] && echo "File '$_path' exists!" >&2 && exit 1
+[ -f "$_script_path" ] && echo "File '$_script_path' exists!" >&2 && exit 1
 
-echo "Script path: $_path"
+echo "Script path: $_script_path"
 
 echo '#!/bin/sh
+' > "$_script_path"
 
-' > "${_context}/${1}"
+chmod u+x "$_script_path"
 
-chmod u+x "$_path"
-
-eval exec "$EDITOR" "$_path" "+2"
+exec "$EDITOR" "$_script_path" "+2"
