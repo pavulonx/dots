@@ -1,12 +1,12 @@
 #!/bin/sh
 
+set -e
 MKSCRIPT_USER_BIN_DIR="${MKSCRIPT_USER_BIN_DIR:-"$HOME/.local/bin"}"
 
-[ -z "${1:-}" ] && echo "
-Usage: $0 <path>
-" >&2 && exit 1
+_file_arg="$*"
+[ -z "${_file_arg:-}" ] && echo "Usage: $0 <path>" >&2 && exit 1
 
-_script_path="$(realpath -m "$1")"
+_script_path="$(realpath -m -- "$_file_arg")"
 _dir="$(dirname "$_script_path")"
 if ! [ -d "$_dir" ]; then
   mkdir -p "$_dir"
@@ -14,11 +14,17 @@ fi
 
 [ -f "$_script_path" ] && echo "File '$_script_path' exists!" >&2 && exit 1
 
-echo "Script path: $_script_path"
+_editor="${EDITOR:-vim}"
+if expr "$(basename "$_editor")" : '^n\?vim$' >/dev/null; then # if (n)vim
+  </dev/tty "$EDITOR" "$_script_path" -c 'call append(0, "#!/bin/sh")' -c 'set ft=sh' "+2"
+else # if not vim then create file and open with editor
+  printf '#!/bin/sh\n' >"$_script_path"
+  </dev/tty "$EDITOR" "$_script_path"
+fi
 
-echo '#!/bin/sh
-' > "$_script_path"
-
-chmod u+x "$_script_path"
-
-exec "$EDITOR" "$_script_path" "+2"
+if [ -f "$_script_path" ]; then
+  chmod u+x "$_script_path"
+  echo "Script path: '$_script_path'"
+else
+  exit 1
+fi
