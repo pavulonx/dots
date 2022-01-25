@@ -21,7 +21,7 @@ export LESSOPEN='| /usr/bin/highlight -O ansi %s 2>/dev/null'
 # system
 alias \
         ka='killall' \
-        pacmanclean='sudo pacman -R `pacman -Qdtq`';
+        pacmanclean='"${SUDO:-sudo}" pacman -R `pacman -Qdtq`';
 
 # Use neovim for vim if present.
 [ -x "$(command -v nvim)" ] && alias vim='nvim' vimdiff='nvim -d';

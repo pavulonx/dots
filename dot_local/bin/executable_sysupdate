@@ -10,7 +10,7 @@ case "$os" in
   arch|artix)
     paru -Syu --upgrademenu ;;
   debian|ubuntu)
-    sudo apt-get update && sudo apt-get upgrade ;;
+    "${SUDO:-sudo}" apt-get update && sudo apt-get upgrade ;;
   Android)
     pkg update && pkg upgrade ;;
   *)

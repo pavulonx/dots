@@ -30,6 +30,7 @@ EOF
 
 [ "$(id -u)" -eq 0 ] && _fail "Must not be executed with superuser priviledges!"
 
+SUDO="${SUDO:-sudo}"
 CWD="$PWD"
 CRYPT_CONFIG=${CRYPT_CONFIG:-"$XDG_CONFIG_HOME/crypt/crypt.conf"}
 [ -z "$CRYPT_CONFIG" ] && _fail "CRYPT_CONFIG is not set!"
@@ -41,12 +42,12 @@ CRYPT_CONFIG=${CRYPT_CONFIG:-"$XDG_CONFIG_HOME/crypt/crypt.conf"}
 #
 _mount() {
   [ ! "$(find "$CRYPT_MOUNTPOINT" | wc -l)" = 1 ] && _fail "Mount directory '$CRYPT_MOUNTPOINT' is not empty!"
-  sudo mount "$CRYPT_MAPPER_PATH" "$CRYPT_MOUNTPOINT" ||
+  "$SUDO" mount "$CRYPT_MAPPER_PATH" "$CRYPT_MOUNTPOINT" ||
     _fail "Unable to mount '$CRYPT_NAME' at '$CRYPT_MOUNTPOINT'";
 }
 
 _open() {
-  sudo cryptsetup open "$CRYPT_REAL_PATH" "$CRYPT_NAME" ||
+  "$SUDO" cryptsetup open "$CRYPT_REAL_PATH" "$CRYPT_NAME" ||
     _fail "Unable to open '$CRYPT_NAME'"
   _mount
 }
@@ -55,19 +56,19 @@ _umount() {
   if echo "$CWD" | grep -q "$CRYPT_MOUNTPOINT"; then
     cd ~ || exit 1
   fi
-  sudo umount "$CRYPT_MAPPER_PATH" ||
+  "$SUDO" umount "$CRYPT_MAPPER_PATH" ||
     _fail "Unable to umount '$CRYPT_NAME' of '$CRYPT_MAPPER_PATH'"
 }
 
 _close() {
   _umount
-  sudo cryptsetup close "$CRYPT_NAME" ||
+  "$SUDO" cryptsetup close "$CRYPT_NAME" ||
     _fail "Unable to close '$CRYPT_NAME'"
 }
 
 _status() {
   if grep -qs "$CRYPT_MAPPER_PATH " /proc/mounts; then
-    sudo cryptsetup status "$CRYPT_NAME"
+    "$SUDO" cryptsetup status "$CRYPT_NAME"
   else
     echo "$CRYPT_NAME is locked"
   fi
