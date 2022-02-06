@@ -1,5 +1,6 @@
 configuration {
     modi: "combi,run,window";
+    font: "Source Code Pro 11";
     show-icons: true;
     sidebar-mode: true;
     combi-modi: "window,drun";
