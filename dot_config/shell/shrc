@@ -178,10 +178,6 @@ chm() {
   fi
 }
 
-# sbt
-alias \
-        sbt-dl-src='sbt "compile;updateClassifiers;updateSbtClassifiers;"';
-
 # view or edit command
 vcmd() {
   [ -z "$1" ] && printf "Usage: vcmd <command> [-]\ntrailing '-' will open containing file\n" && return 1;
