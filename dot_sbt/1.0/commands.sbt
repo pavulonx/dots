@@ -8,3 +8,13 @@ val updateAllClassifiersCommand: String =
 
 addCommandAlias("updateAllClassifiers", updateAllClassifiersCommand)
 addCommandAlias("dlSrc", updateAllClassifiersCommand)
+
+
+val dependencyUpdatesAllCommand: String =
+  """; reload
+    |; dependencyUpdates
+    |; reload plugins
+    |; dependencyUpdates
+    |; reload return""".stripMargin
+
+addCommandAlias("dependencyUpdatesAll", dependencyUpdatesAllCommand)
