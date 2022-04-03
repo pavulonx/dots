@@ -8,7 +8,9 @@ fi
 
 case "$os" in
   arch|artix)
-    paru -Syu --upgrademenu ;;
+    paru -Syu --upgrademenu
+    command -v updatestatus >/dev/null 2>&1 && updatestatus -r >/dev/null 2>&1 &
+    ;;
   debian|ubuntu)
     "${SUDO:-sudo}" apt-get update && sudo apt-get upgrade ;;
   Android)
