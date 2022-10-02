@@ -148,4 +148,6 @@ zinit wait lucid for \
 zinit wait"1" lucid for \
     zdharma-continuum/history-search-multi-word
 
+[ -e "$HOME/TODO" ] && cat "$HOME/TODO"
+
 # vim: ft=zsh sw=2 ts=2 et

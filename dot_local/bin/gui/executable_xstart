@@ -189,6 +189,7 @@ cleanup() {
 }
 
 trap 'cleanup' EXIT HUP TERM EXIT INT QUIT
+touch "$XAUTHORITY" # to avoid warning - XAUTHORITY not exist
 xauth add "$display" MIT-MAGIC-COOKIE-1 "$mcookie"
 
 {

@@ -14,7 +14,7 @@ for arg; do
          *) [ -z "$location" ] && location="$arg";
     esac
 done
-[ -z "$location" ] && location="$(location name)"
+[ -z "$location" ] && location="$(location geo)"
 
 # sed drops varioation characters
 symbols="%c"; $_use_plain_symobls && symbols="%x"
