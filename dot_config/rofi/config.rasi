@@ -6,10 +6,10 @@ configuration {
     combi-modi: "window,drun";
     combi-hide-mode-prefix: true;
     /* keybindings */
-    kb-row-up: "Alt+k,Up,Control+p,ISO_Left_Tab";
+    kb-row-up: "Alt+k,Up,Control+p";
     kb-row-down: "Alt+j,Down,Control+n";
     kb-mode-next: "Alt+l,Shift+Right,Control+Tab";
-    kb-mode-previous:	"Alt-h,Shift+Left,Control+ISO_Left_Tab";
+    kb-mode-previous:	"Alt-h,Shift+Left";
 }
 
 @theme "ebdbb2"

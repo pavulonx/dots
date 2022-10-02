@@ -73,10 +73,10 @@ prompt_git() {
 
   ### FILES STATUS - green - clean, yellow - all staged, red - unstaged changes or untracked files
   local g_base_color; g_base_color="green"
-  local c_staged;       c_staged=$(grep -c "^[12]\ [^.]." <<< "${gst_files}");
-  local c_worktree;   c_worktree=$(grep -c "^[12]\ .[^.]" <<< "${gst_files}");
-  local c_untracked; c_untracked=$(grep -c "^?\ " <<< "${gst_files}");
-  local c_unmerged;   c_unmerged=$(grep -c "^u\ " <<< "${gst_files}");
+  local c_staged;       c_staged=$(grep -c "^[12] [^.]." <<< "${gst_files}");
+  local c_worktree;   c_worktree=$(grep -c "^[12] .[^.]" <<< "${gst_files}");
+  local c_untracked; c_untracked=$(grep -c "^? " <<< "${gst_files}");
+  local c_unmerged;   c_unmerged=$(grep -c "^u " <<< "${gst_files}");
   stat_txt=""
   if [ "$c_staged" -gt 0 ];     then stat_txt="$stat_txt [$c_staged]";              g_base_color='yellow';  fi
   if [ "$c_worktree" -gt 0 ];   then stat_txt="$stat_txt $c_worktree$ICOWORKTREE";  g_base_color='red';     fi
