@@ -1,3 +1,4 @@
+.metals
 dot_config/shell/config.local
 dot_config/shell/profile.local
 dot_config/git/config.local

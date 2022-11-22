@@ -47,8 +47,13 @@ _mount() {
 }
 
 _open() {
-  "$SUDO" cryptsetup open "$CRYPT_REAL_PATH" "$CRYPT_NAME" ||
-    _fail "Unable to open '$CRYPT_NAME'"
+  if [ -z "$CRYPT_KEY" ]; then
+    "$SUDO" cryptsetup open "$CRYPT_REAL_PATH" "$CRYPT_NAME" ||
+      _fail "Unable to open '$CRYPT_NAME'"
+  else
+    "$SUDO" cryptsetup open --key-file="$CRYPT_KEY" "$CRYPT_REAL_PATH" "$CRYPT_NAME" ||
+      _fail "Unable to open '$CRYPT_NAME'"
+  fi
   _mount
 }
 
@@ -86,14 +91,15 @@ _status() {
 _get_crypts() {
   mounts="$(mktemp -p /tmp mounts-XXXXXX)"
   awk '{print $2":"$3}' /proc/mounts | sort -t: -k1,1 >"$mounts"
-  awk '/[[:blank:]*][^#].*/  { if (NF == 3) { printf "%s:%s:%s\n", $1, $2, $3 } }' "$CRYPT_CONFIG" | sort -u -t: -k3,3 |
-    join -t: -1 1 -2 3 -a 2 -e '-' -o 2.1,2.2,2.3,1.2 "$mounts" - |
+  #awk '/[[:blank:]*][^#].*/  { if (NF == 3) { printf "%s:%s:%s\n", $1, $2, $3 } }' "$CRYPT_CONFIG" | sort -u -t: -k3,3 |
+  awk '/[[:blank:]*][^#].*/  { if (NF == 3 || NF == 4) { printf "%s:%s:%s:%s\n", $1, $2, $3, $4} }' "$CRYPT_CONFIG" | sort -u -t: -k3,3 |
+    join -t: -1 1 -2 3 -a 2 -e '-' -o 2.1,2.2,2.3,2.4,1.2 "$mounts" - |
     sort -u -t':' -k1,1
   rm -f "$mounts"
 }
 
 _list() {
-  _get_crypts | column -t -s: --table-columns 'NAME,CRYPT PATH,MOUNTPOINT,MOUNTED'
+  _get_crypts | column -t -s: --table-columns 'NAME,CRYPT PATH,MOUNTPOINT,KEY,MOUNTED'
 }
 
 _parse() {
@@ -111,12 +117,20 @@ _parse() {
   CRYPT_MOUNTPOINT="$(echo "$_crypt_settings" | cut -d: -f3)"
   [ ! -d "$CRYPT_MOUNTPOINT" ] && _fail "Mount directory '$CRYPT_MOUNTPOINT' not found!"
 
+  CRYPT_KEY="$(echo "$_crypt_settings" | cut -d: -f4)"
+  case "$CRYPT_KEY" in
+    -|input|tty|'') CRYPT_KEY='' ;;
+     *) ;;
+  esac
+  [ -n "$CRYPT_KEY" ] && [ ! -f "$CRYPT_KEY" ] && _fail "Key file '$CRYPT_KEY' does not exist!"
+
 
   echo "'$CRYPT_NAME' configuration:"
   cat <<EOF
   CRYPT_NAME          $CRYPT_NAME
   CRYPT_PATH          $CRYPT_PATH
   CRYPT_MOUNTPOINT    $CRYPT_MOUNTPOINT
+  CRYPT_KEY           $CRYPT_KEY
   CRYPT_REAL_PATH     $CRYPT_REAL_PATH
   CRYPT_MAPPER_PATH   $CRYPT_MAPPER_PATH
 EOF
