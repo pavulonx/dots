@@ -18,3 +18,4 @@ val dependencyUpdatesAllCommand: String =
     |; reload return""".stripMargin
 
 addCommandAlias("dependencyUpdatesAll", dependencyUpdatesAllCommand)
+addCommandAlias("lsUpdates", dependencyUpdatesAllCommand)
