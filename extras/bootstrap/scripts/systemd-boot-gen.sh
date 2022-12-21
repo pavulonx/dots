@@ -15,7 +15,7 @@ backupd="$tmproot-backup"
 mkdir -p "$backupd"
 cp -r "$dst_dir" "$backupd"
 
-index=1
+index=10
 loader_conf="\
 # loader.conf - systemd-boot configuration file
 # os name: $os_name
@@ -47,13 +47,13 @@ initrd    /intel-ucode.img"
 title     $_title
 $entry
 initrd    /initramfs-$_kn.img" > "$tmpd/entries/$index-$_id.conf" &&
-  index=$((index + 1))
+  index=$((index + 10))
 
   [ -e "/boot/initramfs-$_kn-fallback.img" ] && echo "# $index-$_id-fallback.conf
 title     $_title - [fallback]
 $entry
 initrd    /initramfs-$_kn-fallback.img" > "$tmpd/entries/$index-$_id-fallback.conf" &&
-  index=$((index + 1))
+  index=$((index + 10))
 
   unset _kn
   unset _kv
