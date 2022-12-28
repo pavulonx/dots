@@ -21,7 +21,7 @@ xdsc run &
 # startup programs
 dunst &
 udiskie -s &
-picom -b --experimental-backends &
+picom -b &
 /usr/lib/mate-polkit/polkit-mate-authentication-agent-1 & # todo: replace with simplier auth agent
 clipmenud &
 redshiftw &

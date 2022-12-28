@@ -57,7 +57,7 @@ bindsym $mod+Mod1+Ctrl+space  exec --no-startup-id dunstctl close-all
 bindsym $mod+o --release exec "$TERMINAL -e ranger"
 bindsym $mod+Shift+F12  --release exec --no-startup-id "autorandr common; exec notify-send 'autorandr common'; true"
 bindsym $mod+Shift+plus --release exec --no-startup-id "xrandr-menu"
-bindsym $mod+Shift+t --release exec --no-startup-id "toggleprogram picom -b --experimental-backends"
+bindsym $mod+Shift+t --release exec --no-startup-id "toggleprogram picom -b"
 bindsym $mod+Shift+d --release exec --no-startup-id "toggleprogram dunst; exec notify-send 'Dunst restart'"
 
 # screenshots
