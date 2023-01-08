@@ -23,6 +23,9 @@ alias \
         ka='killall' \
         pacmanclean='"${SUDO:-sudo}" pacman -R `pacman -Qdtq`';
 
+# clean home
+alias \
+        yarn='yarn --use-yarnrc "$XDG_CONFIG_HOME/yarn/config"';
 # Use neovim for vim if present.
 [ -x "$(command -v nvim)" ] && alias vim='nvim' vimdiff='nvim -d';
 
