@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 _0="$(realpath "$0")"
 
 CURRENT_WALLPAPER_PATH="${CURRENT_WALLPAPER_PATH:-"$XDG_DATA_HOME/current_wallpaper"}"
@@ -8,20 +8,6 @@ FEH_OTPS="${FEH_OTPS:-"--bg-fill --no-fehbg --no-xinerama"}"
 set_as_default=true
 
 [ -d "$WALLPAPERS_DIR" ] || mkdir -p "$WALLPAPERS_DIR"
-
-_ueberzug_id="wallpaper-setter-fzf"
-_ueberzug_fifo="/tmp/$_ueberzug_id.fifo"
-_start_ueberzug() {
-  mkfifo "${_ueberzug_fifo}" || exit 1
-  ueberzug layer --parser json --silent <"${_ueberzug_fifo}" &
-  # prevent EOF
-  exec 3>"${_ueberzug_fifo}"
-}
-_stop_ueberzug() {
-  3>&- exec
-  rm "${_ueberzug_fifo}" &>/dev/null
-  kill "$(jobs -p)" &>/dev/null
-}
 
 _set_wallpaper() {
   # shellcheck disable=SC2086
@@ -41,23 +27,20 @@ _restore() {
 _select_wallpaper() {
   # shellcheck disable=SC2015
   { [ -f "$CURRENT_WALLPAPER_PATH" ] && echo "$CURRENT_WALLPAPER_PATH" || true
-    fd -t f '.*\.(jpg|png)$' "$WALLPAPERS_DIR"
-  } | fzf --with-nth 1 --delimiter "\t" --layout=reverse --preview "sh $_0 __preview__ {}" --preview-window "right:50%:noborder:wrap"
+    find "$WALLPAPERS_DIR" -printf "%T@:%p\n" | grep -E '.*\.(jpg|png)$' | sort -nr | cut -d':' -f2-
+  } | fzf --with-nth 1 --delimiter "\t" --layout=reverse --preview "/bin/sh $_0 __preview__ {}" --preview-window "right:50%:noborder:wrap"
 }
 
 _preview() {
   image="$1"
-  < <(</dev/tty stty size) read -r HEIGHT WIDTH
-  { printf '{ "action": "add", "identifier": "%s", "path": "%s",' "$_ueberzug_id" "$image"
-    printf '"x": %d, "y": %d, "scaler": "fit_contain",' "$((WIDTH / 2 ))" 1
-    printf '"width": %d, "height": %d }\n' "$((WIDTH / 2))" "$((HEIGHT - 2))"
-  } > "$_ueberzug_fifo" || printf '{ "action": "remove", "identifier": "%s" }\n' "$_ueberzug_id" > "$_ueberzug_fifo"
+  read -r _ w <<EOF
+$(</dev/tty stty size)
+EOF
+  w="$((w - 5))"
+  catimg -w "$w" "$image"
 }
 
 _pick() {
-  trap _stop_ueberzug EXIT QUIT INT TERM
-  _start_ueberzug
-
   selected="$(_select_wallpaper)";
 
   if [ -z "$selected" ]; then
@@ -77,21 +60,24 @@ _pick() {
 }
 
 # parse args
-cmd=()
+cmdline=""
 for arg; do
   case "$arg" in
     -n|--no-default)  set_as_default=false;;
-    *)                cmd+=("$arg");;
+    *)                if [ -z "$cmdline" ]; then cmdline="$arg"; else cmdline="$cmdline $arg"; fi;;
   esac
 done
 
-case "${cmd[0]}" in
-  __preview__)  _preview "${cmd[1]}"  ;;
+cmd="${cmdline%% *}"
+if [ "$cmd" = "$cmdline" ]; then args=""; else args="${cmdline#* }"; fi
+
+case "$cmd" in
+  __preview__)  _preview "$args"  ;;
   restore)      _restore              ;;
   pick)         _pick                 ;;
-  set)          _set "${cmd[1]}"      ;;
+  set)          _set_wallpaper "$args"      ;;
   *)
-    echo "Unrecognized command: '${cmd[0]}'";
+    echo "Unrecognized command: '$cmd'";
     echo "usage: $(basename "$0") <command>
     pick - select wallpaper
     set <path> - select <path> as wallpaper
