@@ -3,9 +3,14 @@
 LAYOUTS_DIR="$XDG_DATA_HOME/screenlayouts"
 DEFAULT_LAYOUT="$LAYOUTS_DIR/default"
 
+autorandr_out="$(LANG=C autorandr)"
+
 cmd="$({
 
 [ -x "$DEFAULT_LAYOUT" ] && echo "exec default";
+
+autorandr_out_detected="$(echo "$autorandr_out" | grep '(detected)')"
+[ -n "$autorandr_out_detected" ] && echo "autorandr load $autorandr_out_detected"
 
 echo
 fd . "$LAYOUTS_DIR" --follow --type executable |
@@ -27,7 +32,7 @@ echo "
 
 to_exec="$(echo "$cmd" | awk '/^exec/ {print "'$LAYOUTS_DIR'/"$2}')"
 if [ -n "$to_exec" ]; then
-  $to_exec
+  "$to_exec"
   notify-send "Screenlayout: exec $to_exec";
 else
   autorandr_args=''
