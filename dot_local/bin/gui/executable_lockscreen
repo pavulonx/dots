@@ -8,8 +8,8 @@ c_err="#dc322f"
 c_ver="#268bd2"
 c_trans="#00000000"
 
-locker="$(command -v i3lock-color i3lock 2>/dev/null | head -n1)"
-dunst="$(command -v dunstctl true 2>/dev/null | head -n1 )"
+locker="$(which i3lock-color i3lock 2>/dev/null | head -n1)"
+dunst="$(which dunstctl true 2>/dev/null | head -n1 )"
 
 dunst_status="$("$dunst" is-paused)"
 "$dunst" set-paused true
