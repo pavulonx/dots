@@ -14,7 +14,7 @@ for arg; do
          *) [ -z "$location" ] && location="$arg";
     esac
 done
-[ -z "$location" ] && location="$(location geo)"
+[ -z "$location" ] && location="$(location name)"
 
 # sed drops varioation characters
 symbols="%c"; $_use_plain_symobls && symbols="%x"
@@ -30,6 +30,6 @@ echo "$weather"
 $_send_notification && notify-send "$weather"
 $_show_details && curl -s "wttr.in/$location?format=v2"
 
-$_wait_for_user_input && read -r
+$_wait_for_user_input && read -r _
 
 exit 0
