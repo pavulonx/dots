@@ -9,7 +9,7 @@ application/x-shellscript=editor.desktop;
 application/xhtml+xml=web-browser.desktop
 image/jpeg=viewnior.desktop;
 image/png=viewnior.desktop;
-inode/directory=Thunar.desktop
+inode/directory=file-manager.desktop;Thunar.desktop;thunar.desktop
 text/html=web-browser.desktop
 text/plain=editor.desktop
 x-scheme-handler/about=web-browser.desktop
@@ -21,6 +21,7 @@ x-scheme-handler/https=web-browser.desktop
 x-scheme-handler/mailto=web-browser.desktop
 x-scheme-handler/unknown=web-browser.desktop
 x-scheme-handler/webcal=web-browser.desktop
+x-scheme-handler/jetbrains=jetbrains-toolbox.desktop
 
 [Added Associations]
 application/gzip=org.gnome.FileRoller.desktop;xarchiver.desktop;
