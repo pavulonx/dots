@@ -10,7 +10,6 @@ label=
 if [ -z "$nm_dev_out" ]; then
   label=' DOWN'
 else
-
   IFS="|" read -r _ n_type n_device n_connection <<EOF
 $nm_dev_out
 EOF
@@ -25,18 +24,10 @@ EOF
     label="$label  [VPN]"
   fi
 
-  if ! nc -zw1 1.1.1.1 443 >/dev/null 2>&1; then # check if internet is accessible
+  if ! nc -nzw1 1.1.1.1 80 >/dev/null 2>&1; then # check if internet is accessible
     label="$label  No Internet"
   fi
 
 fi
 
 echo "$label"
-
-#echo "
-#label: '$label'
-#state: $n_state
-#type: $n_type
-#device: $n_device
-#connection: $n_connection
-#"
