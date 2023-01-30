@@ -1,0 +1,13 @@
+#!/bin/sh
+
+set -a
+
+selection="$(man -k . | sort -u | fzf --prompt='man>')"
+
+[ -z "$selection" ] && exit 0
+
+read -r page section <<EOF
+$(echo "$selection" | awk -F'\\s+\\(|)' '{print $1 " " $2}')
+EOF
+
+man "$section" "$page"

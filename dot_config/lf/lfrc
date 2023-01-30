@@ -1,0 +1,5 @@
+set shell zsh
+set shellopts '-eu'
+
+set icons true
+set previewer '~/.config/lf/previewer'

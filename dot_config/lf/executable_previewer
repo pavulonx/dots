@@ -1,0 +1,43 @@
+#!/bin/sh
+
+_file="$1"
+_ftype="$(file --dereference --brief --mime-type -- "$1")"
+
+_term_w="$2"
+_term_h="$3"
+_pos_x="$4"
+_pos_y="$5"
+
+image() {
+  img="${1:-"$_file"}"
+  catimg "$img" -H "$((_term_h - 1))"
+}
+
+case "$_ftype" in
+  image/*) image "$_file" ;;
+	text/html) lynx -width="$4" -display_charset=utf-8 -dump "$1" ;;
+	text/troff) man ./ "$1" | col -b ;;
+	text/* | */xml | application/json) bat --terminal-width "$(($4-2))" -f "$1" ;;
+	audio/* | application/octet-stream) mediainfo "$1" || exit 1 ;;
+	video/* )
+		CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
+		[ ! -f "$CACHE" ] && ffmpegthumbnailer -i "$1" -o "$CACHE" -s 0
+		image "$CACHE"
+		;;
+	*/pdf)
+    pdftotext "$_file" -
+		#CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
+		#[ ! -f "$CACHE.jpg" ] && pdftoppm -jpeg -f 1 -singlefile "$1" "$CACHE"
+		#image "$CACHE.jpg"
+		;;
+	*/epub+zip|*/mobi*)
+		CACHE="${XDG_CACHE_HOME:-$HOME/.cache}/lf/thumb.$(stat --printf '%n\0%i\0%F\0%s\0%W\0%Y' -- "$(readlink -f "$1")" | sha256sum | cut -d' ' -f1)"
+		[ ! -f "$CACHE.jpg" ] && gnome-epub-thumbnailer "$1" "$CACHE.jpg"
+		image "$CACHE.jpg"
+		;;
+	application/*zip) atool --list -F zip -- "$1" ;;
+  application/java-archive) unzip -p "$1" META-INF/MANIFEST.MF || atool --list -- "$_file" ;;
+  application/x-java-applet) javap "$_file" ;;
+	*opendocument*) odt2txt "$1" ;;
+	application/pgp-encrypted) gpg -d -- "$1" ;;
+esac
