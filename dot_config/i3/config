@@ -223,11 +223,10 @@ assign [class="[gG]oogle-chrome-beta"] $ws1
 assign [class="[bB]rave-browser*"] $ws1
 assign [class="[fF]irefox"] $ws1
 assign [class="[fF]irefoxdeveloperedition"] $ws1
-#assign [class="[sS]potify"] $ws8
-for_window [class="[sS]potify"] move to workspace $ws8
-assign [class="[sS]ignal [bB]eta"] $ws7
+assign [class="[sS]potify"] $ws8
+# for_window [class="[sS]potify"] move to workspace $ws8 # when using spotifywm this can be removed
+assign [class="[sS]ignal"] $ws7
 assign [class="[sS]lack"] $ws7
-assign [class="[cC]aprine"] $ws7
 assign [class="Steam"] $ws6
 assign [class="jetbrains-*"] $ws3
 
