@@ -1,5 +1,17 @@
 #!/bin/sh
 
-git status -s \
-  | fzf --no-sort --reverse \
-  --preview 'git diff HEAD --color=always {+2}'
+while out=$(git -c color.ui=always status -s \
+  | fzf --ansi --no-sort --reverse --print-query --query="$query" \
+  --header="^A add | ^R - reset | ^W - revert" \
+  --expect=ctrl-a,ctrl-r,ctrl-w \
+  --preview 'git -c color.ui=always diff HEAD --color=always {+2}');
+do
+  query=$(echo "$out" | sed -n '1p')
+  action=$(echo "$out" | sed -n '2p')
+  file=$(echo "$out" | sed -n '3p' | awk '{print $2}')
+  case "$action" in
+    ctrl-a) git add   "$file"; ;;
+    ctrl-r) git reset "$file"; ;;
+    ctrl-w) git checkout HEAD "$file"; ;;
+  esac
+done

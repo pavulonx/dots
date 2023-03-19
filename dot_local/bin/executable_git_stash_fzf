@@ -1,7 +1,5 @@
 #!/bin/sh
 
-# --preview-window=down,70%
-
 while out=$(git -c color.ui=always stash list --pretty="%C(yellow)%gd %C(red)%h %>(14)%Cgreen%cr %C(reset)%gs" \
   | fzf --ansi --no-sort --reverse --print-query --query="$query" \
   --header="^A apply | ^P - pop | ^D - drop" \
