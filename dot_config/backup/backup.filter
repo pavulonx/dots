@@ -2,9 +2,12 @@
 + /.config/docker/***
 + /.config/BraveSoftware/***
 + /.config/chromium/***
++ /.config/google-chrome-beta/***
 + /.config/gcloud/***
++ /.config/JetBrains/***
 + /.config/shell/***
 + /.config/solaar/***
++ /.config/x11/***
 + /.config/syncthing/
 + /.config/syncthing/*
 + /.config/location.conf
@@ -26,7 +29,11 @@
 + /.local/share/zsh/***
 + /.local/share/current_wallpaper
 + /.local/share/z
++ /.local/share/current_wallpaper
 - /.local/share/**
++ /.local/src/
++ /.local/src/*
+- /.local/src/**
 - /.local/**
 + /.ssh/***
 + /.android/
@@ -44,6 +51,7 @@
 - /.*/
 + /.*
 - tmp
+- snap
 - **/blockchain_data
 - **/.directory
 - **/node_modules/**
