@@ -219,6 +219,7 @@ bindsym $mod+Shift+0 move container to workspace $ws0; workspace $ws0
 
 # Open applications on specific workspaces
 assign [class="[cC]hromium"] $ws1
+assign [class="[gG]oogle-chrome-beta"] $ws1
 assign [class="[bB]rave-browser*"] $ws1
 assign [class="[fF]irefox"] $ws1
 assign [class="[fF]irefoxdeveloperedition"] $ws1
