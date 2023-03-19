@@ -16,7 +16,7 @@ _set_wallpaper() {
 
 _restore() {
   if [ -f "$CURRENT_WALLPAPER_PATH" ]; then
-    echo "Rrestoring wallpaper $CURRENT_WALLPAPER_PATH"
+    echo "Restoring wallpaper $CURRENT_WALLPAPER_PATH"
     _set_wallpaper "$CURRENT_WALLPAPER_PATH"
   else
     echo "No wallpaper to restore!"
@@ -25,19 +25,18 @@ _restore() {
 }
 
 _select_wallpaper() {
-  # shellcheck disable=SC2015
-  { [ -f "$CURRENT_WALLPAPER_PATH" ] && echo "$CURRENT_WALLPAPER_PATH" || true
-    find "$WALLPAPERS_DIR" -printf "%T@:%p\n" | grep -E '.*\.(jpg|png)$' | sort -nr | cut -d':' -f2-
-  } | fzf --with-nth 1 --delimiter "\t" --layout=reverse --preview "/bin/sh $_0 __preview__ {}" --preview-window "right:50%:noborder:wrap"
-}
-
-_preview() {
-  image="$1"
   read -r _ w <<EOF
 $(</dev/tty stty size)
 EOF
-  w="$((w - 5))"
-  catimg -w "$w" "$image"
+  w="$((w - 6))"
+  # shellcheck disable=SC2015
+  { [ -f "$CURRENT_WALLPAPER_PATH" ] && echo "$CURRENT_WALLPAPER_PATH" || true
+    find "$WALLPAPERS_DIR" -printf "%T@:%p\n" | grep -E '.*\.(jpg|png)$' | sort -nr | cut -d':' -f2-
+  } | fzf \
+        --with-nth 1 --delimiter "\t" --layout=reverse \
+        --header="^S set" \
+        --bind="ctrl-s:execute(/bin/sh $_0 set {})" \
+        --preview="catimg -w $w {}" --preview-window="right:50%:noborder:wrap"
 }
 
 _pick() {
@@ -72,10 +71,9 @@ cmd="${cmdline%% *}"
 if [ "$cmd" = "$cmdline" ]; then args=""; else args="${cmdline#* }"; fi
 
 case "$cmd" in
-  __preview__)  _preview "$args"  ;;
-  restore)      _restore              ;;
-  pick)         _pick                 ;;
-  set)          _set_wallpaper "$args"      ;;
+  restore)      _restore               ;;
+  pick)         _pick                  ;;
+  set)          _set_wallpaper "$args" ;;
   *)
     echo "Unrecognized command: '$cmd'";
     echo "usage: $(basename "$0") <command>
