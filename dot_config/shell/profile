@@ -1,6 +1,6 @@
 # setup path
 _user_path="$(find ~/.local/bin -type d | tac | tr '\n' ':')"
-_user_path="${_user_path}$HOME/.local/share/coursier/bin:$HOME/.local/share/ghcup/.ghcup/bin:$HOME/.local/share/yarn/bin"
+_user_path="${_user_path}$HOME/.local/share/coursier/bin:$HOME/.local/share/ghcup/.ghcup/bin:$HOME/.local/share/yarn/bin:$HOME/.local/share/cargo/bin:$HOME/.local/share/go/bin"
 export PATH="${_user_path}:${PATH}"
 
 # default programs
