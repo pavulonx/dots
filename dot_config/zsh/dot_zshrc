@@ -6,8 +6,9 @@ fpath=($ZDOTDIR/completions $ZDOTDIR/plugins $fpath)
 alias reload='source $ZDOTDIR/.zshrc'
 alias zshconf='$EDITOR $ZDOTDIR/.zshrc'
 
-source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/shrc"       # common config
-source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/shrc.local" # local config
+source "${XDG_CONFIG_HOME:-$HOME/.config}/shell/shrc"           # common config
+shrc_local="${XDG_CONFIG_HOME:-$HOME/.config}/shell/shrc.local" # local config
+[ -e "$shrc_local" ] && source "$shrc_local"
 
 # ---[ options ]---
 setopt long_list_jobs         # job notifications in the long format
