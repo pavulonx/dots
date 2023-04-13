@@ -1,94 +1,89 @@
-#!/bin/bash
-_run_timestamp="$(date +%Y%m%d%H%M%S)"
+#!/bin/sh
+set -f
 
-_do_run=false;
-_use_gitignore=false;
-_backup_conf_file=
-_backup_filter_file=
+BACKUP_CONFIG_HOME="${XDG_CONFIG_HOME:-"$HOME/.config"}/backup"
 
-args="$*"
-while [ "$#" -gt 0 ]; do
-  case "$1" in
-    -s|--src)       _backup_src="$2";         shift 2;;
-    -d|--dst)       _backup_dst="$2";         shift 2;;
-    #-c|--config)  _backup_conf_file="$2";    shift 2;;
-    -f|--filter)    _backup_filter_file="$2"; shift 2;;
-    -g|--gitignore) _use_gitignore=true;      shift 1;;
-    run)            _do_run=true;             shift 1;;
-    *) echo "Unrecognized arg: '$1' in '$args'"; exit 1;;
+_fail() {
+  echo "$*" >&2
+  exit 1
+}
+
+_help() {
+  echo "usage: $0 <command> <config> [<args>]
+
+commands:
+  run | backup     run backup
+  exec             execute restic command against given config
+
+args:
+  -n | --dry-run
+"
+  exit 0
+}
+
+command restic >/dev/null 2>&1 ||
+  _fail "restic not installed!"
+
+# parse args
+dry_run=false
+parsed_args=''
+for arg; do
+  case "$arg" in
+    -d|-n|--dry-run) dry_run=true;        shift ;;
+     -h|--help|help) _help;               shift ;;
+                  *) parsed_args="$parsed_args $arg"; shift ;;
   esac
 done
 
-## parse config
-#if [ -n "$_backup_conf_file" ]; then
-#  if [ ! -f "$_backup_conf_file" ]; then
-#    echo "No config file found in '$_backup_conf_file'!" 1>&2
-#    exit 1
-#  else
-#
-#  fi
-#fi
+# shellcheck disable=SC2086
+set -- $parsed_args
+[ -z "$parsed_args" ] && _help
 
-# validation
-_error=false
-[ -n "$_backup_filter_file" ] && [ ! -f "$_backup_filter_file" ] && echo "No filter file found in '$_backup_filter_file'!" 1>&2 && _error=true
-[ -z "$_backup_src" ] && echo "Backup source (-s/--src) is not set!" 1>&2 && _error=true
-[ -z "$_backup_dst" ] && echo "Backup destination (-d/--dst) is not set! " 1>&2 && _error=true
-# exit on error reported;
-$_error && exit 1
+action="$1"
+conf="$2"
+shift 2
 
-echo "_backup_src='$_backup_src'"
-echo "_backup_dst='$_backup_dst'"
-echo "_backup_conf_file='$_backup_conf_file'"
-echo "_backup_filter_file='$_backup_filter_file'"
-echo "_do_run='$_do_run'"
-#exit 1
+# validate & parse config
+conf_dir="$BACKUP_CONFIG_HOME/$conf"
+configrc="$conf_dir/configrc"
+configignore="$conf_dir/ignore"
+test -f "$configrc" || _fail "configrc for $conf not found!"
 
-_log_dir="$_backup_dst/.logs"
-_log_suff=""; "$_do_run" && _log_suff="-dry-run"
-_log_file="$_log_dir/backup.${_run_timestamp}${_log_suff}.log"
+_rc="$(grep -E '^(BACKUP_REPOSITORY|BACKUP_SOURCE|BACKUP_PASS_CMD)=' "$configrc")"
+eval "$_rc"
 
-mkdir -p "$_backup_dst"
-mkdir -p "$_log_dir"
-ln -sf "$_log_file" "$_log_dir/latest.log"
-
-# preparing rsync commands
-rsync_commands=(
-  "-av"
-  "--progress"
-  "--human-readable"
-  "--log-file=$_log_file"
-  "--delete"
-  "--delete-excluded"
-)
-[ -n "$_backup_filter_file" ] && rsync_commands+=("--filter=merge $_filterfile")
-"$_use_gitignore" && rsync_commands+=("--filter=dir-merge,- .gitignore")
-rsync_commands+=(
-  "$_backup_src"
-  "$_backup_dst"
-)
-
-echo "Executing:"
-echo "  rsync" "${rsync_commands[@]}"
-
-do_rsync() {
-  rsync "${rsync_commands[@]}"
-}
-
-do_rsync_dry_run() {
-  rsync --dry-run "${rsync_commands[@]}"
-}
-
-echo "
-Source:       $_backup_src
-Destination:  $_backup_dst
-Log:          $_log_file
+echo "$conf:
+  BACKUP_REPOSITORY: $BACKUP_REPOSITORY
+  BACKUP_SOURCE:     $BACKUP_SOURCE
+  BACKUP_PASS_CMD:   $BACKUP_PASS_CMD
 "
 
-if "$_do_run"; then
-  do_rsync
-else
-  printf "\n*\n* DRY RUN\n*\n"
-  do_rsync_dry_run
-  printf "\n\nRun command with 'run' to backup\n"
-fi
+RESTIC_REPOSITORY="$BACKUP_REPOSITORY"
+RESTIC_PASSWORD_COMMAND="$BACKUP_PASS_CMD"
+export RESTIC_REPOSITORY RESTIC_PASSWORD_COMMAND
+
+_backup() {
+  echo '> runing backup'
+  set --
+  "$dry_run"             && set -- "$@" --dry-run
+  [ -f "$configignore" ] && set -- "$@" --exclude-file="$configignore"
+  restic backup "$BACKUP_SOURCE" "$@"
+}
+
+_stats() {
+  echo '> runing stats'
+  restic stats
+}
+
+_exec() {
+  echo "> runing exec '$*'"
+  restic "$@"
+}
+
+# TODO: info about free size, some means to cleanup and so on...
+case "$action" in
+    run|backup) _backup                              ;;
+  s|stats|info) _stats                               ;;
+          exec) _exec "$@"                           ;;
+             *) _fail "Unrecognized action: $action" ;;
+esac
