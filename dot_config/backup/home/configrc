@@ -1,0 +1,3 @@
+BACKUP_REPOSITORY="/mnt/crypt_nvme/restic/repos/home"
+BACKUP_SOURCE="$HOME"
+BACKUP_PASS_CMD="pass restic/home"
