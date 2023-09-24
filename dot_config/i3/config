@@ -227,7 +227,7 @@ assign [class="[sS]potify"] $ws8
 # for_window [class="[sS]potify"] move to workspace $ws8 # when using spotifywm this can be removed
 assign [class="[sS]ignal"] $ws7
 assign [class="[sS]lack"] $ws7
-assign [class="Steam"] $ws6
+assign [class="[sS]team"] $ws6
 assign [class="jetbrains-*"] $ws3
 
 # Open specific applications in floating mode
