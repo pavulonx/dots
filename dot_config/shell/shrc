@@ -79,7 +79,7 @@ alias \
         drei='docker exec -it' \
         drri='docker run -it --rm' \
         drri.='docker run -it --rm --workdir=/ctx --volume "$PWD:/ctx"' \
-        drc='docker-compose' \
+        drc='docker compose' \
         drip='docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}"';
 
 # git
@@ -99,6 +99,7 @@ alias \
         gcmsg='git commit -m' \
         \
         gco='git checkout' \
+        gcom='git checkout "$(git_default_branch)"' \
         gcob='git checkout -b' \
         \
         gcp='git cherry-pick' \
@@ -106,6 +107,7 @@ alias \
         gcpc='git cherry-pick --continue' \
         \
         gf='git fetch' \
+        gff='git fetch --tags -f' \
         gfprune='git fetch --all --prune' \
         \
         gl='git pull'\
@@ -122,6 +124,7 @@ alias \
         grv='git remote  -v' \
         \
         grb='git rebase' \
+        grbm='git rebase "$(git_default_branch)"' \
         grba='git rebase --abort' \
         grbc='git rebase --continue' \
         \
@@ -147,6 +150,13 @@ alias \
         gcfg='git config' \
         gitroot='git rev-parse --show-toplevel' \
         cdgr='cd $(gitroot)';
+
+git_default_branch() {
+  ref="$(git symbolic-ref --quiet refs/remotes/origin/HEAD 2> /dev/null)";
+  ret="$?";
+  [ "$ret" -ne 0 ] && return;
+  echo "${ref#refs/remotes/origin/}";
+}
 
 git_current_branch() {
   # Outputs the name of the current branch Usage example: git pull origin $(git_current_branch)
