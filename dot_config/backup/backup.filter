@@ -2,8 +2,14 @@
 + /.config/docker/***
 + /.config/BraveSoftware/***
 + /.config/chromium/***
++ /.config/chezmoi/
++ /.config/chezmoi/chezmoi.yaml
++ /.config/backup/***
++ /.config/environment.d/***
++ /.config/fsh/***
 + /.config/google-chrome-beta/***
 + /.config/gcloud/***
++ /.config/git/***
 + /.config/JetBrains/***
 + /.config/shell/***
 + /.config/solaar/***
