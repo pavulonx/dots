@@ -10,8 +10,18 @@ set_as_default=true
 [ -d "$WALLPAPERS_DIR" ] || mkdir -p "$WALLPAPERS_DIR"
 
 _set_wallpaper() {
-  # shellcheck disable=SC2086
-  feh $FEH_OTPS "$1"
+  if [ "$XDG_BACKEND" = wayland ] || [ "$XDG_SESSION_TYPE" = wayland ]; then
+    wp_path="$(readlink -f "$1")"
+    hyprpaper_conf="${XDG_CONFIG_HOME:-"$HOME/.config"}/hypr/hyprpaper.conf"
+    cat <<EOF >"$hyprpaper_conf"
+preload = $wp_path
+wallpaper = ,$wp_path
+EOF
+  hyprctl hyprpaper wallpaper "$wp_path"
+  else
+    # shellcheck disable=SC2086
+    feh $FEH_OTPS "$1"
+  fi
 }
 
 _restore() {
@@ -49,7 +59,9 @@ _pick() {
 
   echo "Setting $selected as wallpaper"
   if $set_as_default; then
-    cp -f "$selected" "$CURRENT_WALLPAPER_PATH"
+    if [ "$(readlink -f "$selected")" = "$(readlink -f "$CURRENT_WALLPAPER_PATH")" ]; then
+      ln -sf "$selected" "$CURRENT_WALLPAPER_PATH"
+    fi
     new_wallpaper="$CURRENT_WALLPAPER_PATH"
   else
     new_wallpaper="$selected"
