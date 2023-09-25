@@ -18,5 +18,9 @@
       "command": "shfmt",
       "args": ["-i", "2", "-bn", "-ci", "-sr"]
     }
+  },
+  "metals": {
+    "javaHome": "/usr/lib/jvm/java-1.11.0-openjdk-amd64/"
   }
+
 }
