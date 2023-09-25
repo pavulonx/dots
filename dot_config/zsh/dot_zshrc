@@ -119,7 +119,7 @@ bindkey -M vicmd "^v" edit-command-line
 # programs shortcuts
 bindkey -s "^F" "ctrlf\n"
 bindkey -s "^O" "openf\n"
-bindkey -s "^G" "z -I .\n"
+bindkey -s "^G" "zi\n"
 
 # ---[ Style plugins ]---
 autoload -Uz vi_style_suppport;   vi_style_suppport
@@ -136,11 +136,7 @@ source "$ZDOTDIR/.zinit/bin/zinit.zsh"
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
 
-export _ZL_FZF_HEIGHT='50%';
-export _ZL_FZF_FLAG="+s -e --preview='exa --level 2 --tree --color=always --group-directories-first {2}'"
-
 zinit wait lucid for \
-    skywind3000/z.lua \
   atinit"ZINIT[COMPINIT_OPTS]=-C; __completions_init; zpcdreplay;" \
     zdharma-continuum/fast-syntax-highlighting \
   atload"!_zsh_autosuggest_start" \
@@ -148,8 +144,11 @@ zinit wait lucid for \
   blockf \
     zsh-users/zsh-completions
 
+export _ZO_FZF_OPTS="+s -e --preview='exa --level 2 --tree --color=always --group-directories-first {2}' $FZF_DEFAULT_OPTS"
+
 zinit wait"1" lucid for \
-    zdharma-continuum/history-search-multi-word
+    zdharma-continuum/history-search-multi-word \
+    ajeetdsouza/zoxide
 
 [ -e "$HOME/TODO" ] && cat "$HOME/TODO"
 
