@@ -3,7 +3,10 @@
 # check pacman -ignore
 dir="/tmp/updatestatus"
 [ -d "$dir" ] || mkdir -p "$dir"
-update_notification_icon='/usr/share/icons/Flatery-Dark/apps/48/system-software-update.svg'
+
+update_notification_icon="/usr/share/icons/Flatery-Dark/apps/48/system-software-update.svg"
+update_notification_icon_local="$HOME/.local/share/icons/Flatery-Dark/apps/48/system-software-update.svg"
+if [ -e "$update_notification_icon_local" ]; then update_notification_icon="$update_notification_icon_local"; fi
 
 mainf="$dir/main"
 aurf="$dir/aur"
