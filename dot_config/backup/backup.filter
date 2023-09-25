@@ -16,6 +16,7 @@
 + /.config/x11/***
 + /.config/syncthing/
 + /.config/syncthing/*
++ /.config/zsh/***
 + /.config/location.conf
 - /.config/**
 + /.local/
