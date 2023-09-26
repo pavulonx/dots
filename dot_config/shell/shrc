@@ -51,12 +51,12 @@ alias \
 
 # ls
 alias \
-        exa='exa --color=auto --group-directories-first' \
-        ls='exa' \
-        l='exa -la' \
-        ll='exa -l' \
-        lt='exa -lasnew' \
-        lg='exa --git -l -snew';
+        eza='eza --color=auto --group-directories-first' \
+        ls='eza' \
+        l='eza -la' \
+        ll='eza -l' \
+        lt='eza -lasnew' \
+        lg='eza --git -l -snew';
 
 # dirs
 alias \

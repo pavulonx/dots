@@ -144,7 +144,7 @@ zinit wait lucid for \
   blockf \
     zsh-users/zsh-completions
 
-export _ZO_FZF_OPTS="+s -e --preview='exa --level 2 --tree --color=always --group-directories-first {2}' $FZF_DEFAULT_OPTS"
+export _ZO_FZF_OPTS="+s -e --preview='eza --level 2 --tree --color=always --group-directories-first {2}' $FZF_DEFAULT_OPTS"
 
 zinit wait"1" lucid for \
     zdharma-continuum/history-search-multi-word \
