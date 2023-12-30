@@ -3,6 +3,9 @@ TODOs:
  - cleanup chezmoi params see https://www.chezmoi.io/docs/reference/#lookpath-examples
  - create .zshenv?
  - chromium history rofi/dmenu/fzf?
+ - wayland
+ - chezmoi config update
+
 
  - polkit agent
  - ranger/lf config

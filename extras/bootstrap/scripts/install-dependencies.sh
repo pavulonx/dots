@@ -32,7 +32,7 @@ core=(
   git
   git-delta
   dust
-  exa
+  eza
   fd
   fzf
   git

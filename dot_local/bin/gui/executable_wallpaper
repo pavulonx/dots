@@ -59,7 +59,7 @@ _pick() {
 
   echo "Setting $selected as wallpaper"
   if $set_as_default; then
-    if [ "$(readlink -f "$selected")" = "$(readlink -f "$CURRENT_WALLPAPER_PATH")" ]; then
+    if ! [ "$(readlink -f "$selected")" = "$(readlink -f "$CURRENT_WALLPAPER_PATH")" ]; then
       ln -sf "$selected" "$CURRENT_WALLPAPER_PATH"
     fi
     new_wallpaper="$CURRENT_WALLPAPER_PATH"
