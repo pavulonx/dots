@@ -14,4 +14,4 @@ cmd="$(echo "$power_options" \
 
 [ -z "$cmd" ] && exit 0;
 
-sys "$cmd"
+pwr "$cmd"

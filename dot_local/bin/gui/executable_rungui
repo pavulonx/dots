@@ -171,7 +171,7 @@ cd "$RUNGUI_EXEC_DIR" || exit 2
 
 {
   {
-    DESKTOP_SESSION="$session" \
+    XDG_CURRENT_DESKTOP="$session" DESKTOP_SESSION="$session" \
       exec "$executor" "$session"
   } | ts '[%Y-%m-%d %H:%M:%S] [OUT] |' >>"$log_file"
 } 2>&1 | ts '[%Y-%m-%d %H:%M:%S] [ERR] |' >>"$log_file"
