@@ -1,0 +1,52 @@
+#!/bin/sh
+
+RUNWL_ENABLED_SESSIONS="${RUNWL_ENABLED_SESSIONS:-"Hyprland sway"}"
+
+_die() {
+  echo "$@" >&2; exit 1
+}
+
+_help() {
+  cat <<EOF
+Starts Wayland session and sets DESKTOP_SESSION enviroment variable
+Usage: $(basename "$0") [-h] SESSION_NAME
+  SESSION_NAME  - name of the session
+  -h/--help     - prints this message
+
+EOF
+}
+
+
+#### MAIN
+# parse cmdline arg
+_choice="$1"
+if [ -z "$_choice" ] || [ "-h" = "$_choice" ] || [ "--help" = "$_choice" ] || [ "$#" -ne 1 ]; then
+  _help; exit 0;
+fi
+# resolving available sessions
+# shellcheck disable=SC2086
+available_sessions="$(command -v $RUNWL_ENABLED_SESSIONS 2> /dev/null | xargs -I {} basename {})"
+if [ -z "$available_sessions" ]; then
+  _die "No available session found! Install one or modify $RUNWL_ENABLED_SESSIONS variable"
+fi
+# check if choosen session is available
+session="$(echo "$available_sessions" | grep -Eo "^$_choice$")"
+if [ -z "$session" ] || [ "$(echo "$session" | wc -l)" -ne 1 ]; then
+  _die "Bad session '$_choice'!"
+fi
+
+
+### EXEC
+
+export _JAVA_AWT_WM_NONREPARENTING=1
+export XCURSOR_SIZE=24
+
+# nvidia stuff
+#export LIBVA_DRIVER_NAME=nvidia
+#export XDG_SESSION_TYPE=wayland
+#export GBM_BACKEND=nvidia-drm
+#export __GLX_VENDOR_LIBRARY_NAME=nvidia
+#export WLR_NO_HARDWARE_CURSORS=1
+
+DESKTOP_SESSION="${DESKTOP_SESSION:-$session}" \
+  exec "$session"

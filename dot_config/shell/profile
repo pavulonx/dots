@@ -16,6 +16,10 @@ export XDG_CONFIG_HOME="$HOME/.config"
 export XDG_DATA_HOME="$HOME/.local/share"
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_STATE_HOME="$HOME/.local/state"
+export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-"/run/user/$UID"}"
+
+# gui
+export RUNGUI_LOCK_FILE="$XDG_RUNTIME_DIR/rungui.lock"
 
 # home dir debloat
 export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
@@ -54,9 +58,9 @@ command -v ssha >/dev/null 2>&1 && eval "$(ssha 2>/dev/null)"
 _profile_local="$XDG_CONFIG_HOME/shell/profile.local"
 [ -e "$_profile_local" ] && . "$_profile_local"
 
-# run xstart if X are not running
-if [ "$(tty)" = "/dev/tty1" ] && ! pgrep X; then
-  xstart
+# run rungui if on tty1 and lock file doesnt exist
+if [ "$(tty)" = "/dev/tty1" ] && ! [ -s "$RUNGUI_LOCK_FILE" ]; then
+  rungui
 fi
 
 # vi:syntax=sh

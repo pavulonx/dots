@@ -14,9 +14,9 @@ done
 
 logfile=
 if "$list"; then
-  logfile="$(find "$XDG_CACHE_HOME/xstart" -type f | sort -ur | fzf --preview 'head -n20 {}')"
+  logfile="$(find "$XDG_CACHE_HOME/rungui" -type f | sort -ur | fzf --preview 'head -n20 {}')"
 else
-  logfile="$XDG_CACHE_HOME/xstart/latest.log"
+  logfile="$XDG_CACHE_HOME/rungui/latest.log"
 fi
 [ -z "$logfile" ] && exit 0
 

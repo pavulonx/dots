@@ -1,0 +1,126 @@
+#!/bin/sh
+
+X11_CONFIG_DIR="${X11_CONFIG_DIR:-"$XDG_CONFIG_HOME/x11"}"
+RUNX11_ENABLED_SESSIONS="${RUNX11_ENABLED_SESSIONS:-"i3 xmonad bspwm"}"
+
+_die() {
+  echo "$@" >&2; exit 1
+}
+
+_help() {
+  cat <<EOF
+Starts X session and sets DESKTOP_SESSION enviroment variable
+Usage: $(basename "$0") [-h] SESSION_NAME
+  SESSION_NAME  - name of the session
+  -h/--help     - prints this message
+
+Environment:
+  X11_CONFIG_DIR=$X11_CONFIG_DIR
+    config directory for X files
+
+EOF
+}
+
+resolve_xinitrc() {
+  _xinitrc_path=""
+  _session="$1"
+  _dir="$X11_CONFIG_DIR"
+  [ -d "$_dir" ] || _dir="$HOME";
+  [ -f "/etc/X11/xinit/xinitrc" ] && _xinitrc_path="/etc/X11/xinit/xinitrc"
+  [ -f "$HOME/.xinitrc" ] && _xinitrc_path="$HOME/.xinitrc"
+  [ -f "$_dir/xinitrc" ] && _xinitrc_path="$_dir/xinitrc"
+  [ -f "$_dir/.xinitrc-$_session" ] && _xinitrc_path="$_dir/.xinitrc-$_session"
+  [ -f "$_dir/xinitrc-$_session" ] && _xinitrc_path="$_dir/xinitrc-$_session"
+  # shellcheck disable=SC2153
+  [ -f "$XINITRC" ] && _xinitrc_path="$XINITRC"
+  realpath "$_xinitrc_path"
+  unset _xinitrc_path _dir _session
+}
+
+resolve_xserver() {
+  _dir="$X11_CONFIG_DIR"
+  [ -d "$_dir" ] || _dir="$HOME";
+  _xserver="/usr/bin/X"
+  [ -f "/etc/X11/xinit/xserverrc" ] && _xserver="/etc/X11/xinit/xserverrc"
+  [ -f "$HOME/.xserverrc" ] && _xserver="$HOME/.xserverrc"
+  [ -f "$_dir/.xserverrc" ] && _xserver="$_dir/.xserverrc"
+  [ -f "$_dir/xserverrc" ] && _xserver="$_dir/xserverrc"
+  echo "$_xserver"
+  unset _xserver
+}
+
+#### MAIN
+# parse cmdline arg
+_choice="$1"
+if [ -z "$_choice" ] || [ "-h" = "$_choice" ] || [ "--help" = "$_choice" ] || [ "$#" -ne 1 ]; then
+  _help; exit 0;
+fi
+# resolving available sessions
+# shellcheck disable=SC2086
+available_sessions="$(command -v $RUNX11_ENABLED_SESSIONS 2> /dev/null | xargs -I {} basename {})"
+if [ -z "$available_sessions" ]; then
+  _die "No available session found! Install one of modify RUNX11_ENABLED_SESSIONS variable"
+fi
+# check if choosen session is available
+session="$(echo "$available_sessions" | grep -Eo "^$_choice$")"
+if [ -z "$session" ] || [ "$(echo "$session" | wc -l)" -ne 1 ]; then
+  _die "Bad session '$_choice'!"
+fi
+
+### EXEC
+
+# resolve xinitrc
+xinitrc="$(resolve_xinitrc "$session")"
+[ -z "$xinitrc" ] && _die "Could not resolve xinitrc config"
+
+
+# resolve xinitrc
+xserver="$(resolve_xserver)"
+[ -z "$xinitrc" ] && _die "Could not resolve X server"
+
+
+if [ -z "$XAUTHORITY" ]; then
+  XAUTHORITY="${XDG_RUNTIME_DIR:-$HOME}/.Xauthority"
+  export XAUTHORITY
+fi
+
+# determine display
+d=0
+while [ -e "/tmp/.X$d-lock" ] || [ -S "/tmp/.X11-unix/X$d" ]; do
+  d=$((d + 1))
+done
+display=":$d"
+unset d
+
+# datermine tty
+tty=$(tty); tty_num="${tty#/dev/tty}"
+! [ "$tty_num" -ge 0 ] >/dev/null 2>&1 && _die "TTY '$tty' is invalid"
+
+# get cookie
+mcookie="$(/usr/bin/mcookie)"
+[ -z "$mcookie" ] && _die "Couldn't create cookie"
+
+# start X with given session
+cat <<EOF
+session:  $session
+xserver:  $xserver
+xinitrc:  $xinitrc
+display:  $display
+auth:     $XAUTHORITY
+EOF
+
+
+cleanup() {
+  rc=$?
+  xauth remove "$display"
+  command -v deallocvt > /dev/null 2>&1 && deallocvt
+  exit $rc
+}
+
+trap 'cleanup' EXIT HUP TERM EXIT INT QUIT
+touch "$XAUTHORITY" # to avoid warning - XAUTHORITY not exist
+xauth add "$display" MIT-MAGIC-COOKIE-1 "$mcookie"
+
+
+DESKTOP_SESSION="${DESKTOP_SESSION:-$session}" \
+  exec xinit "$xinitrc" -- "$xserver" "$display" "vt$tty_num" -keeptty -auth "$XAUTHORITY"

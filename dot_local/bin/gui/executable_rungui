@@ -1,0 +1,177 @@
+#!/bin/sh
+#exec:type
+ENABLED_SESSIONS="$(cat <<EOF
+i3:x11
+bspwm:x11
+xmonad:x11
+Hyprland:wayland
+sway:wayland
+EOF
+)"
+
+
+RUNGUI_LOGS_DIR="${RUNGUI_LOGS_DIR:-"$XDG_CACHE_HOME/rungui"}"
+RUNGUI_LOGS_HISTORY="${RUNGUI_LOGS_HISTORY:-10}"
+RUNGUI_EXEC_DIR="${RUNGUI_EXEC_DIR:-$HOME}"
+
+_die() {
+  echo "$@" >&2; exit 1
+}
+
+[ -z "$RUNGUI_LOCK_FILE" ] && _die "RUNGUI_LOCK_FILE is not set"
+[ -s "$RUNGUI_LOCK_FILE" ] && _die "Locked! Lock file $RUNGUI_LOCK_FILE exists!"
+
+cleanup() {
+  rc=$?
+  rm -f "$RUNGUI_LOCK_FILE"
+  exit $rc
+}
+
+trap 'cleanup' EXIT HUP TERM EXIT INT QUIT
+echo "$session" >"$RUNGUI_LOCK_FILE"
+
+_help() {
+  cat <<EOF
+Starts GUI session and sets DESKTOP_SESSION enviroment variable
+Usage: $(basename "$0") [-h] [ SESSION_NAME ]
+  SESSION_NAME  - optional name of the session, if not set will run in interactive mode
+  -h/--help     - prints this message
+
+Environment:
+  RUNGUI_LOGS_DIR=$RUNGUI_LOGS_DIR
+    location of logs
+  RUNGUI_EXEC_DIR=$RUNGUI_EXEC_DIR
+    directory in which GUI will be started
+
+Use guilogs for retrieve formatted logs
+EOF
+}
+
+
+_check_session_runnung() {
+  pids="$(pgrep "$1" 2>/dev/null)"
+  if [ -n "$pids" ]; then
+    printf "WARNING! Session %s is running with pid(s): \n" "$1"
+    echo "$pids"
+    printf "Continue? [y/N]: "
+    read -r yn
+    echo "$yn" | grep -qE '[yY][eE]?[sS]?' || exit 1
+  fi
+}
+
+_check_X_running() {
+  xpids="$(pgrep X 2>/dev/null)"
+  if [ -n "$xpids" ]; then
+    printf "WARNING! Xorg is running with pid(s): \n"
+    echo "$xpids"
+    printf "Continue? [y/N]: "
+    read -r yn
+    echo "$yn" | grep -qE '[yY][eE]?[sS]?' || exit 1
+  fi
+}
+
+
+#### MAIN
+
+# parse cmdline args
+_choice=
+for arg; do
+  case "$arg" in
+    -h) _help; exit 0
+      ;;
+    *)
+      if [ -z "$_choice" ]; then
+        _choice="$arg";
+      else
+        _die "Bad argument '$arg'";
+      fi
+      ;;
+  esac
+done
+
+# resolving available sessions
+# shellcheck disable=SC2086
+available_sessions="$ENABLED_SESSIONS"
+while IFS=: read -r session session_type; do
+  if ! command -v "$session" >/dev/null 2>&1; then
+    available_sessions="$(echo "$available_sessions" | grep -Ev "^$session")"
+  fi
+done <<EOF
+$ENABLED_SESSIONS
+EOF
+
+if [ -z "$available_sessions" ]; then
+  _die "$(cat <<EOF
+No available session found!
+Install one or modify ENABLED_SESSIONS variable
+ENABLED_SESSIONS:
+$ENABLED_SESSIONS
+EOF
+)"
+fi
+
+
+# interactive choose session if session not set
+if [ -z "$_choice" ]; then
+  trap 'exit 0' INT
+  echo "Available sessions:"
+  echo "$available_sessions" | awk -F':' '{printf "  %s) %-10s %s\n", NR, $1, $2}'
+  printf "Select name or number (defaut 1): "
+  read -r _choice </dev/tty
+  _choice="${_choice:-1}"
+  if test "$_choice" -gt 0 2>/dev/null; then
+    _choice="$(echo "$available_sessions" | awk "NR == $_choice")"
+  fi
+  trap - INT
+fi
+
+
+# check if choosen session is available
+IFS=: read -r session session_type <<EOF
+$(echo "$available_sessions" | grep -Eo "^${_choice}(:(wayland|x11))?$")
+EOF
+if [ -z "$session" ] || [ "$(echo "$session" | wc -l)" -ne 1 ]; then
+  _die "Bad session!"
+fi
+
+
+# prepare logging
+mkdir -p "$RUNGUI_LOGS_DIR"
+log_file="$RUNGUI_LOGS_DIR/$(date +'%F_%H-%M-%S').$session.$session_type.log"
+ln -sf "$log_file" "$RUNGUI_LOGS_DIR/latest.log"
+[ "$RUNGUI_LOGS_HISTORY" -gt 0 ] && # keep RUNGUI_LOGS_HISTORY logs in RUNGUI_LOGS_DIR
+  find "$RUNGUI_LOGS_DIR" -type f -name '*.log' -printf "%T@:%p\n" |
+  sort -nr | tail -n "+$RUNGUI_LOGS_HISTORY" | cut -d: -f2- |
+  xargs -r rm
+
+
+# start X with given session
+echo "Starting session: $session" | tee -a "$log_file"
+cat <<EOF >>"$log_file"
+----------------------------------------------------------
+Info:
+  type        $session_type
+  session     $session
+  tty         $(tty)
+----------------------------------------------------------
+EOF
+
+
+case "$session_type" in
+  x11)
+    _check_X_running
+    executor=runx11
+    ;;
+  wayland)
+    _check_session_runnung "$session"
+    executor=runwl  ;;
+esac
+
+cd "$RUNGUI_EXEC_DIR" || exit 2
+
+{
+  {
+    DESKTOP_SESSION="$session" \
+      exec "$executor" "$session"
+  } | ts '[%Y-%m-%d %H:%M:%S] [OUT] |' >>"$log_file"
+} 2>&1 | ts '[%Y-%m-%d %H:%M:%S] [ERR] |' >>"$log_file"
