@@ -164,7 +164,8 @@ case "$session_type" in
     ;;
   wayland)
     _check_session_runnung "$session"
-    executor=runwl  ;;
+    executor=runwl
+    ;;
 esac
 
 cd "$RUNGUI_EXEC_DIR" || exit 2
