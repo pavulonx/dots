@@ -78,3 +78,5 @@ x-scheme-handler/ftp=chromium.desktop;firefox.desktop;brave-browser.desktop;
 x-scheme-handler/http=chromium.desktop;firefox.desktop;brave-browser.desktop;
 x-scheme-handler/https=chromium.desktop;firefox.desktop;brave-browser.desktop;
 x-scheme-handler/mailto=chromium.desktop;firefox.desktop;brave-browser.desktop;
+application/x-mozilla-bookmarks=editor.desktop;
+application/x-awk=editor.desktop;

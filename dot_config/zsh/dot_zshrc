@@ -150,6 +150,8 @@ zinit wait"1" lucid for \
     zdharma-continuum/history-search-multi-word \
     ajeetdsouza/zoxide
 
+[ -e "$ZDOTDIR/.zshrc.local" ] && source "$ZDOTDIR/.zshrc.local"
+
 [ -e "$HOME/TODO" ] && cat "$HOME/TODO"
 
 # vim: ft=zsh sw=2 ts=2 et
