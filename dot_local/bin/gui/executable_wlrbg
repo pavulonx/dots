@@ -1,0 +1,4 @@
+#!/bin/sh
+
+killwait swaybg
+exec swaybg -i "$XDG_DATA_HOME/current_wallpaper" -m fill

@@ -187,10 +187,15 @@ gcmsgt() {
 
 chm() {
   if [ "$#" -eq 0 ]; then
-    cd "$(chezmoi source-path)"
+    cd "$(chezmoi source-path)" || ( echo "failed to execute chme" >&2 && return )
   else
     chezmoi "$@"
   fi
+}
+
+chme() {
+  cd "$(chezmoi source-path)" || ( echo "failed to execute chme" >&2 && return )
+  "$EDITOR" .
 }
 
 # view or edit command
@@ -245,4 +250,4 @@ ex() {
   fi
 }
 
-# vi:syntax=sh
+# vi:filetype=sh

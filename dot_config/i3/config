@@ -54,7 +54,6 @@ bindsym XF86Calculator        exec gnome-calculator
 
 
 # NOTIFICATIONS
-bindsym $mod+Shift+d --release exec --no-startup-id "toggleprogram dunst; exec notify-send 'Dunst restart'"
 bindsym $mod+$alt+h            exec --no-startup-id dunstctl history-pop
 bindsym $mod+$alt+c            exec --no-startup-id dunstctl context
 bindsym $mod+$alt+space        exec --no-startup-id dunstctl close
@@ -70,7 +69,7 @@ exec_always --no-startup-id wallpaper restore
 bindsym $mod+o --release exec "$TERMINAL -e ranger"
 bindsym $mod+Shift+F12  --release exec --no-startup-id "autorandr common; exec notify-send 'autorandr common'; true"
 bindsym $mod+Shift+plus --release exec --no-startup-id "xrandr-menu"
-bindsym $mod+Shift+t --release exec --no-startup-id "toggleprogram picom -b"
+bindsym $mod+Shift+t --release exec --no-startup-id "killwait picom; picom -b"
 # screenshots
 bindsym $mod+Print --release exec --no-startup-id sshot -s
 # xkill

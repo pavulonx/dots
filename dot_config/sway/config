@@ -54,7 +54,6 @@ bindsym XF86Calculator        exec gnome-calculator
 
 
 # NOTIFICATIONS
-bindsym $mod+Shift+d --release exec --no-startup-id "toggleprogram dunst; exec notify-send 'Dunst restart'"
 bindsym $mod+$alt+h            exec --no-startup-id dunstctl history-pop
 bindsym $mod+$alt+c            exec --no-startup-id dunstctl context
 bindsym $mod+$alt+space        exec --no-startup-id dunstctl close

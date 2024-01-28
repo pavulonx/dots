@@ -1,20 +1,7 @@
 #!/bin/sh
 
-echo "Starting waybar"
-
-# shutdown waybars
-if pgrep -u "$(id -u)" -x waybar >/dev/null; then
-  echo "killing existing waybars"
-  killall -q waybar
-
-  # wait until shutdown of existing waybars
-  cycles=10
-  while pgrep -u "$(id -u)" -x waybar >/dev/null; do
-    [ $cycles -le 0 ] && break;
-    sleep 0.5;
-    cycles=$((cycles-1))
-  done
-fi
+echo "Killing existing waybars"
+killwait waybar
 
 WAYBAR_CFG_DIR="$XDG_CONFIG_HOME/waybar"
 
@@ -29,4 +16,5 @@ cfg="$(mktemp -p /tmp waybarconfig-XXXXXXXX.log)"
   fi
 ) | jq -r 'reduce inputs as $i (.; . *= $i)' >"$cfg"
 
+echo "Starting waybar"
 exec waybar -c "$cfg"
