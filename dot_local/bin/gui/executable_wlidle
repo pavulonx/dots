@@ -1,0 +1,29 @@
+#!/bin/sh
+
+cmd_dpms_off=
+cmd_dpms_on=
+case "$XDG_CURRENT_DESKTOP" in
+  Hyprland)
+    cmd_dpms_off='hyprctl dispatch dpms off'
+    cmd_dpms_on='hyprctl dispatch dpms on'
+    ;;
+  sway)
+    cmd_dpms_off='swaymsg "output * dpms off"'
+    cmd_dpms_on='swaymsg "output * dpms on"'
+    ;;
+  *)
+    echo "Unsuported desktop: $XDG_CURRENT_DESKTOP" 2>&1
+    exit 1
+    ;;
+esac
+
+# running swayidle without waiting for command (-w flag) because lockscreen command is blocking
+# TODO: add suspending?
+exec swayidle \
+  timeout 270 'notify-send -u critical -t 29000 "Screen will lock in 30s"' \
+  timeout 300 'lockscreen' \
+  timeout 450 "$cmd_dpms_off" resume "$cmd_dpms_on" \
+  lock 'lockscreen' \
+  before-sleep 'lockscreen' \
+  after-resume 'lockscreen' \
+  idlehint 600

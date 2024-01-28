@@ -42,11 +42,12 @@ case "$cmd" in
     ;;
   exit)
     case "$DESKTOP_SESSION" in
-      i3)     i3-msg exit ;;
-      xmonad) xmonadctl quit-wm ;;
-      bspwm)  bspc quit ;;
-      dwm)    pkill dwm ;;
-      *)      loginctl terminate-user ;;
+      i3)       i3-msg exit ;;
+      xmonad)   xmonadctl quit-wm ;;
+      bspwm)    bspc quit ;;
+      Hyprland) hyprctl dispatch exit ;;
+      sway)     swaymsg exit ;;
+      *)        loginctl terminate-user ;;
     esac
     ;;
   *)

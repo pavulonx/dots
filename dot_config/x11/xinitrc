@@ -24,11 +24,10 @@ udiskie -s &
 picom -b &
 /usr/lib/mate-polkit/polkit-mate-authentication-agent-1 & # todo: replace with simplier auth agent
 clipmenud &
-redshiftw &
 unclutter &
+nightlight &
 nm-applet &
 wallpaper restore &
-solaar -w hide &
 
 # source local xinitrc if present
 _xinitrc_local="$XDG_CONFIG_HOME/x11/xinitrc.local"

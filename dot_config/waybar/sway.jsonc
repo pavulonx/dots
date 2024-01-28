@@ -1,0 +1,19 @@
+{
+  "modules-left": ["sway/workspaces", "sway/mode", "sway/scratchpad", "sway/window"],
+  "modules-right": ["custom/media", "idle_inhibitor", "pulseaudio", "network", "cpu", "memory", "temperature", "backlight", "keyboard-state", "sway/language", "tray"],
+
+  "sway/workspaces": {
+  },
+  "sway/mode": {
+    "format": "<span style=\"italic\">{}</span>"
+  },
+  "sway/scratchpad": {
+    "format": "{icon} {count}",
+    "show-empty": false,
+    "format-icons": ["", ""],
+    "tooltip": true,
+    "tooltip-format": "{app}: {title}"
+  }
+}
+
+// vi: ft=jsonc

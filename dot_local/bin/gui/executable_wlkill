@@ -1,0 +1,5 @@
+#!/bin/sh
+
+pid="$(wlprop | jq ".pid")"
+
+kill "$pid"

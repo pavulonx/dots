@@ -81,6 +81,7 @@ gui=(
   dunst
   feh
   flatery-icon-theme-git
+  gammastep
   gsimplecal
   i3-gaps
   i3lock-color-git
@@ -91,7 +92,6 @@ gui=(
   networkmanager-dmenu-git
   picom
   polybar
-  redshift
   rofi
   scrot
   thunar

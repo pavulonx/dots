@@ -22,6 +22,9 @@ Plug 'airblade/vim-gitgutter'
 Plug 'tpope/vim-fugitive'
 Plug 'neoclide/coc.nvim', {'branch': 'release'}
 Plug 'neovimhaskell/haskell-vim'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
+" Plug 'theRealCarneiro/hyprland-vim-syntax'
+Plug 'luckasRanarison/tree-sitter-hyprlang'
 " Plug 'autozimu/LanguageClient-neovim', {'branch': 'next', 'do': 'bash install.sh'}
 " Plug 'ap/vim-css-color' " disabled because of https://github.com/ap/vim-css-color/issues/139
 call plug#end()

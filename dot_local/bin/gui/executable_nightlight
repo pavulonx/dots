@@ -1,0 +1,10 @@
+#!/bin/sh
+
+_location_geo="$(location geo | tr ',' ':')"
+
+killall gammastep >/dev/null 2>&1 && sleep 1
+
+method=randr
+[ -n "$WAYLAND_DISPLAY" ] && method=wayland
+
+exec gammastep -r -m "$method" -l manual -l "$_location_geo" 2>&1 | sed 's/^/nightlight: /'

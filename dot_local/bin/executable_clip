@@ -30,7 +30,10 @@ When running trough te pipe 'set' is assumed.
 _EOF_
 }
 
-if command -v xclip >/dev/null 2>&1; then
+if [ -n "$WAYLAND_DISPLAY" ] && command -v wl-copy >/dev/null 2>&1 && command -v wl-paste >/dev/null 2>&1; then
+  _clipboard_get() { wl-paste; }
+  _clipboard_set() { wl-copy; }
+elif command -v xclip >/dev/null 2>&1; then
   _clipboard_get() { xclip -out -selection clipboard; }
   _clipboard_set() { xclip -in -selection clipboard; }
 elif [ -n "$TERMUX_VERSION" ] && command -v termux-clipboard-get >/dev/null 2>&1; then

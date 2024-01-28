@@ -29,8 +29,7 @@ printer='cat'
 if [ -t 1 ] || "$force_color"; then # colorize outfut when connected to terminal
   $printer "$logfile" | sed '
   s/^\(Starting session:.*\)/\x1b[1m\1\x1b[0m/
-  s/^\(.*\)\[ERR\] |/\x1b[1m\1\x1b[0m\x1b[31;1m[ERR]\x1b[0m |/g
-  s/^\(.*\)\[OUT\] |/\x1b[1m\1\x1b[0m\x1b[1m[OUT]\x1b[0m |/g
+  s/^\[\([^|]*\)\] |/\x1b[1m\1\x1b[0m |/g
   '
 else
   $printer "$logfile"
