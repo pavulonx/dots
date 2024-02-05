@@ -20,10 +20,10 @@ esac
 # running swayidle without waiting for command (-w flag) because lockscreen command is blocking
 # TODO: add suspending?
 exec swayidle \
-  timeout 270 'notify-send -u critical -t 29000 "Screen will lock in 30s"' \
-  timeout 300 'lockscreen' \
-  timeout 450 "$cmd_dpms_off" resume "$cmd_dpms_on" \
+  timeout 570 'notify-send -u critical -t 29000 "Screen will lock in 30s"' \
+  timeout 600 'lockscreen' \
+  timeout 750 "$cmd_dpms_off" resume "$cmd_dpms_on" \
   lock 'lockscreen' \
   before-sleep 'lockscreen' \
   after-resume 'lockscreen' \
-  idlehint 600
+  idlehint 900

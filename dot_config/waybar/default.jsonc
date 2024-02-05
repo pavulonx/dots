@@ -115,6 +115,7 @@
       "escape": true,
       "restart-interval": 60,
       "exec": "updatestatus 2>/dev/null",
+      "exec-if": "test \"$(updatestatus)\" -gt 0",
       "on-click": "updatestatus -r -n"
     },
     "mpd": {
