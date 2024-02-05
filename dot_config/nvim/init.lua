@@ -20,9 +20,33 @@ local plugins = {
   'williamboman/mason-lspconfig.nvim',
   'neovim/nvim-lspconfig',
   'tpope/vim-surround',
+  { 'farmergreg/vim-lastplace', lazy = false}, -- return to last edit position when opening files
   'preservim/nerdtree',
+  {
+    "nvim-neo-tree/neo-tree.nvim",
+    branch = "v3.x",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
+      "MunifTanjim/nui.nvim",
+      -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
+    },
+    opts = {
+      sources = { "filesystem", "buffers", "git_status", "document_symbols" },
+      open_files_do_not_replace_types = { "terminal", "Trouble", "trouble", "qf", "Outline" },
+      filesystem = {
+        filtered_items = {
+          visible = true,
+          show_hidden_count = true,
+          hide_dotfiles = false,
+          hide_gitignored = false,
+          never_show = {},
+        },
+      }
+    }
+  },
   'junegunn/goyo.vim',
--- " Plug 'junegunn/fzf.vim'
+  -- " Plug 'junegunn/fzf.vim'
   'jreybert/vimagit',
   'vimwiki/vimwiki',
   {
@@ -35,7 +59,7 @@ local plugins = {
   },
   {
     'nvim-lualine/lualine.nvim',
-     dependencies = {'nvim-tree/nvim-web-devicons' }
+    dependencies = {'nvim-tree/nvim-web-devicons' }
   },
   {
     "folke/which-key.nvim",
@@ -50,9 +74,9 @@ local plugins = {
   'tpope/vim-fugitive',
   { 'neoclide/coc.nvim', branch = 'release' },
   { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
- 'luckasRanarison/tree-sitter-hyprlang',
--- " Plug 'autozimu/LanguageClient-neovim', {'branch': 'next', 'do': 'bash install.sh'}
--- " Plug 'ap/vim-css-color' " disabled because of https://github.com/ap/vim-css-color/issues/139
+  'luckasRanarison/tree-sitter-hyprlang',
+  -- " Plug 'autozimu/LanguageClient-neovim', {'branch': 'next', 'do': 'bash install.sh'}
+  -- " Plug 'ap/vim-css-color' " disabled because of https://github.com/ap/vim-css-color/issues/139
 }
 require("lazy").setup(plugins) --, { defaults = { lazy = false } } )
 --[[ end:plugin ]]--
@@ -155,9 +179,21 @@ vim.o.wrap = true
 
 --[[ remoaps ]]--
 vim.keymap.set('n', 'c', '"_c') -- in normal mode CHANGE (c) puts changed word into black hole register (does not copy to cp)
+vim.keymap.set('v', '.', ':normal .<CR>') -- perform dot commands over visual blocks
+-- moving betwee windows
+vim.keymap.set("n", "<C-h>", "<C-w>h")
+vim.keymap.set("n", "<C-j>", "<C-w>j")
+vim.keymap.set("n", "<C-k>", "<C-w>k")
+vim.keymap.set("n", "<C-l>", "<C-w>l")
+-- resize
+vim.keymap.set("n", "<C-Up>", ":resize -4<CR>")
+vim.keymap.set("n", "<C-Down>", ":resize +4<CR>")
+vim.keymap.set("n", "<C-Left>", ":vertical resize -4<CR>")
+vim.keymap.set("n", "<C-Right>", ":vertical resize +4<CR>")
 --[[ end:remoaps ]]--
 
 
+vim.keymap.set("n", "<leader>n", ":Neotree toggle<CR>")
 
 
 require("mason").setup()
