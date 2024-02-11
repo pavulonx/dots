@@ -12,111 +12,21 @@ if not vim.loop.fs_stat(lazypath) then
     lazypath,
   })
 end
-vim.opt.rtp:prepend(lazypath)
 
-local plugins = {
-  {'nvim-telescope/telescope.nvim', tag = '0.1.5', dependencies = {'nvim-lua/plenary.nvim' }},
-  'williamboman/mason.nvim',
-  'williamboman/mason-lspconfig.nvim',
-  'neovim/nvim-lspconfig',
-  'tpope/vim-surround',
-  { 'farmergreg/vim-lastplace', lazy = false}, -- return to last edit position when opening files
-  'preservim/nerdtree',
-  {
-    "nvim-neo-tree/neo-tree.nvim",
-    branch = "v3.x",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-tree/nvim-web-devicons", -- not strictly required, but recommended
-      "MunifTanjim/nui.nvim",
-      -- "3rd/image.nvim", -- Optional image support in preview window: See `# Preview Mode` for more information
-    },
-    opts = {
-      sources = { "filesystem", "buffers", "git_status", "document_symbols" },
-      open_files_do_not_replace_types = { "terminal", "Trouble", "trouble", "qf", "Outline" },
-      filesystem = {
-        filtered_items = {
-          visible = true,
-          show_hidden_count = true,
-          hide_dotfiles = false,
-          hide_gitignored = false,
-          never_show = {},
-        },
-      }
-    }
-  },
-  'junegunn/goyo.vim',
-  -- " Plug 'junegunn/fzf.vim'
-  'jreybert/vimagit',
-  'vimwiki/vimwiki',
-  {
-    'lifepillar/vim-solarized8',
-    lazy = false,
-    priority = 1000,
-    config = function()
-      vim.cmd("colorscheme solarized8")
-    end
-  },
-  {
-    'nvim-lualine/lualine.nvim',
-    dependencies = {'nvim-tree/nvim-web-devicons' }
-  },
-  {
-    "folke/which-key.nvim",
-    event = "VeryLazy",
-    init = function()
-      vim.o.timeout = true
-      vim.o.timeoutlen = 300
-    end,
-  },
-  'tpope/vim-commentary',
-  'airblade/vim-gitgutter',
-  'tpope/vim-fugitive',
-  { 'neoclide/coc.nvim', branch = 'release' },
-  { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
-  'luckasRanarison/tree-sitter-hyprlang',
-  -- " Plug 'autozimu/LanguageClient-neovim', {'branch': 'next', 'do': 'bash install.sh'}
-  -- " Plug 'ap/vim-css-color' " disabled because of https://github.com/ap/vim-css-color/issues/139
-}
-require("lazy").setup(plugins) --, { defaults = { lazy = false } } )
+vim.opt.rtp:prepend(lazypath)
+require("lazy").setup("plugins") -- plugins are stored in plugins module
 --[[ end:plugin ]]--
 --------------------
-
------------------
---[[ lualine ]]--
-local lualine_solarized = require('lualine.themes.solarized_dark')
-lualine_solarized.normal.b = { fg = lualine_solarized.normal.c.fg, bg = lualine_solarized.normal.c.bg, gui = 'bold' }
-require("lualine").setup {
-  options = {
-    theme = lualine_solarized,
-    section_separators = '',
-    component_separators = ''
-  },
-  sections = {
-    lualine_b = {'branch', 'diff'},
-    lualine_x = {
-      'diagnostics',
-      'encoding',
-      {'fileformat', symbols = {unix = '[unix]', dos = '[dos]', mac ='[mac]'}},
-      'filetype'
-    }
-  }
-  -- TODO: add tabline
-}
---[[ end:lualine ]]--
----------------------
-
-
---- automaticaly exec which-key -- TODO: if not needed remoe this and just command :WhichKey
-require("which-key").setup {}
-
 
 -----------------
 --[[ options ]]--
 --- theme
 vim.o.termguicolors = true
 vim.o.title = true
-vim.o.bg = 'dark'
+vim.o.background = 'dark' -- or 'light'
+--vim.cmd.colorscheme 'catppuccin-mocha'
+vim.cmd.colorscheme 'solarized-osaka-night'
+-- vim.cmd.colorscheme 'kanagawa-dragon'
 
 -- numbers
 vim.wo.number = true
@@ -193,7 +103,7 @@ vim.keymap.set("n", "<C-Right>", ":vertical resize +4<CR>")
 --[[ end:remoaps ]]--
 
 
-vim.keymap.set("n", "<leader>n", ":Neotree toggle<CR>")
+-- vim.keymap.set("n", "<leader>n", ":Neotree toggle<CR>")
 
 
 require("mason").setup()
@@ -213,10 +123,7 @@ vim.keymap.set('n', '<leader>fh', builtin.help_tags, {})
 --[[ end:telescope ]]--
 -----------------------
 
-
-
 ----- sourcing old files -- TODO: remove
 vim.cmd([[
 source ~/.config/nvim/init-legacy.vim
-source ~/.config/nvim/coc.vim
 ]])
