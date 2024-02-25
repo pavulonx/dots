@@ -1,0 +1,5 @@
+.local/bin/gui/grimblast:
+  type: file
+  url: https://raw.githubusercontent.com/hyprwm/contrib/main/grimblast/grimblast
+  refreshPeriod: 168h
+  executable: true

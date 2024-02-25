@@ -1,0 +1,23 @@
+{{- $profile_choices := list "pc" "server" "phone" -}}
+{{- $profile := promptChoice "What type of machine?" $profile_choices "pc"  -}}
+{{- $browser := env "BROWSER" -}}
+{{- $u_email := promptString "User email: " -}}
+{{- $u_fullname := promptString "User fullname: " -}}
+
+
+# chezmoi config
+data:
+  conf:
+    profile:      '{{- $profile -}}'
+    browser:      '{{- $browser -}}'
+    user:
+      email:      '{{- $u_email -}}'
+      fullname:   '{{- $u_fullname -}}'
+
+merge:
+  command: "nvim"
+  args: "-d"
+
+pager: delta
+
+# vi:ft=yaml
