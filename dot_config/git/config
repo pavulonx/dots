@@ -36,5 +36,8 @@
 [init]
   defaultBranch = master
 
+[rerere]
+	enabled = true
+
 [include]
   path = ~/.config/git/config.local
