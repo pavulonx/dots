@@ -5,8 +5,8 @@ OS_COLOR="$(grep -Eo '^ANSI_COLOR=".*$' /etc/os-release | cut -d\" -f2)"
 
 tmpf="$(mktemp)"
 cat <<EOF>"$tmpf"
- \e[${OS_COLOR}m$OS_NAME\e[0m \e[1m\n\e[0m \e[0;33m\r\e[0m
- \e[0;35m\l\e[0m
+\e[${OS_COLOR}m$OS_NAME\e[0m \e[1m\n\e[0m \e[0;33m\r\e[0m
+\e[0;35m\l\e[0m
 
 EOF
 
