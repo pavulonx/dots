@@ -136,7 +136,9 @@ source "$ZDOTDIR/.zinit/bin/zinit.zsh"
 autoload -Uz _zinit
 (( ${+_comps} )) && _comps[zinit]=_zinit
 
+
 zinit wait lucid for \
+    ajeetdsouza/zoxide \
   atinit"ZINIT[COMPINIT_OPTS]=-C; __completions_init; zpcdreplay;" \
     zdharma-continuum/fast-syntax-highlighting \
   atload"!_zsh_autosuggest_start" \
@@ -144,11 +146,12 @@ zinit wait lucid for \
   blockf \
     zsh-users/zsh-completions
 
-export _ZO_FZF_OPTS="+s -e --preview='eza --level 2 --tree --color=always --group-directories-first {2}' $FZF_DEFAULT_OPTS"
-
 zinit wait"1" lucid for \
-    zdharma-continuum/history-search-multi-word \
-    ajeetdsouza/zoxide
+    zdharma-continuum/history-search-multi-word
+
+
+alias zi=__zoxide_zi
+export _ZO_FZF_OPTS="+s -e --preview='eza --level 2 --tree --color=always --group-directories-first {2}' $FZF_DEFAULT_OPTS"
 
 [ -e "$HOME/TODO" ] && cat "$HOME/TODO"
 
