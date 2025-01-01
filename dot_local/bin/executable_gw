@@ -1,0 +1,10 @@
+#!/bin/sh
+
+if [ -x "./gradlew" ]; then
+  ./gradlew "$@"
+elif command -V gradle >/dev/null 2>&1; then
+  gradle "$@"
+else
+  echo "Not found ./gradlew in current directory and gradle is not installed!" >&2
+  exit 1
+fi
