@@ -12,6 +12,12 @@ mainf="$dir/main"
 aurf="$dir/aur"
 lockf="$dir/lock"
 
+if [ -f '/etc/os-release' ]; then
+  os="$(grep '^ID=' /etc/os-release)"; os="${os#ID=}"
+else
+  os="$(uname -o)"
+fi
+
 _debug() {
   $_show_debug && echo "updatestatus:debug:$*"
 }
@@ -21,10 +27,24 @@ _gen_update_stats() {
     trap 'rm -f "$lockf"; exit $?' INT TERM EXIT
     _debug "lock aquired"
 
+case "$os" in
+  arch|artix)
     _debug "refreshing main: $mainf"
-    checkupdates > "$mainf" 2> /dev/null
+    checkupdates >"$mainf" 2> /dev/null
     _debug "refreshing aur:  $aurf"
     paru -Qua > "$aurf" 2> /dev/null
+    ;;
+  debian|ubuntu)
+    _debug "refreshing main: $mainf"
+    apt list --upgradeable 2>/dev/null | grep -v 'Listing' | awk -F '[/ \\]]' '{ print $1 " " $7 " -> " $3 }' >"$mainf"
+    touch "$aurf"
+    ;;
+#  Android)
+#    # TODO: implement
+#    ;;
+  *)
+    echo "Not implemented for os: $os"; exit 1;;
+esac
 
     rm -f "$lockf"
     trap - INT TERM EXIT
@@ -61,7 +81,7 @@ fi
 
 main_count="$(wc -l < "$mainf")"
 aur_count="$(wc -l < "$aurf")"
-updates_count=$(("$main_count" + "$aur_count"))
+updates_count=$((main_count + aur_count))
 
 if $_show_details; then
   echo "Updates: $updates_count"
@@ -70,15 +90,17 @@ if $_show_details; then
   echo "  AUR:  $aur_count"
   awk '{printf "    - " $0 "\n"}' "$aurf"
 
-  ignored_pkg="$(grep '^\s*IgnorePkg'   /etc/pacman.conf | cut -d'=' -f2-)"
-  if [ -n "$ignored_pkg" ]; then
-    echo "  Ignored packages:"
-    echo "$ignored_pkg" | tr ' ' '\n' | xargs -r -I {} echo "    - {}"
-  fi
-  ignored_grp="$(grep '^\s*IgnoreGroup' /etc/pacman.conf | cut -d'=' -f2-)"
-  if [ -n "$ignored_grp" ]; then
-    echo "  Ignored groups:"
-    echo "$ignored_grp" | tr ' ' '\n' | xargs -r -I {} echo "    - {}"
+  if [ -e "/etc/pacman.conf" ]; then
+    ignored_pkg="$(grep '^\s*IgnorePkg'   /etc/pacman.conf | cut -d'=' -f2-)"
+    if [ -n "$ignored_pkg" ]; then
+      echo "  Ignored packages:"
+      echo "$ignored_pkg" | tr ' ' '\n' | xargs -r -I {} echo "    - {}"
+    fi
+    ignored_grp="$(grep '^\s*IgnoreGroup' /etc/pacman.conf | cut -d'=' -f2-)"
+    if [ -n "$ignored_grp" ]; then
+      echo "  Ignored groups:"
+      echo "$ignored_grp" | tr ' ' '\n' | xargs -r -I {} echo "    - {}"
+    fi
   fi
 elif $_show_info_oneline; then
   echo "updatestatus: package updates: $updates_count (main = $main_count, aur = $aur_count)"
@@ -89,3 +111,5 @@ fi
 if $_send_notification && [ "$updates_count" -gt 0 ]; then
   notify-send -t 30000 "System updates available: $updates_count" "Main: \t$main_count \nAUR: \t$aur_count" --icon="$update_notification_icon"
 fi
+#
+# vi: syntax=sh
