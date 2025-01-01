@@ -22,6 +22,8 @@ export XDG_RUNTIME_DIR="${XDG_RUNTIME_DIR:-"/run/user/$UID"}"
 export RUNGUI_LOCK_FILE="$XDG_RUNTIME_DIR/rungui.lock"
 
 # home dir debloat
+export AWS_SHARED_CREDENTIALS_FILE="$XDG_CONFIG_HOME/aws/credentials"
+export AWS_CONFIG_FILE="$XDG_CONFIG_HOME/aws/config"
 export XAUTHORITY="$XDG_RUNTIME_DIR/Xauthority"
 export GTK2_RC_FILES="$XDG_CONFIG_HOME/gtk-2.0/gtkrc-2.0"
 export WGETRC="$XDG_CONFIG_HOME/wget/wgetrc"

@@ -112,6 +112,7 @@ alias \
         \
         gf='git fetch' \
         gff='git fetch --tags -f' \
+        gfom='git fetch origin "$(git_default_branch)":"$(git_default_branch)"' \
         gfprune='git fetch --all --prune' \
         \
         gl='git pull'\
@@ -176,6 +177,26 @@ git_current_branch() {
     ref="$(git rev-parse --short HEAD 2> /dev/null)" || return;
   fi
   echo "${ref#refs/heads/}";
+}
+
+gct() {
+  ticket_default="${GIT_MSG_TICKET_DEFAULT:-}"
+  ticket_sep="${GIT_MSG_TICKET_SEP:-" "}"
+  ticket=
+  if echo "$1" | grep -qE '[A-Z]+-[0-9]+'; then
+    ticket="$(echo "$1" | grep -Eo '[A-Z]+-[0-9]+')";
+  elif git_current_branch | grep -qE '[A-Z]+-[0-9]+'; then
+    ticket="$(git_current_branch | grep -oE '[A-Z]+-[0-9]+')"
+  fi
+  tmpl="$(mktemp -p /tmp -t gct.XXXXXXXXXXXXX)"
+  cat <<EOF >"$tmpl"
+$1
+
+Ticket: $ticket
+EOF
+  git commit -v --template="$tmpl" || rc=$?
+  \rm "$tmpl"
+  return $rc
 }
 
 gcmsgt() {
