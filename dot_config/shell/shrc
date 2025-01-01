@@ -95,6 +95,8 @@ alias \
         gdo='git diff origin/"$(git_current_branch)"' \
         gdca='git diff --cached' \
         gdcao='git diff --cached origin/"$(git_current_branch)"' \
+        gdm='git diff "$(git_default_branch)"' \
+        gdcam='git diff --cached "$(git_default_branch)"' \
         \
         gc='git commit -v' \
         gc!='git commit -v --amend' \
@@ -116,6 +118,8 @@ alias \
         glo='git pull origin "$(git_current_branch)"' \
         \
         gm='git merge' \
+        gmm='git merge "$(git_default_branch)"' \
+        gma='git merge --abort' \
         gmt='git mergetool' \
         \
         gp='git push' \
@@ -151,7 +155,9 @@ alias \
         gsetup='git branch --set-upstream-to=origin/$(git_current_branch)' \
         gcfg='git config' \
         gitroot='git rev-parse --show-toplevel' \
-        cdgr='cd $(gitroot)';
+        gcd='cd $(gitroot)' \
+        cdgr='cd $(gitroot)'
+        ;
 
 git_default_branch() {
   ref="$(git symbolic-ref --quiet refs/remotes/origin/HEAD 2> /dev/null)";
