@@ -6,23 +6,51 @@ else
   os="$(uname -o)"
 fi
 
+_info() {
+  printf "\33[1m%s\33[0m\n" "$1"
+}
+
+_flatpak() {
+  if command -V flatpak >/dev/null 2>&1; then
+    _info "flatpak update"
+    flatpak update
+  fi
+}
+
+_updatestatus() {
+  if command -V updatestatus >/dev/null 2>&1; then
+    _info "Refreshing updatestatus"
+    updatestatus -r
+  fi
+}
+
+retval=0
+
 case "$os" in
   arch|artix)
-    paru -Syu --upgrademenu
-    printf " Refreshing updatestatus... " && command -v updatestatus >/dev/null 2>&1 && updatestatus -r
+    _info "paru -Syu --upgrademenu"
+    paru -Syu --upgrademenu || retval=$((retval + $?))
+    echo
+    _flatpak || retval=$((retval + $?))
+    echo
+    _updatestatus
     ;;
   debian|ubuntu)
-    "${SUDO:-sudo}" apt-get update && sudo apt-get upgrade ;;
+    _info "${SUDO:-sudo} apt-get update && ${SUDO:-sudo} apt-get upgrade"
+    "${SUDO:-sudo}" apt-get update && "${SUDO:-sudo}" apt-get upgrade || retval=$((retval + $?))
+    echo
+    _flatpak || retval=$((retval + $?))
+    echo
+    _updatestatus
+    ;;
   Android)
     pkg update && pkg upgrade ;;
   *)
     echo "Not implemented for os: $os"; exit 1;;
 esac
 
-retval="$?"
-
 [ "$1" = "-w" ] &&
-  printf "\33[1m> Press Return to exit <\33[0m\n" &&
+  _info "> Press Return to exit <" &&
   read -r;
 
 exit $retval
