@@ -12,6 +12,14 @@ mainf="$dir/main"
 aurf="$dir/aur"
 lockf="$dir/lock"
 
+if [ -f '/etc/os-release' ]; then
+  os="$(grep '^ID=' /etc/os-release)"; os="${os#ID=}"
+else
+  os="$(uname -o)"
+fi
+
+
+# vi: syntax=sh
 _debug() {
   $_show_debug && echo "updatestatus:debug:$*"
 }
@@ -21,10 +29,25 @@ _gen_update_stats() {
     trap 'rm -f "$lockf"; exit $?' INT TERM EXIT
     _debug "lock aquired"
 
+case "$os" in
+  arch|artix)
     _debug "refreshing main: $mainf"
-    checkupdates > "$mainf" 2> /dev/null
+    checkupdates >"$mainf" 2> /dev/null
     _debug "refreshing aur:  $aurf"
     paru -Qua > "$aurf" 2> /dev/null
+    ;;
+  debian|ubuntu)
+    _debug "refreshing main: $mainf"
+    apt list --upgradeable 2>/dev/null | grep -v 'Listing' | awk -F '[/ \\]]' '{ print $1 " " $7 " -> " $3 }' >"$mainf"
+    touch "$aurf"
+    ;;
+#  Android)
+#    pkg list-all |
+#      fzf --multi --preview-window down --preview 'pkg show {1}' |
+#      awk '{print $1}' ;;
+  *)
+    echo "Not implemented for os: $os"; exit 1;;
+esac
 
     rm -f "$lockf"
     trap - INT TERM EXIT
@@ -61,7 +84,7 @@ fi
 
 main_count="$(wc -l < "$mainf")"
 aur_count="$(wc -l < "$aurf")"
-updates_count=$(("$main_count" + "$aur_count"))
+updates_count=$((main_count + aur_count))
 
 if $_show_details; then
   echo "Updates: $updates_count"
@@ -70,6 +93,7 @@ if $_show_details; then
   echo "  AUR:  $aur_count"
   awk '{printf "    - " $0 "\n"}' "$aurf"
 
+  if [ -e "/etc/pacman.conf" ]; then
   ignored_pkg="$(grep '^\s*IgnorePkg'   /etc/pacman.conf | cut -d'=' -f2-)"
   if [ -n "$ignored_pkg" ]; then
     echo "  Ignored packages:"
@@ -79,6 +103,7 @@ if $_show_details; then
   if [ -n "$ignored_grp" ]; then
     echo "  Ignored groups:"
     echo "$ignored_grp" | tr ' ' '\n' | xargs -r -I {} echo "    - {}"
+  fi
   fi
 elif $_show_info_oneline; then
   echo "updatestatus: package updates: $updates_count (main = $main_count, aur = $aur_count)"

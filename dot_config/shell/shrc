@@ -95,8 +95,6 @@ alias \
         gdo='git diff origin/"$(git_current_branch)"' \
         gdca='git diff --cached' \
         gdcao='git diff --cached origin/"$(git_current_branch)"' \
-        gdm='git diff "$(git_default_branch)"' \
-        gdcam='git diff --cached "$(git_default_branch)"' \
         \
         gc='git commit -v' \
         gc!='git commit -v --amend' \
@@ -112,14 +110,13 @@ alias \
         \
         gf='git fetch' \
         gff='git fetch --tags -f' \
+        gfom='git fetch origin "$(git_default_branch)":"$(git_default_branch)"' \
         gfprune='git fetch --all --prune' \
         \
         gl='git pull'\
         glo='git pull origin "$(git_current_branch)"' \
         \
         gm='git merge' \
-        gmm='git merge "$(git_default_branch)"' \
-        gma='git merge --abort' \
         gmt='git mergetool' \
         \
         gp='git push' \
@@ -155,9 +152,7 @@ alias \
         gsetup='git branch --set-upstream-to=origin/$(git_current_branch)' \
         gcfg='git config' \
         gitroot='git rev-parse --show-toplevel' \
-        gcd='cd $(gitroot)' \
-        cdgr='cd $(gitroot)'
-        ;
+        cdgr='cd $(gitroot)';
 
 git_default_branch() {
   ref="$(git symbolic-ref --quiet refs/remotes/origin/HEAD 2> /dev/null)";
@@ -176,6 +171,26 @@ git_current_branch() {
     ref="$(git rev-parse --short HEAD 2> /dev/null)" || return;
   fi
   echo "${ref#refs/heads/}";
+}
+
+gct() {
+  ticket_default="${GIT_MSG_TICKET_DEFAULT:-}"
+  ticket_sep="${GIT_MSG_TICKET_SEP:-" "}"
+  ticket=
+  if echo "$1" | grep -qE '[A-Z]+-[0-9]+'; then
+    ticket="$(echo "$1" | grep -Eo '[A-Z]+-[0-9]+')";
+  elif git_current_branch | grep -qE '[A-Z]+-[0-9]+'; then
+    ticket="$(git_current_branch | grep -oE '[A-Z]+-[0-9]+')"
+  fi
+  tmpl="$(mktemp -p /tmp -t gct.XXXXXXXXXXXXX)"
+  cat <<EOF >"$tmpl"
+$1
+
+Ticket: $ticket
+EOF
+  git commit -v --template="$tmpl" || rc=$?
+  \rm "$tmpl"
+  return $rc
 }
 
 gcmsgt() {

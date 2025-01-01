@@ -153,6 +153,8 @@ zinit wait"1" lucid for \
 alias zi=__zoxide_zi
 export _ZO_FZF_OPTS="+s -e --preview='eza --level 2 --tree --color=always --group-directories-first {2}' $FZF_DEFAULT_OPTS"
 
+[ -e "$ZDOTDIR/.zshrc.local" ] && source "$ZDOTDIR/.zshrc.local"
+
 [ -e "$HOME/TODO" ] && cat "$HOME/TODO"
 
 # vim: ft=zsh sw=2 ts=2 et

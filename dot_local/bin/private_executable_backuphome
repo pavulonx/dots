@@ -26,7 +26,8 @@ LOG_DIR="$XDG_CACHE_HOME/backup"
 mkdir -p "$LOG_DIR"
 
 # Append current PC (hostname) and username to destination
-BCKP_DESTINATION="${BCKP_DESTINATION%/}/$(cat /etc/hostname)_${USER}-$(id -u "$USER")"
+#BCKP_DESTINATION="${BCKP_DESTINATION%/}/$(cat /etc/hostname)_${USER}-$(id -u "$USER")"
+BCKP_DESTINATION="${BCKP_DESTINATION%/}/"
 TIMESTAMP=$(date +%Y%m%d%H%M%S)
 
 # backup dotfiles
@@ -42,8 +43,6 @@ rsync_commands=(
   "--progress"
   "--human-readable"
   "--log-file=$LOG_DIR/rsync.$TIMESTAMP.log"
-  "--delete"
-  "--delete-excluded"
   "--filter=merge $_filterfile"
   "--filter=dir-merge,- .gitignore"
   "$BCKP_SOURCE"
