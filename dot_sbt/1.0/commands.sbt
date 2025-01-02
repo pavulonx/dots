@@ -19,3 +19,14 @@ val dependencyUpdatesAllCommand: String =
 
 addCommandAlias("dependencyUpdatesAll", dependencyUpdatesAllCommand)
 addCommandAlias("lsUpdates", dependencyUpdatesAllCommand)
+
+
+lazy val sh = inputKey[Unit]("Run shell command")
+
+import sys.process._
+import complete.DefaultParsers._
+sh := {
+  val args: Seq[String] = spaceDelimited("<arg>").parsed
+  val cmd = args.mkString(" ")
+  cmd.!
+}

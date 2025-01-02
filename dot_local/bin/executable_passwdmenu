@@ -27,7 +27,7 @@ password=$(printf '%s\n' "${password_files[@]}" | rofi -p "password$(if [ "$type
 [[ -n $password ]] || exit
 
 pass_cmd="pass"
-if [[ $password =~ ^otp.* ]]; then
+if [[ $password =~ .*\.otp$ ]]; then
   pass_cmd="pass otp"
 fi
 

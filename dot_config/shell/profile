@@ -7,7 +7,7 @@ export PATH="${_user_path}:${PATH}"
 export TERMINAL="/usr/bin/alacritty"
 export EDITOR="nvim"
 export VISUAL="$EDITOR"
-export BROWSER="firefox-developer-edition"
+export BROWSER="/usr/bin/firefox"
 export READER="zathura"
 export PAGER="less"
 

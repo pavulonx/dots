@@ -1,0 +1,8 @@
+#!/bin/sh
+
+code="$(which code 2>/dev/null | head -n1)"
+[ -z "$code" ] && echo "Visual Studio Code distribution not found!" >&2 && exit 1
+
+"$code" \
+  --use-gl=egl \
+  "$@"

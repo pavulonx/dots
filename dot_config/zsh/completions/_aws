@@ -1,0 +1,5 @@
+#compdef aws
+
+complete -C $(command -v aws_completer) aws
+
+# vim: ft=zsh sw=2 ts=2 et

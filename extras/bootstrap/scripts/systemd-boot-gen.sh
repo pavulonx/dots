@@ -39,18 +39,22 @@ linux     /vmlinuz-$_kn"
 options   $kernel_cmdline"
   [ -e "/boot/intel-ucode.img" ] && entry="$entry
 initrd    /intel-ucode.img"
+  [ -e "/boot/amd-ucode.img" ] && entry="$entry
+initrd    /amd-ucode.img"
 
   _title="${os_name}${_kv:+ - $_kv}"
   _id="${os_id}${_kv:+-$_kv}"
 
   [ -e "/boot/initramfs-$_kn.img" ] && echo "# $index-$_id.conf
 title     $_title
+sort-key  $index
 $entry
 initrd    /initramfs-$_kn.img" > "$tmpd/entries/$index-$_id.conf" &&
   index=$((index + 10))
 
   [ -e "/boot/initramfs-$_kn-fallback.img" ] && echo "# $index-$_id-fallback.conf
 title     $_title - [fallback]
+sort-key  $index
 $entry
 initrd    /initramfs-$_kn-fallback.img" > "$tmpd/entries/$index-$_id-fallback.conf" &&
   index=$((index + 10))
