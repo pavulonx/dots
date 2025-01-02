@@ -28,8 +28,9 @@ bindsym $mod+Return exec "$TERMINAL"
 bindsym $mod+Shift+q kill
 
 # start program launcher
-bindsym $mod+d exec --no-startup-id  rofi -show
-bindsym $mod+x exec --no-startup-id  rofi -show run
+bindsym $mod+d        exec --no-startup-id  rofi -show
+bindsym $mod+Shift+d  exec --no-startup-id  rofi -show combi -drun-show-actions
+bindsym $mod+x        exec --no-startup-id  rofi -show run
 
 # reload/poewer management
 bindsym $mod+Shift+r restart
@@ -198,6 +199,7 @@ assign [class="jetbrains-*"] $ws3
 for_window [instance="floating-terminal"] floating enable
 for_window [class="Pavucontrol"] floating enable
 for_window [class="[gG]nome-calculator"] floating enable
+for_window [class="[zZ]oom"] floating enable
 
 
 ### LAYOUT
