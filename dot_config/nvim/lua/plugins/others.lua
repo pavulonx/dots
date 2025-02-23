@@ -45,6 +45,17 @@ return {
   -- { 'neoclide/coc.nvim', branch = 'release' },
   { 'nvim-treesitter/nvim-treesitter', build = ':TSUpdate'},
   'luckasRanarison/tree-sitter-hyprlang',
+
+  {
+    'alker0/chezmoi.vim',
+    lazy = false,
+    init = function()
+      -- This option is required.
+      vim.g['chezmoi#use_tmp_buffer'] = true
+      -- add other options here if needed.
+    end,
+  },
+
   -- " Plug 'autozimu/LanguageClient-neovim', {'branch': 'next', 'do': 'bash install.sh'}
   -- " Plug 'ap/vim-css-color' " disabled because of https://github.com/ap/vim-css-color/issues/139
 }
