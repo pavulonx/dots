@@ -92,7 +92,7 @@ _get_crypts() {
   mounts="$(mktemp -p /tmp mounts-XXXXXX)"
   awk '{print $2":"$3}' /proc/mounts | sort -t: -k1,1 >"$mounts"
   #awk '/[[:blank:]*][^#].*/  { if (NF == 3) { printf "%s:%s:%s\n", $1, $2, $3 } }' "$CRYPT_CONFIG" | sort -u -t: -k3,3 |
-  awk '/[[:blank:]*][^#].*/  { if (NF == 3 || NF == 4) { printf "%s:%s:%s:%s\n", $1, $2, $3, $4} }' "$CRYPT_CONFIG" | sort -u -t: -k3,3 |
+  awk '!/^[[:blank:]]*#.*/  { if (NF == 3 || NF == 4) { printf "%s:%s:%s:%s\n", $1, $2, $3, $4} }' "$CRYPT_CONFIG" | sort -u -t: -k3,3 |
     join -t: -1 1 -2 3 -a 2 -e '-' -o 2.1,2.2,2.3,2.4,1.2 "$mounts" - |
     sort -u -t':' -k1,1
   rm -f "$mounts"
