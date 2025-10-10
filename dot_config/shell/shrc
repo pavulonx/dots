@@ -24,8 +24,8 @@ alias \
         pacmanclean='"${SUDO:-sudo}" pacman -R `pacman -Qdtq`';
 
 # clean home
-alias \
-        yarn='yarn --use-yarnrc "$XDG_CONFIG_HOME/yarn/config"';
+#alias \
+#        yarn='yarn --use-yarnrc "$XDG_CONFIG_HOME/yarn/config"';
 # Use neovim for vim if present.
 [ -x "$(command -v nvim)" ] && alias vim='nvim' vimdiff='nvim -d';
 
@@ -105,6 +105,7 @@ alias \
         gco='git checkout' \
         gcom='git checkout "$(git_default_branch)"' \
         gcob='git checkout -b' \
+        gcof='git-checkout-fzf' \
         \
         gcp='git cherry-pick' \
         gcpa='git cherry-pick --abort' \
@@ -157,8 +158,7 @@ alias \
         gcfg='git config' \
         gitroot='git rev-parse --show-toplevel' \
         gcd='cd $(gitroot)' \
-        cdgr='cd $(gitroot)'
-        ;
+        cdgr='cd $(gitroot)';
 
 git_default_branch() {
   ref="$(git symbolic-ref --quiet refs/remotes/origin/HEAD 2> /dev/null)";
@@ -183,10 +183,10 @@ gct() {
   ticket_default="${GIT_MSG_TICKET_DEFAULT:-}"
   ticket_sep="${GIT_MSG_TICKET_SEP:-" "}"
   ticket=
-  if echo "$1" | grep -qE '[A-Z]+-[0-9]+'; then
-    ticket="$(echo "$1" | grep -Eo '[A-Z]+-[0-9]+')";
-  elif git_current_branch | grep -qE '[A-Z]+-[0-9]+'; then
-    ticket="$(git_current_branch | grep -oE '[A-Z]+-[0-9]+')"
+  if echo "$1" | 'grep' -qE '[A-Z]+-[0-9]+'; then
+    ticket="$(echo "$1" | 'grep' -Eo '[A-Z]+-[0-9]+')";
+  elif git_current_branch | 'grep' -qE '[A-Z]+-[0-9]+'; then
+    ticket="$(git_current_branch | 'grep' -oE '[A-Z]+-[0-9]+')"
   fi
   tmpl="$(mktemp -p /tmp -t gct.XXXXXXXXXXXXX)"
   cat <<EOF >"$tmpl"
@@ -194,8 +194,8 @@ $1
 
 Ticket: $ticket
 EOF
-  git commit -v --template="$tmpl" || rc=$?
-  \rm "$tmpl"
+  git commit -v --template="$tmpl"; rc=$?
+  'rm' "$tmpl" || :
   return $rc
 }
 
