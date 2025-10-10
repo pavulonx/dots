@@ -63,7 +63,7 @@ _refresh=false
 for arg; do
     case "$arg" in
         -r) _refresh=true ;;
-        -d) _show_details=true ;;
+        -l|-d) _show_details=true ;;
         -o) _show_info_oneline=true ;;
         -v) _show_debug=true ;;
         -n) _send_notification=true ;;

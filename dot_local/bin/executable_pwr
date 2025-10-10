@@ -10,6 +10,7 @@ _help() {
     help
     lock
     suspend
+    hibernate
     reboot
     shutdown / poweroff
 
@@ -24,13 +25,14 @@ cmd="$1"
 
 _log "command: '$cmd'"
 case "$cmd" in
-  -h|--help|help)     _help                       ;;
-  status)             _status                     ;;
+  -h|--help|help)     _help                 ;;
+  status)             _status               ;;
 
-  lock)               loginctl lock-session       ;;
-  suspend)            systemctl suspend   ;;
-  reboot)             systemctl reboot    ;;
-  shutdown|poweroff)  systemctl poweroff  ;;
+  lock)               loginctl lock-session ;;
+  suspend)            systemctl suspend     ;;
+  hibernate)          systemctl hibernate   ;;
+  reboot)             systemctl reboot      ;;
+  shutdown|poweroff)  systemctl poweroff    ;;
 
   dim)
     if [ -n "$WAYLAND_DISPLAY" ]; then

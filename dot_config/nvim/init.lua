@@ -25,7 +25,7 @@ vim.o.termguicolors = true
 vim.o.title = true
 vim.o.background = 'dark' -- or 'light'
 --vim.cmd.colorscheme 'catppuccin-mocha'
-vim.cmd.colorscheme 'solarized-osaka-night'
+vim.cmd.colorscheme 'solarized-osaka'
 -- vim.cmd.colorscheme 'kanagawa-dragon'
 
 -- numbers

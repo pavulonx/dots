@@ -17,14 +17,12 @@ else
   exit 1
 fi
 
-prefix=${PASSWORD_STORE_DIR-~/.password-store}
-password_files=( "$prefix"/**/*.gpg )
-password_files=( "${password_files[@]#"$prefix"/}" )
-password_files=( "${password_files[@]%.gpg}" )
+prefix="${PASSWORD_STORE_DIR:-$HOME/.password-store}"
+prefix="${prefix%%/}/"
+password_files="$(find "$prefix" -type f -name '*.gpg' | sed "s|^${prefix}\(.*\).gpg"'$'"|\1|g")"
 
-password=$(printf '%s\n' "${password_files[@]}" | rofi -p "password$(if [ "$typeit" = 1 ]; then echo " (type)"; fi)" -dmenu "$@")
-
-[[ -n $password ]] || exit
+password=$(echo "$password_files" | rofi -p "password$(if [ "$typeit" = 1 ]; then echo " (type)"; fi)" -dmenu "$@")
+[ -n $password ] || exit
 
 pass_cmd="pass"
 if [[ $password =~ .*\.otp$ ]]; then

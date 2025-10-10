@@ -4,12 +4,13 @@ power_options="
  dim
  exit
  suspend
+ hibernate
  reboot
  shutdown
 "
 cmd="$(echo "$power_options" \
   | grep -v "^$" \
-  | rofi -dmenu -i -no-custom -p "?" -theme-str 'listview { lines: 6; scrollbar: false; } window { width: 12%; }' \
+  | rofi -dmenu -i -no-custom -p "?" -theme-str 'listview { lines: 7; scrollbar: false; } window { width: 12%; }' \
   | awk '{print $2}')";
 
 [ -z "$cmd" ] && exit 0;
