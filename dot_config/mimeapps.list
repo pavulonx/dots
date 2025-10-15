@@ -60,6 +60,7 @@ image/gif=viewnior.desktop;gimp.desktop;
 image/jpeg=imv.desktop;imv-dir.desktop;gimp.desktop;feh.desktop;sxiv.desktop;viewnior.desktop;org.gnome.gThumb.desktop;gpicview.desktop;
 image/png=viewnior.desktop;feh.desktop;gimp.desktop;
 text/css=editor.desktop;
+text/csv=editor.desktop;
 text/html=editor.desktop;firefox.desktop;firefox-developer-edition.desktop;chromium.desktop;
 text/markdown=editor.desktop;
 text/plain=editor.desktop;
