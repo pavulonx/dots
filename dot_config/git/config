@@ -18,10 +18,10 @@
   tool = nvimdiff
 
 [mergetool]
-	keepBackup = false
+  keepBackup = false
 
 [mergetool "nvimdiff"]
-	cmd = nvim -d $LOCAL $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
+  cmd = nvim -d $LOCAL $REMOTE $MERGED -c '$wincmd w' -c 'wincmd J'
 
 
 [pager]
@@ -37,7 +37,7 @@
   defaultBranch = main
 
 [rerere]
-	enabled = true
+  enabled = true
 
 [include]
   path = ~/.config/git/config.local

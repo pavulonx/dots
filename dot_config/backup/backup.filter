@@ -39,8 +39,7 @@
 + /.local/share/current_wallpaper
 - /.local/share/**
 + /.local/src/
-+ /.local/src/*
-- /.local/src/**
++ /.local/src/***
 - /.local/**
 + /.ssh/***
 + /.android/
@@ -50,6 +49,7 @@
 + /.m2/
 + /.m2/*
 - /.m2/**
++ /.mozilla/
 + /.mozilla/***
 + /.sbt/
 + /.sbt/*
