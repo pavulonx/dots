@@ -10,6 +10,18 @@ _info() {
   printf "\33[1m%s\33[0m\n" "$1"
 }
 
+_arch() {
+  if paru --version >/dev/null 2>&1; then
+    paru -Syu --upgrademenu
+  elif yay --version >/dev/null 2>&1; then
+    yay -Syu
+  else
+    echo "No AUR package manager found (seached for pary, yay)" >&2
+    echo "Falling back to pacman - AUR will not be updated" >&2
+    pacman -Syu
+  fi
+}
+
 _flatpak() {
   if command -V flatpak >/dev/null 2>&1; then
     _info "flatpak update"
@@ -29,7 +41,7 @@ retval=0
 case "$os" in
   arch|artix)
     _info "paru -Syu --upgrademenu"
-    paru -Syu --upgrademenu || retval=$((retval + $?))
+    _arch -Syu --upgrademenu || retval=$((retval + $?))
     echo
     _flatpak || retval=$((retval + $?))
     echo

@@ -3,39 +3,224 @@
 _jcmd="${JPSF_JCMD:-jcmd}"
 _jps="${JPSF_JPS:-jps}"
 JPSF_JCMD_TIMEOUT="${JPSF_JCMD_TIMEOUT:-3s}"
+# max length of a single value before it gets truncated with a "+N chars" hint
+JPSF_MAX_FIELD="${JPSF_MAX_FIELD:-240}"
+# how many classpath entries to show while the classpath is collapsed
+JPSF_CP_PREVIEW="${JPSF_CP_PREVIEW:-3}"
 
-_preview_command="$(cat <<EOF
-{
-  echo "proc_cwd:\$(pwdx {1} | cut -d' ' -f2-)";
-  echo "proc_usr:\$(ps -p {1} -o user=)";
-  echo "proc_cmd:\$(ps -p {1} -o command=)";
-  _jcmd_out="\$(timeout $JPSF_JCMD_TIMEOUT $_jcmd {1} VM.info)";
-  _jcmd_retval="\$?"
-  if [ "\$_jcmd_retval" -ne 0 ]; then
-    printf ";\33[31;1mCouldn't get JVM info for proc {1} - $_jcmd exit status \$_jcmd_retval.\33[0m";
-  else
-    echo "\$_jcmd_out" |
-      grep -E '^Command Line|^Time|^jvm_args|^java_command|^java_class_path|^vm_info'
+_c_proc='\033[34;1m'  # process info  - blue
+_c_java='\033[32;1m'  # java info     - green
+_c_err='\033[31;1m'   # errors        - red
+_c_dim='\033[2m'
+_c_off='\033[0m'
+
+# absolute path to this script, so the fzf preview can call back into it
+case "$0" in
+  /*) _self="$0" ;;
+  */*) _self="$PWD/${0#./}" ;;
+  *) _self="$(command -v -- "$0" 2>/dev/null || echo "$0")" ;;
+esac
+
+# ---------------------------------------------------------------- helpers ----
+
+# heading label + value on separate lines (for long values)
+_block() {
+  printf "$1%s:$_c_off\n" "$2"
+  shift 2
+  printf '%s\n' "$*"
+}
+
+# label: value on a single line (for short values)
+_line() {
+  printf "$1%s:$_c_off %s\n" "$2" "$3"
+}
+
+# shorten $1 to JPSF_MAX_FIELD chars, marking clearly that it was cut short
+_shorten() {
+  printf '%s' "$1" | awk -v max="$JPSF_MAX_FIELD" -v dim="$_c_dim" -v off="$_c_off" '
+    { if (length($0) > max)
+        printf "%s%s … [truncated, +%d chars]%s\n", \
+          substr($0, 1, max), dim, length($0) - max, off
+      else
+        print $0
+    }'
+}
+
+_human_time() {
+  awk -v s="$1" 'BEGIN {
+    d = int(s / 86400); h = int(s % 86400 / 3600); m = int(s % 3600 / 60)
+    if (d > 0) printf "%dd %dh %dm", d, h, m
+    else if (h > 0) printf "%dh %dm", h, m
+    else printf "%dm %ds", m, s % 60
+  }'
+}
+
+_proc_cwd() {
+  # pwdx prints "Permission denied" for foreign processes; try /proc too
+  _cwd="$(readlink -f "/proc/$1/cwd" 2>/dev/null)"
+  if [ -z "$_cwd" ]; then
+    _cwd="$(pwdx "$1" 2>/dev/null | cut -d' ' -f2-)"
   fi
-} |
+  case "$_cwd" in
+    '' | *'Permission denied'* | *'No such process'*)
+      printf '%b(unavailable - not readable by %s)%b\n' "$_c_dim" "$(id -un)" "$_c_off" ;;
+    *) printf '%s\n' "$_cwd" ;;
+  esac
+}
 
-  sed '
-    s/^Command Line:/10;\x1b[32;1mCMD line:\x1b[0m\\n11;/g
-    s/^java_command:/20;\x1b[32;1mJava CMD:\x1b[0m\\n21;/g
-    s/^jvm_args:/30;\x1b[32;1mJVM Args:\x1b[0m\\n31;/g
-    s/^java_class_path[^:]*:/40;\x1b[32;1mJava ClassPath:\x1b[0m\\n41;/g
-    s/^vm_info:/50;\x1b[32;1mJVM info:\x1b[0m\\n51;/g
-    s/^Time:/60;\x1b[32;1mJVM time:\x1b[0m\\n61;/g
-    s/^proc_cmd:/70;\x1b[34;1mProcess command:\x1b[0m\\n71;/g
-    s/^proc_usr:/80;\x1b[34;1mProcess user:\x1b[0m\\n81;/g
-    s/^proc_cwd:/90;\x1b[34;1mProcess working dir:\x1b[0m\\n91;/g
-  ' |
-  sort -n -k1.1,1.2 |
-  cut -d';' -f2- |
-  sed 's/^\s*//g'
+# --------------------------------------------------------------- preview -----
 
+_render_preview() {
+  pid="$1"
+
+  case "$pid" in
+    '' | *[!0-9]*)
+      printf "$_c_err%s$_c_off\n" "Not a valid pid: '$pid'"
+      return 0
+      ;;
+  esac
+
+  if ! kill -0 "$pid" 2>/dev/null && [ ! -d "/proc/$pid" ]; then
+    printf "$_c_err%s$_c_off\n" "Process $pid is gone."
+    return 0
+  fi
+
+  # ---- process section (single ps call) ----
+  # -ww stops ps from silently cutting the command line to the terminal width;
+  # fzf exports COLUMNS to preview processes, which would otherwise trigger it
+  _ps="$(ps -ww -p "$pid" -o user=,etimes=,pcpu=,rss=,ppid=,nlwp=,command= 2>/dev/null)"
+  if [ -n "$_ps" ]; then
+    # command= is last because it contains spaces
+    read -r p_user p_etimes p_cpu p_rss p_ppid p_thr p_cmd <<EOF
+$_ps
 EOF
-)"
+  fi
+
+  # /proc holds the full, never-truncated command line
+  if [ -r "/proc/$pid/cmdline" ]; then
+    _full_cmd="$(tr '\0' ' ' < "/proc/$pid/cmdline" 2>/dev/null |
+      sed 's/ *$//')"
+    [ -n "$_full_cmd" ] && p_cmd="$_full_cmd"
+  fi
+
+  _block "$_c_proc" 'Working dir' "$(_proc_cwd "$pid")"
+
+  if [ -n "$_ps" ]; then
+    _line "$_c_proc" 'User' "$p_user"
+    printf "$_c_proc%s:$_c_off %s   $_c_proc%s:$_c_off %s%%   $_c_proc%s:$_c_off %s\n" \
+      'Uptime' "$(_human_time "$p_etimes")" \
+      'CPU' "$p_cpu" \
+      'RSS' "$(printf '%s' "$p_rss" | numfmt --to=iec --from-unit=1024 2>/dev/null || echo "${p_rss}K")"
+    printf "$_c_proc%s:$_c_off %s   $_c_proc%s:$_c_off %s\n" \
+      'PPID' "$p_ppid" 'Threads' "$p_thr"
+    _block "$_c_proc" 'Command' "$(_shorten "$p_cmd")"
+  fi
+
+  # ---- java section (VM.command_line: ~26x smaller than VM.info) ----
+  _cl="$(timeout "$JPSF_JCMD_TIMEOUT" $_jcmd "$pid" VM.command_line 2>/dev/null)"
+  _rc="$?"
+  if [ "$_rc" -ne 0 ] || [ -z "$_cl" ]; then
+    printf "$_c_err%s$_c_off\n" \
+      "Couldn't get JVM info for proc $pid - $_jcmd exit status $_rc."
+    return 0
+  fi
+
+  _field() {
+    printf '%s\n' "$_cl" | sed -n "s/^$1[^:]*: *//p" | head -1
+  }
+
+  _args="$(_field 'jvm_args')"
+  [ -n "$_args" ] && _block "$_c_java" 'JVM args' "$(_shorten "$_args")"
+
+  _jcommand="$(_field 'java_command')"
+  [ -n "$_jcommand" ] && _block "$_c_java" 'Java cmd' "$(_shorten "$_jcommand")"
+
+  # ---- classpath: collapsed to a count unless toggled ----
+  _cp="$(_field 'java_class_path')"
+  if [ -n "$_cp" ]; then
+    _n="$(printf '%s' "$_cp" | awk -F: '{print NF}')"
+    _sz="$(printf '%s' "$_cp" | wc -c | tr -d ' ' |
+      numfmt --to=iec --suffix=B 2>/dev/null)"
+    [ "$_n" -eq 1 ] && _unit='entry' || _unit='entries'
+    if [ -s "${JPSF_CP_STATE:-/nonexistent}" ]; then
+      printf "$_c_java%s:$_c_off %s %s, %s\n" 'Java classpath' "$_n" "$_unit" "$_sz"
+      printf '%s\n' "$_cp" | tr ':' '\n' | sed 's/^/  /'
+    else
+      printf "$_c_java%s:$_c_off %s %s, %s $_c_dim%s$_c_off\n" \
+        'Java classpath' "$_n" "$_unit" "$_sz" '(ctrl-p to expand)'
+      printf '%s\n' "$_cp" | tr ':' '\n' | head -n "$JPSF_CP_PREVIEW" | sed 's/^/  /'
+      [ "$_n" -gt "$JPSF_CP_PREVIEW" ] &&
+        printf "  $_c_dim… [truncated, +%s entries]$_c_off\n" \
+          "$((_n - JPSF_CP_PREVIEW))"
+    fi
+  fi
+
+  # ---- jvm section ----
+  _ver="$(timeout "$JPSF_JCMD_TIMEOUT" $_jcmd "$pid" VM.version 2>/dev/null |
+    sed -n '2p;3p' | paste -sd' ' -)"
+  [ -n "$_ver" ] && _line "$_c_java" 'JVM' "$_ver"
+
+  # GC.heap_info is ~200 bytes, versus ~700 KB for the whole VM.info dump
+  _heap="$(timeout "$JPSF_JCMD_TIMEOUT" $_jcmd "$pid" GC.heap_info 2>/dev/null |
+    awk '
+      /used/ && !done {
+        c = ""; t = ""; u = ""
+        for (i = 1; i <= NF; i++) {
+          if ($i == "committed") c = $(i+1)
+          else if ($i == "total") t = $(i+1)
+          else if ($i == "used")  u = $(i+1)
+        }
+        gsub(/[K,]/, "", c); gsub(/[K,]/, "", t); gsub(/[K,]/, "", u)
+        if (u == "" || u + 0 == 0) next
+        d = (c + 0 > 0 ? c : t)
+        if (d + 0 > 0)
+          printf "used %.2f GiB of %.2f GiB (%.0f%%)", u/1048576, d/1048576, (u/d)*100
+        else
+          printf "used %.2f GiB", u/1048576
+        done = 1
+      }')"
+  [ -n "$_heap" ] && _line "$_c_java" 'Heap' "$_heap"
+
+  return 0
+}
+
+# ------------------------------------------------------------ entry points ---
+
+case "$1" in
+  --preview)
+    _render_preview "$2"
+    exit 0
+    ;;
+  --toggle-cp)
+    # flip the shared classpath-expanded flag
+    if [ -s "${JPSF_CP_STATE:-/nonexistent}" ]; then
+      : > "$JPSF_CP_STATE"
+    else
+      echo 1 > "$JPSF_CP_STATE"
+    fi
+    exit 0
+    ;;
+esac
+
+JPSF_CP_STATE="${TMPDIR:-/tmp}/jpsf-cp.$$"
+: > "$JPSF_CP_STATE"
+export JPSF_CP_STATE JPSF_JCMD JPSF_JPS JPSF_JCMD_TIMEOUT JPSF_MAX_FIELD JPSF_CP_PREVIEW
+trap 'rm -f "$JPSF_CP_STATE"' EXIT
+trap 'rm -f "$JPSF_CP_STATE"; exit 130' HUP INT TERM
+
+# reap state files left behind by runs that were killed outright (SIGKILL, or a
+# signal received while blocked in fzf, where the trap cannot run)
+for _stale in "${TMPDIR:-/tmp}"/jpsf-cp.*; do
+  case "$_stale" in
+    *'jpsf-cp.*') continue ;;  # glob did not match anything
+  esac
+  _stale_pid="${_stale##*.}"
+  case "$_stale_pid" in
+    '' | *[!0-9]*) continue ;;
+  esac
+  [ "$_stale_pid" = "$$" ] && continue
+  kill -0 "$_stale_pid" 2>/dev/null || rm -f "$_stale"
+done
 
 query="$*"
 
@@ -43,11 +228,13 @@ while out="$($_jps -lm \
   | grep -Ev '^[0-9]+ jdk.jcmd/sun.tools.jps.Jps' \
   | fzf \
   --reverse \
+  --ansi \
   --query="$query" --print-query \
-  --header="^T - kill -TERM | F9 - kill -KILL" \
+  --header="^T - kill -TERM | F9 - kill -KILL | ^P - classpath" \
   --expect=ctrl-t,f9 \
   --bind=ctrl-r:accept \
-  --preview="$_preview_command" \
+  --bind="ctrl-p:execute-silent($_self --toggle-cp)+refresh-preview" \
+  --preview="$_self --preview {1}" \
   --preview-window=bottom:70%:wrap)";
 do
   query=$(echo "$out" | sed -n '1p')

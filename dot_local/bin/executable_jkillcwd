@@ -1,0 +1,152 @@
+#!/bin/sh
+# Kill all java processes whose working directory is the current working
+# directory (or the directory given as argument), optionally including
+# any subdirectory of it.
+
+_jps="${JPSF_JPS:-jps}"
+JKILLCWD_TERM_WAIT="${JKILLCWD_TERM_WAIT:-10}"
+
+usage() {
+  cat <<EOF
+Usage: ${0##*/} [-r] [-y] [-9] [-n] [-d DIR]
+
+Kills every java process (as reported by $_jps) whose working directory
+matches DIR (default: the current working directory).
+
+  -d DIR  directory to match instead of \$PWD
+  -r      recursive - also kill processes running in any subdirectory of DIR
+  -y      do not ask for confirmation
+  -9      send KILL right away instead of TERM (then KILL)
+  -n      dry run - only list the matching processes
+  -h      show this help
+EOF
+}
+
+assume_yes=0
+force_kill=0
+dry_run=0
+recursive=0
+target_dir="$PWD"
+
+while getopts ':d:ry9nh' opt; do
+  case "$opt" in
+    d) target_dir="$OPTARG" ;;
+    r) recursive=1 ;;
+    y) assume_yes=1 ;;
+    9) force_kill=1 ;;
+    n) dry_run=1 ;;
+    h) usage; exit 0 ;;
+    :) echo "${0##*/}: option -$OPTARG requires an argument" >&2; exit 2 ;;
+    ?) echo "${0##*/}: unknown option -$OPTARG" >&2; usage >&2; exit 2 ;;
+  esac
+done
+shift $((OPTIND - 1))
+
+if [ ! -d "$target_dir" ]; then
+  echo "${0##*/}: not a directory: $target_dir" >&2
+  exit 2
+fi
+
+# canonical path so that symlinks/trailing slashes compare equal
+target_dir="$(cd -- "$target_dir" && pwd -P)" || exit 2
+
+proc_cwd() {
+  # $1 = pid; prints the canonical working dir of the process
+  readlink -f "/proc/$1/cwd" 2>/dev/null ||
+    pwdx "$1" 2>/dev/null | cut -d' ' -f2-
+}
+
+# prefix used for the recursive match; avoids turning "/" into "//"
+case "$target_dir" in
+  */) subdir_prefix="$target_dir" ;;
+  *) subdir_prefix="$target_dir/" ;;
+esac
+
+matches() {
+  # $1 = process working dir
+  [ "$1" = "$target_dir" ] && return 0
+  if [ "$recursive" -eq 1 ]; then
+    case "$1" in
+      "$subdir_prefix"*) return 0 ;;
+    esac
+  fi
+  return 1
+}
+
+pids=''
+count=0
+while read -r pid rest; do
+  [ -n "$pid" ] || continue
+  [ "$pid" = "$$" ] && continue
+  cwd="$(proc_cwd "$pid")"
+  [ -n "$cwd" ] || continue
+  matches "$cwd" || continue
+  if [ "$recursive" -eq 1 ]; then
+    printf '%s\t%s\t[%s]\n' "$pid" "$rest" "$cwd"
+  else
+    printf '%s\t%s\n' "$pid" "$rest"
+  fi
+  pids="$pids $pid"
+  count=$((count + 1))
+done <<EOF
+$($_jps -lm | grep -Ev '^[0-9]+ jdk\.jcmd/sun\.tools\.jps\.Jps')
+EOF
+
+if [ "$count" -eq 0 ]; then
+  if [ "$recursive" -eq 1 ]; then
+    echo "No java process running in $target_dir or below"
+  else
+    echo "No java process running in $target_dir"
+  fi
+  exit 0
+fi
+
+[ "$dry_run" -eq 1 ] && exit 0
+
+if [ "$assume_yes" -ne 1 ]; then
+  if [ "$recursive" -eq 1 ]; then
+    where="$target_dir or below"
+  else
+    where="$target_dir"
+  fi
+  if [ "$force_kill" -eq 1 ]; then
+    printf 'KILL those %s process(es) in %s [y/N]? ' "$count" "$where"
+  else
+    printf 'TERM those %s process(es) in %s [y/N]? ' "$count" "$where"
+  fi
+  read -r yN
+  case "$yN" in
+    y | Y | yes | YES) : ;;
+    *) echo 'Aborted.'; exit 1 ;;
+  esac
+fi
+
+if [ "$force_kill" -eq 1 ]; then
+  for pid in $pids; do
+    echo "KILL $pid"
+    kill -KILL "$pid" 2>/dev/null
+  done
+  exit 0
+fi
+
+for pid in $pids; do
+  echo "TERM $pid"
+  kill -TERM "$pid" 2>/dev/null
+done
+
+# give them a chance to shut down, then force the survivors
+waited=0
+while [ "$waited" -lt "$JKILLCWD_TERM_WAIT" ]; do
+  alive=''
+  for pid in $pids; do
+    kill -0 "$pid" 2>/dev/null && alive="$alive $pid"
+  done
+  [ -z "$alive" ] && exit 0
+  sleep 1
+  waited=$((waited + 1))
+done
+
+for pid in $alive; do
+  echo "KILL $pid (did not exit after TERM)"
+  kill -KILL "$pid" 2>/dev/null
+done

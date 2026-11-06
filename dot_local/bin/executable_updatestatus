@@ -18,6 +18,16 @@ else
   os="$(uname -o)"
 fi
 
+_aurpm() {
+  if paru --version >/dev/null 2>&1; then
+    paru "$@"
+  elif yay --version >/dev/null 2>&1; then
+    yay "$@"
+  else
+    echo "No AUR package manager found, seached for pary, yay" >&2 && exit 1
+  fi
+}
+
 _debug() {
   $_show_debug && echo "updatestatus:debug:$*"
 }
@@ -32,7 +42,7 @@ case "$os" in
     _debug "refreshing main: $mainf"
     checkupdates >"$mainf" 2> /dev/null
     _debug "refreshing aur:  $aurf"
-    paru -Qua > "$aurf" 2> /dev/null
+    _aurpm -Qua > "$aurf" 2> /dev/null
     ;;
   debian|ubuntu)
     _debug "refreshing main: $mainf"
