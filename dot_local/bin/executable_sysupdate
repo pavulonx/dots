@@ -1,5 +1,7 @@
 #!/bin/sh
 
+: "${AUR_HELPER:?AUR_HELPER must be set}"
+
 if [ -f '/etc/os-release' ]; then
   os="$(grep '^ID=' /etc/os-release)"; os="${os#ID=}"
 else
@@ -11,12 +13,19 @@ _info() {
 }
 
 _arch() {
-  if paru --version >/dev/null 2>&1; then
-    paru -Syu --upgrademenu
-  elif yay --version >/dev/null 2>&1; then
-    yay -Syu
+  if "$AUR_HELPER" --version >/dev/null 2>&1; then
+    if [ "$AUR_HELPER" = "paru" ]; then
+      _info "paru -Syu --upgrademenu"
+      "$AUR_HELPER" -Syu --upgrademenu
+    elif [ "$AUR_HELPER" = "yay" ]; then
+      _info "yay -Syu"
+      "$AUR_HELPER" -Syu
+    else
+      echo "Unsupported AUR helper: $AUR_HELPER" >&2
+      return 1
+    fi
   else
-    echo "No AUR package manager found (seached for pary, yay)" >&2
+    echo "AUR helper not found: $AUR_HELPER" >&2
     echo "Falling back to pacman - AUR will not be updated" >&2
     pacman -Syu
   fi
@@ -40,8 +49,7 @@ retval=0
 
 case "$os" in
   arch|artix)
-    _info "paru -Syu --upgrademenu"
-    _arch -Syu --upgrademenu || retval=$((retval + $?))
+    _arch || retval=$((retval + $?))
     echo
     _flatpak || retval=$((retval + $?))
     echo

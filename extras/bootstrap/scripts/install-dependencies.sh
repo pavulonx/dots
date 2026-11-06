@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
 set -euo pipefail
+: "${AUR_HELPER:?AUR_HELPER must be set}"
 
 _install() {
-  paru -S --needed "$@"
+  "$AUR_HELPER" -S --needed "$@"
 }
 
 _log_install() {

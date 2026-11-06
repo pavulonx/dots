@@ -1,5 +1,7 @@
 #!/bin/sh
 
+: "${AUR_HELPER:?AUR_HELPER must be set}"
+
 if [ -f '/etc/os-release' ]; then
   os="$(grep '^ID=' /etc/os-release)"; os="${os#ID=}"
 else
@@ -8,8 +10,8 @@ fi
 
 case "$os" in
   arch|artix)
-    paru -Sl --color=always |
-      fzf --ansi --multi --preview 'paru -Si {2}' |
+    "$AUR_HELPER" -Sl --color=always |
+      fzf --ansi --multi --preview "$AUR_HELPER -Si {2}" |
       awk '{print $2}' ;;
   debian|ubuntu)
     apt-cache pkgnames |

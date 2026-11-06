@@ -5,6 +5,7 @@
 ### OPTIONS AND VARIABLES ###
 bootstrap_hostname="${bootstrap_hostname:-}"
 bootstrap_timezone="${bootstrap_timezone:-"Europe/Warsaw"}"
+: "${AUR_HELPER:?AUR_HELPER must be set}"
 
 [ -z "$bootstrap_hostname" ] && echo "bootstrap_hostname is not set" && exit 1
 [ -z "$bootstrap_timezone" ] && echo "bootstrap_timezone is not set" && exit 1
@@ -140,7 +141,7 @@ _add_user_with_pass ||
 echo "%wheel ALL=(ALL) NOPASSWD: ALL #REMOVE_THIS_LINE" >> /etc/sudoers
 
 
-# Make pacman and paru colorful and adds eye candy on the progress bar because why not.
+# Make pacman and the AUR helper colorful and add eye candy on the progress bar because why not.
 sed -i "
 s~^#Color~Color~
 s~^#VerbosePkgLists~VerbosePkgLists~
@@ -154,8 +155,8 @@ sed -i "s/-j2/-j$(nproc)/;s/^#MAKEFLAGS/MAKEFLAGS/" /etc/makepkg.conf
 
 
 # INSTALL PACKAGES
-_log "Installing AUR helper - paru"
-makepkginstall paru-bin ||
+_log "Installing AUR helper - $AUR_HELPER"
+makepkginstall "$AUR_HELPER-bin" ||
   _error "Failed to install AUR helper."
 
 # Make zsh the default shell for the user.

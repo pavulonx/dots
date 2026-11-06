@@ -10,6 +10,7 @@ export VISUAL="$EDITOR"
 export BROWSER="/usr/bin/firefox"
 export READER="zathura"
 export PAGER="less"
+export AUR_HELPER="paru"
 
 # xdg config
 export XDG_CONFIG_HOME="$HOME/.config"

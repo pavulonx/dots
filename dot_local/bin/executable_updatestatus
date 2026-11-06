@@ -3,6 +3,7 @@
 # check pacman -ignore
 dir="/tmp/updatestatus"
 [ -d "$dir" ] || mkdir -p "$dir"
+: "${AUR_HELPER:?AUR_HELPER must be set}"
 
 update_notification_icon="/usr/share/icons/Flatery-Dark/apps/48/system-software-update.svg"
 update_notification_icon_local="$HOME/.local/share/icons/Flatery-Dark/apps/48/system-software-update.svg"
@@ -19,12 +20,10 @@ else
 fi
 
 _aurpm() {
-  if paru --version >/dev/null 2>&1; then
-    paru "$@"
-  elif yay --version >/dev/null 2>&1; then
-    yay "$@"
+  if "$AUR_HELPER" --version >/dev/null 2>&1; then
+    "$AUR_HELPER" "$@"
   else
-    echo "No AUR package manager found, seached for pary, yay" >&2 && exit 1
+    echo "AUR helper not found: $AUR_HELPER" >&2 && exit 1
   fi
 }
 
