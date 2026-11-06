@@ -1,0 +1,11 @@
+{{- /* chezmoi:modify-template */ -}}
+{{- $config := (.chezmoi.stdin | default "{}" | fromJsonc) -}}
+{{- $config
+    | setValueAtPath (list "$schema") "https://opencode.ai/config.json"
+    | setValueAtPath (list "disabled_providers") (list "amazon-bedrock" "opencode-zen")
+    | setValueAtPath (list "mcp" "servers" "context7") (dict
+        "type" "remote"
+        "url" "https://mcp.context7.com/mcp"
+      )
+    | toPrettyJson
+}}

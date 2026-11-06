@@ -1,0 +1,24 @@
+{
+  "$schema": "https://opencode.ai/v2/cli.json",
+  "theme": {
+    "name": "system",
+    "mode": "dark"
+  },
+  "keybinds": {
+    "prompt.editor": "ctrl+v,<leader>e",
+    "prompt.paste": "none"
+  },
+  "diffs": {
+    "wrap": "word"
+  },
+  "terminal": {
+    "title": true
+  },
+  "session": {
+    "sidebar": "auto",
+    "scrollbar": false,
+    "thinking": "hide"
+  },
+  "animations": true,
+  "plugins": ["*", "-opencode.notifications"]
+}

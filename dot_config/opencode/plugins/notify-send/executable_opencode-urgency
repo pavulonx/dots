@@ -1,0 +1,27 @@
+#!/bin/sh
+# OpenCode-specific wrapper around window-by-cwd.
+#
+# Pins the filters that identify an OpenCode TUI:
+#   --process opencode     the TUI binary
+#   --title-match 'OC | '  the title prefix the TUI sets
+#   --exclude ...          the background service, which is spawned by a TUI and
+#                          so inherits that window's ancestry
+#
+# Takes the same actions and arguments as window-by-cwd:
+#   opencode-urgency urgency <directory>
+#   opencode-urgency clear <directory>
+#   opencode-urgency focused <directory>
+#   opencode-urgency list
+set -eu
+
+if ! command -v window-by-cwd >/dev/null 2>&1; then
+  echo "missing dependency: window-by-cwd" >&2
+  exit 2
+fi
+
+exec window-by-cwd \
+  --process opencode \
+  --title-match 'OC | ' \
+  --exclude '*serve*' \
+  --exclude '*--service*' \
+  "$@"

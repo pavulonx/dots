@@ -1,0 +1,214 @@
+#!/usr/bin/env bash
+# Resolve the terminal window a process is running in, by working directory.
+#
+# Terminal emulators run one process per window, so a window can be identified
+# by walking from a process up to its terminal's `_NET_WM_PID`:
+#
+#   process -> parent chain -> terminal pid -> _NET_WM_PID -> window id
+#
+# Matching this way avoids window titles, which are truncated when long and can
+# collide between windows.
+#
+# Usage:
+#   window-by-cwd [filters] <action> [directory]
+#
+# Actions:
+#   print <directory>    print matching window ids
+#   urgency <directory>  set the X11 urgency hint
+#   clear <directory>    clear the urgency hint
+#   focused <directory>  exit 0 if that window has focus
+#   list                 list windows, pids, cwds and titles
+#
+# Filters may appear before or after the action.
+#
+# Only `list` prints titles, and only prints a header when stdout is a terminal,
+# so piping it stays parseable. `print` emits bare window ids for composition:
+#
+#   wid=$(window-by-cwd --process sbtn --first print "$PWD")
+#   xdotool windowactivate "$wid"
+#
+# Filters:
+#   --process NAME      only these processes, by exact name (repeatable)
+#   --title-match TEXT  only windows whose title contains TEXT
+#   --exclude PATTERN   skip processes whose cmdline matches (repeatable)
+#   --first             act on or print only the first match
+#
+# Limitation: this relies on one process per window, which holds for terminal
+# emulators but not for GUI applications. Firefox and IntelliJ, for example,
+# share a single pid across many windows, so a pid cannot select one of them.
+#
+# Exit: 0 matched, 1 no match, 2 usage or missing dependency.
+set -uo pipefail
+
+usage() {
+  sed -n '3,40p' "$0" | sed 's/^# \{0,1\}//'
+  exit "${1:-0}"
+}
+
+for dep in wmctrl xdotool; do
+  command -v "$dep" >/dev/null || { echo "missing dependency: $dep" >&2; exit 2; }
+done
+
+processes=()
+excludes=()
+title_match=""
+action=""
+first=0
+target=""
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -h|--help) usage 0 ;;
+    --process) [ $# -ge 2 ] || usage 2; processes+=("$2"); shift 2 ;;
+    --exclude) [ $# -ge 2 ] || usage 2; excludes+=("$2"); shift 2 ;;
+    --title-match) [ $# -ge 2 ] || usage 2; title_match="$2"; shift 2 ;;
+    --first) first=1; shift ;;
+    --) shift ;;
+    -*) usage 2 ;;
+    print|urgency|clear|focused|list)
+      [ -z "$action" ] || usage 2
+      action="$1"; shift
+      ;;
+    *)
+      [ -n "$action" ] && [ -z "$target" ] || usage 2
+      target="$1"; shift
+      ;;
+  esac
+done
+
+[ -n "$action" ] || usage 2
+[ "$action" = "list" ] || [ -n "$target" ] || usage 2
+
+# Emit tab-delimited "WINDOW_ID<TAB>PID<TAB>CWD<TAB>TITLE" for every window
+# containing a matching process. Tabs rather than spaces because both the cwd
+# and the title can contain spaces.
+candidates() {
+  local windows
+  windows=$(wmctrl -lp 2>/dev/null) || return 0
+  if [ -n "$title_match" ]; then
+    windows=$(grep -F "$title_match" <<<"$windows")
+  fi
+  [ -n "$windows" ] || return 0
+
+  local pids=()
+  if [ ${#processes[@]} -gt 0 ]; then
+    local name
+    for name in "${processes[@]}"; do
+      # shellcheck disable=SC2207
+      pids+=($(pgrep -x "$name" 2>/dev/null))
+    done
+  else
+    # No process filter: consider every process owned by this user.
+    # shellcheck disable=SC2207
+    pids=($(pgrep -u "$(id -u)" 2>/dev/null))
+  fi
+
+  local pid cwd wid title found current depth cmdline skip pattern
+  for pid in "${pids[@]}"; do
+    [ -n "$pid" ] || continue
+
+    if [ ${#excludes[@]} -gt 0 ]; then
+      cmdline=$(tr '\0' ' ' <"/proc/$pid/cmdline" 2>/dev/null) || continue
+      skip=0
+      for pattern in "${excludes[@]}"; do
+        # shellcheck disable=SC2254
+        case "$cmdline" in $pattern) skip=1; break ;; esac
+      done
+      [ "$skip" -eq 1 ] && continue
+    fi
+
+    cwd=$(readlink "/proc/$pid/cwd" 2>/dev/null) || continue
+    [ -n "$cwd" ] || continue
+
+    # Walk up a bounded number of ancestors looking for a known window.
+    current=$pid
+    for depth in 1 2 3 4 5 6; do
+      current=$(ps -o ppid= -p "$current" 2>/dev/null | tr -d ' ')
+      [ -n "$current" ] || break
+      # wmctrl -lp columns are: id, desktop, pid, host, then the title.
+      found=$(awk -v p="$current" '
+        $3 == p {
+          title = $0
+          for (i = 1; i <= 4; i++) sub(/^[^ ]+ +/, "", title)
+          print $1 "\t" title
+          exit
+        }' <<<"$windows")
+      if [ -n "$found" ]; then
+        IFS=$'\t' read -r wid title <<<"$found"
+        printf '%s\t%s\t%s\t%s\n' "$wid" "$pid" "$cwd" "$title"
+        break
+      fi
+    done
+  done
+}
+
+if [ "$action" = "list" ]; then
+  # Collect first so the directory column can be sized to the content.
+  rows=()
+  while IFS=$'\t' read -r wid pid cwd title; do
+    [ -n "$wid" ] || continue
+    rows+=("$wid"$'\t'"$pid"$'\t'"${cwd/#$HOME/\~}"$'\t'"$title")
+    [ "$first" -eq 1 ] && break
+  done < <(candidates)
+  [ ${#rows[@]} -gt 0 ] || exit 1
+
+  dir_width=9
+  for row in "${rows[@]}"; do
+    IFS=$'\t' read -r wid pid cwd title <<<"$row"
+    [ ${#cwd} -gt "$dir_width" ] && dir_width=${#cwd}
+  done
+
+  # Give the title whatever room is left, but only when writing to a terminal:
+  # a redirected or piped list should keep the full text. Titles are already
+  # elided by the application, so trimming them further loses little.
+  if [ -t 1 ]; then
+    cols=${COLUMNS:-0}
+    [ "$cols" -gt 0 ] || cols=$(tput cols 2>/dev/null || echo 80)
+    title_width=$((cols - 10 - 2 - 8 - 2 - dir_width - 2))
+    [ "$title_width" -lt 8 ] && title_width=8
+  else
+    title_width=0
+  fi
+
+  # Only decorate for humans: a header would corrupt anything parsing this.
+  if [ -t 1 ]; then
+    printf '%-10s  %-8s  %-*s  %s\n' \
+      WINDOW PID "$dir_width" DIRECTORY TITLE
+  fi
+
+  for row in "${rows[@]}"; do
+    IFS=$'\t' read -r wid pid cwd title <<<"$row"
+    if [ "$title_width" -gt 0 ] && [ ${#title} -gt "$title_width" ]; then
+      title="${title:0:$((title_width - 1))}…"
+    fi
+    printf '%-10s  %-8s  %-*s  %s\n' \
+      "$wid" "$pid" "$dir_width" "$cwd" "$title"
+  done
+  exit 0
+fi
+
+if [ "$action" = "focused" ]; then
+  # xdotool reports the active window in decimal; wmctrl uses padded hex.
+  active=$(xdotool getactivewindow 2>/dev/null) || exit 1
+  active=$(printf '0x%08x' "$active")
+  while IFS=$'\t' read -r wid pid cwd title; do
+    [ "$cwd" = "$target" ] || continue
+    [ "$wid" = "$active" ] && exit 0
+  done < <(candidates)
+  exit 1
+fi
+
+# Act on every window in the directory: two terminals open on one project
+# should both be handled.
+acted=0
+while IFS=$'\t' read -r wid pid cwd title; do
+  [ "$cwd" = "$target" ] || continue
+  case "$action" in
+    print) printf '%s\n' "$wid"; acted=1 ;;
+    urgency) xdotool set_window --urgency 1 "$wid" 2>/dev/null && acted=1 ;;
+    clear) xdotool set_window --urgency 0 "$wid" 2>/dev/null && acted=1 ;;
+  esac
+  [ "$first" -eq 1 ] && [ "$acted" -eq 1 ] && break
+done < <(candidates)
+
+[ "$acted" -eq 1 ] || exit 1
